@@ -9,9 +9,16 @@ namespace AtoTax.API.Mapping
         public MappingConfig()
         {
             CreateMap<GSTClient, GSTClientDTO>().ReverseMap();
-            CreateMap<GSTClient, GSTClientCreateDTO > ();
-            CreateMap<GSTClient, GSTClientUpdateDTO>();
-           
+            CreateMap<GSTClientCreateDTO, GSTClient>()
+                        .ForMember(dest => dest.CreatedOn, opt => opt.MapFrom(src => DateTime.UtcNow))
+                        .ForMember(dest => dest.UpdatedOn, opt => opt.MapFrom(src => DateTime.UtcNow));
+            CreateMap<GSTClientUpdateDTO, GSTClient>()
+                        .ForMember(dest => dest.UpdatedOn, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+
+            CreateMap<Status, StatusDTO>().ReverseMap();
+            CreateMap<StatusCreateDTO, Status>().ReverseMap();
+            //
         }
     }
 }

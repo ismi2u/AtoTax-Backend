@@ -11,7 +11,7 @@ namespace AtoTax.Domain.DTOs
     public class ServiceChargeUpdateTrackerDTO
     {
 
-        public int Id { get; set; }
+       public Guid Id { get; set; }
         public int GSTClientId { get; set; }
         public DateTime DateAmended { get; set; }
         public int ServiceCategoryId { get; set; }

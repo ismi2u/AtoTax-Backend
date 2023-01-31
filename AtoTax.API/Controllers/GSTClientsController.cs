@@ -31,12 +31,12 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<GSTClientDTO>>> GetGSTClients()
         {
-          if (_context.GSTClients == null)
-          {
-              return NotFound();
-          }
+            if (_context.GSTClients == null)
+            {
+                return NotFound();
+            }
 
-            IEnumerable<GSTClient> ListGSTClients =  await _context.GSTClients.ToListAsync();
+            IEnumerable<GSTClient> ListGSTClients = await _context.GSTClients.ToListAsync();
 
             return Ok(_mapper.Map<IEnumerable<GSTClientDTO>>(ListGSTClients));
         }
@@ -46,9 +46,9 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<GSTClient>> GetGSTClient(int id)
+        public async Task<ActionResult<GSTClient>> GetGSTClient(Guid id)
         {
-            if (id == 0)
+            if (id == null)
             {
                 return BadRequest();
             }
@@ -66,15 +66,17 @@ namespace AtoTax.API.Controllers
         // PUT: api/GSTClients/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutGSTClient(int id, GSTClient gSTClient)
+        public async Task<IActionResult> UpdateGSTClient(Guid id, GSTClientUpdateDTO gstClientUpdateDTO)
         {
-            if (id != gSTClient.Id)
+            if (id != gstClientUpdateDTO.Id)
             {
                 return BadRequest();
             }
+            //var oldgstclient = await _context.GSTClients.FindAsync(gstClientUpdateDTO.Id);
 
-            _context.Entry(gSTClient).State = EntityState.Modified;
-
+            var gstClient = _mapper.Map<GSTClient>(gstClientUpdateDTO);
+            _context.Entry(gstClient).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
 
 
             try
@@ -95,40 +97,16 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<GSTClientDTO>> CreateGSTClient(GSTClientCreateDTO createDTO)
+        public async Task<ActionResult<GSTClient>> CreateGSTClient(GSTClientCreateDTO gstClientCreateDTO)
         {
-          if (_context.GSTClients == null)
-          {
-              return Problem("Entity set 'AtoTaxDbContext.GSTClients'  is null.");
-          }
 
-            GSTClient gstClient = new GSTClient();
+            if (_context.GSTClients == null)
+            {
+                return Problem("Entity set 'AtoTaxDbContext.GSTClients'  is null.");
+            }
 
-            gstClient.ProprietorName = createDTO.ProprietorName;
-            gstClient.GSTIN = createDTO.GSTIN;
-            gstClient.ContactName = createDTO.ContactName;
-            gstClient.GSTUserName = createDTO.GSTUserName;
-            gstClient.GSTUserPassword = createDTO.GSTUserPassword;
-            gstClient.ProprietorName = createDTO.ProprietorName;
-            gstClient.GSTRegDate = createDTO.GSTRegDate;
-            gstClient.GSTSurrenderedDate = createDTO.GSTSurrenderedDate;
-            gstClient.GSTRelievedDate = createDTO.GSTRelievedDate;
-            gstClient.GSTAnnualTurnOver = createDTO.GSTAnnualTurnOver;
-            gstClient.MobileNumber = createDTO.MobileNumber;
-            gstClient.PhoneNumber = createDTO.PhoneNumber;
-            gstClient.ContactEmailId = createDTO.ContactEmailId;
-            gstClient.GSTEmailId = createDTO.GSTEmailId;
-            gstClient.GSTEmailPassword = createDTO.GSTEmailPassword;
-            gstClient.GSTRecoveryEmailId = createDTO.GSTRecoveryEmailId;
-            gstClient.GSTRecoveryEmailPassword = createDTO.GSTRecoveryEmailPassword;
-            gstClient.EWAYBillUserName = createDTO.EWAYBillUserName;
-            gstClient.EWAYBillPassword = createDTO.EWAYBillPassword;
-            gstClient.RackFileNo = createDTO.RackFileNo;
-            gstClient.TallyDataFilePath = createDTO.TallyDataFilePath;
-            gstClient.CreatedOn = DateTime.UtcNow;
-            gstClient.UpdatedOn = DateTime.UtcNow;
-
-            await _context.GSTClients.AddAsync(_mapper.Map<GSTClient>(createDTO));
+            var gstClient = _mapper.Map<GSTClient>(gstClientCreateDTO);
+            await _context.GSTClients.AddAsync(gstClient);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetGSTClient", new { id = gstClient.Id }, gstClient);
@@ -141,7 +119,7 @@ namespace AtoTax.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteGSTClient(int id)
         {
-            if(id== 0)
+            if (id == 0)
             {
                 return BadRequest();
             }

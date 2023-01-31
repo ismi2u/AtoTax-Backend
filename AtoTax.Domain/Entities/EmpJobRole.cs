@@ -7,7 +7,7 @@ namespace AtoTax.Domain.Entities
     {
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+       public Guid Id { get; set; }
         public string? JobRole { get; set; }
         public string? JobDescription { get; set; }
         public int StatusTypeId { get; set; }

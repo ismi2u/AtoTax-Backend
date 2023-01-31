@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AtoTax.API.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -56,8 +56,7 @@ namespace AtoTax.API.Migrations
                 name: "ClientFeeCharges",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     GSTClientId = table.Column<int>(type: "integer", nullable: false),
                     GSTMonthlySubmission = table.Column<double>(type: "double precision", nullable: false),
                     GSTAmendment = table.Column<double>(type: "double precision", nullable: false),
@@ -73,8 +72,7 @@ namespace AtoTax.API.Migrations
                 name: "EmpJobRoles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     JobRole = table.Column<string>(type: "text", nullable: true),
                     JobDescription = table.Column<string>(type: "text", nullable: true),
                     StatusTypeId = table.Column<int>(type: "integer", nullable: false)
@@ -88,8 +86,7 @@ namespace AtoTax.API.Migrations
                 name: "Employees",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     FirstName = table.Column<string>(type: "text", nullable: true),
                     LastName = table.Column<string>(type: "text", nullable: true),
                     DOB = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -108,8 +105,7 @@ namespace AtoTax.API.Migrations
                 name: "GSTBillAndFeeCollections",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     GSTClientID = table.Column<int>(type: "integer", nullable: false),
                     Month = table.Column<int>(type: "integer", nullable: false),
                     Year = table.Column<int>(type: "integer", nullable: false),
@@ -138,8 +134,7 @@ namespace AtoTax.API.Migrations
                 name: "GSTClients",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ProprietorName = table.Column<string>(type: "text", nullable: true),
                     GSTIN = table.Column<string>(type: "text", nullable: true),
                     ContactName = table.Column<string>(type: "text", nullable: true),
@@ -162,7 +157,7 @@ namespace AtoTax.API.Migrations
                     TallyDataFilePath = table.Column<string>(type: "text", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    StatusTypeId = table.Column<int>(type: "integer", nullable: false)
+                    StatusId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -173,8 +168,7 @@ namespace AtoTax.API.Migrations
                 name: "GSTFilingTypes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     FilingType = table.Column<string>(type: "text", nullable: true),
                     StatusTypeId = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -187,8 +181,7 @@ namespace AtoTax.API.Migrations
                 name: "GSTPaidDetails",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     GSTClientID = table.Column<string>(type: "text", nullable: true),
                     PaidMonth = table.Column<string>(type: "text", nullable: true),
                     PaidYear = table.Column<int>(type: "integer", nullable: false),
@@ -204,8 +197,7 @@ namespace AtoTax.API.Migrations
                 name: "MediaTypes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Media = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
                     StatusTypeId = table.Column<int>(type: "integer", nullable: false)
@@ -219,8 +211,7 @@ namespace AtoTax.API.Migrations
                 name: "PaymentTypes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     PaymentMethod = table.Column<string>(type: "text", nullable: true),
                     StatusTypeId = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -233,8 +224,7 @@ namespace AtoTax.API.Migrations
                 name: "ServiceCategory",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ServiceName = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
                     StatusTypeId = table.Column<int>(type: "integer", nullable: false)
@@ -248,8 +238,7 @@ namespace AtoTax.API.Migrations
                 name: "ServiceChargeUpdateTrackers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     GSTClientId = table.Column<int>(type: "integer", nullable: false),
                     DateAmended = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ServiceCategoryId = table.Column<int>(type: "integer", nullable: false),
@@ -262,16 +251,15 @@ namespace AtoTax.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "StatusTypes",
+                name: "Status",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Status = table.Column<string>(type: "text", nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    StatusType = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StatusTypes", x => x.Id);
+                    table.PrimaryKey("PK_Status", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -470,7 +458,7 @@ namespace AtoTax.API.Migrations
                 name: "ServiceChargeUpdateTrackers");
 
             migrationBuilder.DropTable(
-                name: "StatusTypes");
+                name: "Status");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

@@ -9,7 +9,7 @@ namespace AtoTax.Domain.Entities
 
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+       public Guid Id { get; set; }
         public string? FilingType { get; set; }
 
         public int StatusTypeId { get; set; }

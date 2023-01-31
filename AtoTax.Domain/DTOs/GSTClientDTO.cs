@@ -7,7 +7,7 @@ namespace AtoTax.Domain.DTOs
     public class GSTClientDTO
     {
 
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string? ProprietorName { get; set; }
         public string? GSTIN { get; set; }
         public string? ContactName { get; set; }
@@ -29,9 +29,9 @@ namespace AtoTax.Domain.DTOs
         public string? RackFileNo { get; set; }
         public string? TallyDataFilePath { get; set; }
 
-        public int StatusTypeId { get; set; }
-
-
+        public int StatusId { get; set; }
+       
+        public string Status{ get; set; }
     }
     public class GSTClientCreateDTO
     {
@@ -56,7 +56,8 @@ namespace AtoTax.Domain.DTOs
         public string? RackFileNo { get; set; }
         public string? TallyDataFilePath { get; set; }
 
-        public int StatusTypeId { get; set; }
+        public int StatusId { get; set; }
+        public string Status { get; set; }
 
 
     }
@@ -67,9 +68,9 @@ namespace AtoTax.Domain.DTOs
     public class GSTClientUpdateDTO
     {
 
-        public int Id { get; set; }
-        public string? ProprietorName { get; set; }
+        public Guid Id { get; set; }
         public string? GSTIN { get; set; }
+        public string? ProprietorName { get; set; }
         public string? ContactName { get; set; }
         public string? GSTUserName { get; set; }
         public string? GSTUserPassword { get; set; }
@@ -88,7 +89,8 @@ namespace AtoTax.Domain.DTOs
         public string? EWAYBillPassword { get; set; }
         public string? RackFileNo { get; set; }
         public string? TallyDataFilePath { get; set; }
-        public int StatusTypeId { get; set; }
+        public int StatusId { get; set; }
+        public string Status { get; set; }
 
 
     }

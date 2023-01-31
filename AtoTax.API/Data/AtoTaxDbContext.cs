@@ -35,7 +35,7 @@ namespace AtoTaxAPI.Data
         public DbSet<MediaType> MediaTypes { get; set; }
         public DbSet<ServiceCategory> ServiceCategory { get; set; }
         public DbSet<ServiceChargeUpdateTracker> ServiceChargeUpdateTrackers { get; set; }
-        public DbSet<StatusType> StatusTypes { get; set; }
+        public DbSet<Status> Status { get; set; }
 
 
     }

@@ -10,7 +10,7 @@ namespace AtoTax.Domain.DTOs
 {
     public class CreateClientFeeChargeDTO
     {
-        public int GSTClientId { get; set; }
+        public Guid GSTClientId { get; set; }
         public double GSTMonthlySubmission { get; set; }
         public double GSTAmendment { get; set; }
         public double GSTAnnualReturnFiling { get; set; }
@@ -20,7 +20,7 @@ namespace AtoTax.Domain.DTOs
 
     public class GetClientFeeChargeDTO
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public int GSTClientId { get; set; }
         public double GSTMonthlySubmission { get; set; }
         public double GSTAmendment { get; set; }
@@ -31,7 +31,7 @@ namespace AtoTax.Domain.DTOs
 
     public class UpdateClientFeeChargeDTO
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public int GSTClientId { get; set; }
         public double GSTMonthlySubmission { get; set; }
         public double GSTAmendment { get; set; }
@@ -42,7 +42,7 @@ namespace AtoTax.Domain.DTOs
 
     public class RemoveClientFeeChargeDTO
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
     }
 
 }

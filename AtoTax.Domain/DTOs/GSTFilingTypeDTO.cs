@@ -8,7 +8,7 @@ namespace AtoTax.Domain.DTOs
     {
 
 
-        public int Id { get; set; }
+       public Guid Id { get; set; }
         public string? FilingType { get; set; }
 
         public int StatusTypeId { get; set; }

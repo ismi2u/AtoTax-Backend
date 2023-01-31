@@ -6,7 +6,7 @@ namespace AtoTax.Domain.Entities
     {
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+       public Guid Id { get; set; }
         public string? GSTClientID { get; set; }
         public string? PaidMonth { get; set; }
         public int PaidYear { get; set; }

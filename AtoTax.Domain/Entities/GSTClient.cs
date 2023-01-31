@@ -7,7 +7,7 @@ namespace AtoTax.Domain.Entities
     {
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string? ProprietorName { get; set; }
         public string? GSTIN { get; set; }
         public string? ContactName { get; set; }
@@ -31,7 +31,7 @@ namespace AtoTax.Domain.Entities
 
         public DateTime? CreatedOn { get; set; }
         public DateTime? UpdatedOn { get; set; }
-        public int StatusTypeId { get; set; }
+        public int StatusId { get; set; }
 
 
     }
