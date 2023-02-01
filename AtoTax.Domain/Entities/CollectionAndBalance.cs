@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AtoTax.Domain.Entities
 {
-    public class CollectionAndBalanceDTO
+    public class CollectionAndBalance
     {
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]

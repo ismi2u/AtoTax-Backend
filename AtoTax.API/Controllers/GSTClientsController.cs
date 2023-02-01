@@ -72,10 +72,13 @@ namespace AtoTax.API.Controllers
             {
                 return BadRequest();
             }
-            //var oldgstclient = await _context.GSTClients.FindAsync(gstClientUpdateDTO.Id);
+            var oldgstclient = await _context.GSTClients.AsNoTracking().FirstOrDefaultAsync(g=> g.Id==gstClientUpdateDTO.Id);
 
             var gstClient = _mapper.Map<GSTClient>(gstClientUpdateDTO);
+            gstClient.GSTIN = oldgstclient.GSTIN;
             _context.Entry(gstClient).State = EntityState.Modified;
+
+            _context.GSTClients.Update(gstClient);
             await _context.SaveChangesAsync();
 
 

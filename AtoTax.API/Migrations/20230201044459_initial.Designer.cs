@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AtoTax.API.Migrations
 {
     [DbContext(typeof(AtoTaxDbContext))]
-    [Migration("20230131191608_initial")]
+    [Migration("20230201044459_initial")]
     partial class initial
     {
         /// <inheritdoc />
