@@ -31,7 +31,7 @@ namespace AtoTax.Domain.DTOs
 
         public int? StatusId { get; set; }
        
-        public Guid? Status{ get; set; }
+     
     }
     public class GSTClientCreateDTO
     {
@@ -56,7 +56,7 @@ namespace AtoTax.Domain.DTOs
         public string? RackFileNo { get; set; }
         public string? TallyDataFilePath { get; set; }
 
-        public Guid? StatusId { get; set; }
+        public int? StatusId { get; set; }
 
 
 
@@ -89,7 +89,7 @@ namespace AtoTax.Domain.DTOs
         public string? EWAYBillPassword { get; set; }
         public string? RackFileNo { get; set; }
         public string? TallyDataFilePath { get; set; }
-        public Guid? StatusId { get; set; }
+        public int? StatusId { get; set; }
 
 
     }

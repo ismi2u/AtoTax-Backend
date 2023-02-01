@@ -53,26 +53,36 @@ namespace AtoTax.API.Controllers
         // PUT: api/GSTClients/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateGSTClient(Guid id, GSTClientUpdateDTO gstClientUpdateDTO)
         {
-           if(_dbGSTClient.GetAsync(u => u.Id ))
-            var oldgstclient = await _context.GSTClients.AsNoTracking().FirstOrDefaultAsync(g=> g.Id==gstClientUpdateDTO.Id);
+            if (id == Guid.Empty)
+            {
+                return BadRequest();
+            }
+
+            if (!(id == gstClientUpdateDTO.Id))
+            {
+                return BadRequest();
+            }
+
+            if (await _dbGSTClient.GetAsync(u => u.Id == id) == null)
+            {
+                return NoContent();
+            }
+
+            var oldgstclient = await _dbGSTClient.GetAsync(u => u.Id == id, tracked:false);
 
             var gstClient = _mapper.Map<GSTClient>(gstClientUpdateDTO);
-            gstClient.GSTIN = oldgstclient.GSTIN;
-            _context.Entry(gstClient).State = EntityState.Modified;
+            gstClient.GSTIN = oldgstclient.GSTIN; // dont update the GSTIN number which is the Identity of the GST Client
 
-            _context.GSTClients.Update(gstClient);
-            await _context.SaveChangesAsync();
+            await _dbGSTClient.UpdateAsync(gstClient);
 
-
-            try
+            if(!ModelState.IsValid)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                throw ex;
+                return BadRequest(ModelState);
             }
 
             return NoContent();
@@ -87,15 +97,16 @@ namespace AtoTax.API.Controllers
         public async Task<ActionResult<GSTClient>> CreateGSTClient(GSTClientCreateDTO gstClientCreateDTO)
         {
 
-            if (_context.GSTClients == null)
+            if (await _dbGSTClient.GetAsync(u => u.GSTIN == gstClientCreateDTO.GSTIN) != null)
             {
-                return Problem("Entity set 'AtoTaxDbContext.GSTClients'  is null.");
+                return BadRequest(gstClientCreateDTO);
             }
-
+            if (await _dbGSTClient.GetAsync(u => u.ProprietorName == gstClientCreateDTO.ProprietorName) != null)
+            {
+                return BadRequest(gstClientCreateDTO);
+            }
             var gstClient = _mapper.Map<GSTClient>(gstClientCreateDTO);
-            await _context.GSTClients.AddAsync(gstClient);
-            await _context.SaveChangesAsync();
-
+            await _dbGSTClient.CreateAsync(gstClient);
             return CreatedAtAction("GetGSTClient", new { id = gstClient.Id }, gstClient);
         }
 
@@ -104,26 +115,19 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteGSTClient(int id)
+        public async Task<IActionResult> DeleteGSTClient(Guid id)
         {
-            if (id == 0)
+            if(id == Guid.Empty)
             {
                 return BadRequest();
             }
-
-            if (_context.GSTClients == null)
-            {
-                return NotFound();
-            }
-            var gstClient = await _context.GSTClients.FindAsync(id);
+            var gstClient = await _dbGSTClient.GetAsync(u => u.Id == id);
             if (gstClient == null)
             {
                 return NotFound();
             }
 
-            _context.GSTClients.Remove(gstClient);
-            await _context.SaveChangesAsync();
-
+            await _dbGSTClient.RemoveAsync(gstClient);
             return NoContent();
         }
 

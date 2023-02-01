@@ -234,7 +234,7 @@ namespace AtoTax.API.Migrations
                     b.Property<string>("RackFileNo")
                         .HasColumnType("text");
 
-                    b.Property<int>("StatusId")
+                    b.Property<int?>("StatusId")
                         .HasColumnType("integer");
 
                     b.Property<string>("TallyDataFilePath")
@@ -376,9 +376,11 @@ namespace AtoTax.API.Migrations
 
             modelBuilder.Entity("AtoTax.Domain.Entities.Status", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("StatusType")
                         .HasColumnType("text");

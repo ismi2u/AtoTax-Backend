@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AtoTax.API.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class intial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -157,7 +157,7 @@ namespace AtoTax.API.Migrations
                     TallyDataFilePath = table.Column<string>(type: "text", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    StatusId = table.Column<int>(type: "integer", nullable: false)
+                    StatusId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -254,7 +254,8 @@ namespace AtoTax.API.Migrations
                 name: "Status",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     StatusType = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>

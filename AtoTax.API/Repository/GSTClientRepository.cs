@@ -15,9 +15,6 @@ namespace AtoTax.API.Repository
         }
         public async Task<GSTClient> UpdateAsync(GSTClient entity)
         {
-            var oldGSTclient = await _context.GSTClients.AsNoTracking().FirstOrDefaultAsync(g => g.Id == entity.Id);
-            
-            entity.GSTIN = oldGSTclient.GSTIN;
             entity.UpdatedOn = DateTime.UtcNow;
 
             _context.Update(entity);
