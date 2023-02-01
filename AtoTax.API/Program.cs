@@ -1,5 +1,7 @@
 
 using AtoTax.API.Mapping;
+using AtoTax.API.Repository;
+using AtoTax.API.Repository.IRepository;
 using AtoTaxAPI.Authentication;
 using AtoTaxAPI.Data;
 using EmailService;
@@ -18,7 +20,9 @@ builder.Services.AddDbContextPool<AtoTaxDbContext>(options => options.UseNpgsql(
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<AtoTaxDbContext>()
                 .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>(TokenOptions.DefaultProvider);
-//builder.Services.AddScoped<IEmailSender, EmailSender>();
+
+
+builder.Services.AddScoped<IGSTClientRepository, GSTClientRepository>();
 
 builder.Services.AddAuthentication(options =>
 {
