@@ -51,7 +51,6 @@ namespace AtoTax.API.Controllers
         }
 
         // PUT: api/GSTClients/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -68,12 +67,14 @@ namespace AtoTax.API.Controllers
                 return BadRequest();
             }
 
-            if (await _dbGSTClient.GetAsync(u => u.Id == id) == null)
+           
+
+            var oldgstclient = await _dbGSTClient.GetAsync(u => u.Id == id, tracked:false);
+
+            if (oldgstclient == null)
             {
                 return NoContent();
             }
-
-            var oldgstclient = await _dbGSTClient.GetAsync(u => u.Id == id, tracked:false);
 
             var gstClient = _mapper.Map<GSTClient>(gstClientUpdateDTO);
             gstClient.GSTIN = oldgstclient.GSTIN; // dont update the GSTIN number which is the Identity of the GST Client
@@ -89,11 +90,9 @@ namespace AtoTax.API.Controllers
         }
 
         // POST: api/GSTClients
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<GSTClient>> CreateGSTClient(GSTClientCreateDTO gstClientCreateDTO)
         {
 
