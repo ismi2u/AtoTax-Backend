@@ -117,7 +117,7 @@ namespace AtoTax.API.Controllers
                 gstClient.GSTIN = oldgstclient.GSTIN;
 
                 //// dont update the below field as they are not part of updateDTO  and hence will become null
-                gstClient.CreatedOn = oldgstclient.CreatedOn;
+                gstClient.CreatedDate = oldgstclient.CreatedDate;
 
                 await _dbGSTClient.UpdateAsync(gstClient);
 
@@ -161,7 +161,7 @@ namespace AtoTax.API.Controllers
                     return _response;
                 }
                 var gstClient = _mapper.Map<GSTClient>(gstClientCreateDTO);
-                gstClient.CreatedOn= DateTime.UtcNow;
+                gstClient.CreatedDate= DateTime.UtcNow;
                 await _dbGSTClient.CreateAsync(gstClient);
 
                 _response.Result = _mapper.Map<GSTClientDTO>(gstClient);

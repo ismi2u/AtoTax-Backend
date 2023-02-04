@@ -6,8 +6,8 @@ namespace AtoTax.Domain.DTOs
     public class GSTBillAndFeeCollectionDTO
     {
 
-       public Guid Id { get; set; }
-        public int GSTClientID { get; set; }
+        public Guid Id { get; set; }
+        public Guid GSTClientID { get; set; }
         public int Month { get; set; }
         public int Year { get; set; }
         public int GSTFilingTypeId { get; set; }

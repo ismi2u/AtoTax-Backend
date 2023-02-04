@@ -8,17 +8,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AtoTax.Domain.DTOs
 {
-    public class CreateClientFeeChargeDTO
-    {
-        public Guid GSTClientId { get; set; }
-        public double GSTMonthlySubmission { get; set; }
-        public double GSTAmendment { get; set; }
-        public double GSTAnnualReturnFiling { get; set; }
-        public double GSTNoticeService { get; set; }
 
-    }
-
-    public class GetClientFeeChargeDTO
+    public class ClientFeeChargeDTO
     {
         public Guid Id { get; set; }
         public int GSTClientId { get; set; }
@@ -26,23 +17,42 @@ namespace AtoTax.Domain.DTOs
         public double GSTAmendment { get; set; }
         public double GSTAnnualReturnFiling { get; set; }
         public double GSTNoticeService { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? LastModifiedDate { get; set; }
 
     }
-
-    public class UpdateClientFeeChargeDTO
+    public class ClientFeeChargeCreateDTO
     {
-        public Guid Id { get; set; }
+        [Required]
         public int GSTClientId { get; set; }
+        [Required]
         public double GSTMonthlySubmission { get; set; }
+        [Required]
         public double GSTAmendment { get; set; }
+        [Required]
         public double GSTAnnualReturnFiling { get; set; }
+        [Required]
         public double GSTNoticeService { get; set; }
 
     }
 
-    public class RemoveClientFeeChargeDTO
+
+    public class ClientFeeChargeUpdateDTO
     {
+        [Required]
         public Guid Id { get; set; }
+        [Required]
+        public int GSTClientId { get; set; }
+        [Required]
+        public double GSTMonthlySubmission { get; set; }
+        [Required]
+        public double GSTAmendment { get; set; }
+        [Required]
+        public double GSTAnnualReturnFiling { get; set; }
+        [Required]
+        public double GSTNoticeService { get; set; }
+
     }
+
 
 }

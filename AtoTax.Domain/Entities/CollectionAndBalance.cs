@@ -15,7 +15,7 @@ namespace AtoTax.Domain.Entities
         public double? PreviousBalance { get; set; }
         public double AmountPaid { get; set; }
         public double CurrentBalance { get; set; }
-        public DateTime? AmtReceivedDate { get; set; }
+        public DateTime? AmountReceivedDate { get; set; }
 
     }
 }

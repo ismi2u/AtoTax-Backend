@@ -6,12 +6,29 @@ namespace AtoTax.Domain.DTOs
 {
     public class GSTFilingTypeDTO
     {
-
-
-       public Guid Id { get; set; }
+        public int Id { get; set; }
         public string? FilingType { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? LastModifiedDate { get; set; }
 
-        public int StatusTypeId { get; set; }
+        public int StatusId { get; set; }
+    }
 
+    public class GSTFilingTypeCreateDTO
+    {
+        [Required]
+        public string? FilingType { get; set; }
+        [Required]
+        public int StatusId { get; set; }
+    }
+
+    public class GSTFilingTypeUpdateDTO
+    {
+        [Required]
+        public int Id { get; set; }
+        [Required]
+        public string? FilingType { get; set; }
+        [Required]
+        public int StatusId { get; set; }
     }
 }

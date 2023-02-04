@@ -8,10 +8,14 @@ namespace AtoTax.Domain.Entities
 
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-       public Guid Id { get; set; }
+        public int Id { get; set; }
         public string? PaymentMethod { get; set; }
-
-        public int StatusTypeId { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? LastModifiedDate { get; set; }
+        [Required]
+        [ForeignKey("Status")]
+        public int StatusId { get; set; }
+        public virtual Status Status { get; set; }
 
     }
 }

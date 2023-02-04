@@ -10,12 +10,30 @@ namespace AtoTax.Domain.DTOs
 {
     public class PaymentTypeDTO
     {
-
-
-       public Guid Id { get; set; }
+        public int Id { get; set; }
         public string? PaymentMethod { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? LastModifiedDate { get; set; }
+        public int StatusId { get; set; }
 
-        public int StatusTypeId { get; set; }
+    }
+
+    public class PaymentTypeCreateDTO
+    {
+        [Required]
+        public string? PaymentMethod { get; set; }
+        [Required]
+        public int StatusId { get; set; }
+
+    }
+
+    public class PaymentTypeUpdateDTO
+    {
+        public int Id { get; set; }
+        [Required]
+        public string? PaymentMethod { get; set; }
+        [Required]
+        public int StatusId { get; set; }
 
     }
 }

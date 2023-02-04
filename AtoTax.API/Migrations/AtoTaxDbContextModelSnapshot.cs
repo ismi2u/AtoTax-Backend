@@ -22,11 +22,118 @@ namespace AtoTax.API.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("AtoTax.Domain.Entities.AddressType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AddressTypeDesc")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("AddressTypeName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StatusId");
+
+                    b.ToTable("AddressTypes");
+                });
+
+            modelBuilder.Entity("AtoTax.Domain.Entities.AmendType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AmendTypeName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StatusId");
+
+                    b.ToTable("AmendTypes");
+                });
+
+            modelBuilder.Entity("AtoTax.Domain.Entities.Amendment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ARN")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("AmendTypeId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ApprovedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("GSTClientId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("SumittedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AmendTypeId");
+
+                    b.HasIndex("GSTClientId");
+
+                    b.HasIndex("StatusId");
+
+                    b.ToTable("Amendments");
+                });
+
             modelBuilder.Entity("AtoTax.Domain.Entities.ClientFeeCharge", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<double>("GSTAmendment")
                         .HasColumnType("double precision");
@@ -43,6 +150,9 @@ namespace AtoTax.API.Migrations
                     b.Property<double>("GSTNoticeService")
                         .HasColumnType("double precision");
 
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
                     b.ToTable("ClientFeeCharges");
@@ -50,20 +160,31 @@ namespace AtoTax.API.Migrations
 
             modelBuilder.Entity("AtoTax.Domain.Entities.EmpJobRole", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("JobDescription")
                         .HasColumnType("text");
 
                     b.Property<string>("JobRole")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("StatusTypeId")
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("StatusId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("StatusId");
 
                     b.ToTable("EmpJobRoles");
                 });
@@ -77,28 +198,41 @@ namespace AtoTax.API.Migrations
                     b.Property<string>("ConcactNo")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("DOB")
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DOB")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("DOJ")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("EmpJobRoleId")
+                    b.Property<int>("EmpJobRoleId")
                         .HasColumnType("integer");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("StatusTypeId")
+                    b.Property<int>("StatusId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EmpJobRoleId");
+
+                    b.HasIndex("StatusId");
 
                     b.ToTable("Employees");
                 });
@@ -109,61 +243,80 @@ namespace AtoTax.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<double>("Balance")
+                    b.Property<double?>("Balance")
                         .HasColumnType("double precision");
 
-                    b.Property<double>("FeesAmount")
+                    b.Property<int>("DueMonth")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DueYear")
+                        .HasColumnType("integer");
+
+                    b.Property<double?>("FeesAmount")
                         .HasColumnType("double precision");
 
-                    b.Property<double>("FeesPaidAmt")
+                    b.Property<double?>("FeesPaidAmt")
                         .HasColumnType("double precision");
 
                     b.Property<int>("FiledBy")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("FiledByEmployeeId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime?>("FiledDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("GSTClientID")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("GSTClientId")
+                        .HasColumnType("uuid");
 
-                    b.Property<bool>("GSTFiledAckEmailSent")
+                    b.Property<bool?>("GSTFiledAckEmailSent")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("GSTFiledAckSMSSent")
+                    b.Property<bool?>("GSTFiledAckSMSSent")
                         .HasColumnType("boolean");
 
                     b.Property<int>("GSTFilingTypeId")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsBillsReceived")
+                    b.Property<bool?>("IsBillsReceived")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsFiled")
+                    b.Property<bool?>("IsFiled")
                         .HasColumnType("boolean");
 
                     b.Property<int>("MediaTypeId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Month")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("ReceivedAckEmailSent")
+                    b.Property<bool?>("ReceivedAckEmailSent")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("ReceivedAckSMSSent")
+                    b.Property<bool?>("ReceivedAckSMSSent")
                         .HasColumnType("boolean");
 
                     b.Property<int>("ReceivedBy")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("ReceivedByEmployeeId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime?>("ReceivedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("Year")
+                    b.Property<int>("ServiceCategoryId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FiledByEmployeeId");
+
+                    b.HasIndex("GSTClientId");
+
+                    b.HasIndex("GSTFilingTypeId");
+
+                    b.HasIndex("ReceivedByEmployeeId");
+
+                    b.HasIndex("ServiceCategoryId");
 
                     b.ToTable("GSTBillAndFeeCollections");
                 });
@@ -180,7 +333,7 @@ namespace AtoTax.API.Migrations
                     b.Property<string>("ContactName")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("CreatedOn")
+                    b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("EWAYBillPassword")
@@ -223,6 +376,9 @@ namespace AtoTax.API.Migrations
                     b.Property<string>("GSTUserPassword")
                         .HasColumnType("text");
 
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("MobileNumber")
                         .HasColumnType("text");
 
@@ -243,9 +399,6 @@ namespace AtoTax.API.Migrations
                     b.Property<string>("TallyDataFilePath")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("timestamp with time zone");
-
                     b.HasKey("Id");
 
                     b.HasIndex("StatusId");
@@ -253,19 +406,86 @@ namespace AtoTax.API.Migrations
                     b.ToTable("GSTClients");
                 });
 
-            modelBuilder.Entity("AtoTax.Domain.Entities.GSTFilingType", b =>
+            modelBuilder.Entity("AtoTax.Domain.Entities.GSTClientAddressExtension", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
 
-                    b.Property<string>("FilingType")
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AddressLine1")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("StatusTypeId")
+                    b.Property<string>("AddressLine2")
+                        .HasColumnType("text");
+
+                    b.Property<string>("AddressLine3")
+                        .HasColumnType("text");
+
+                    b.Property<int>("AddressTypeId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("District")
+                        .HasColumnType("text");
+
+                    b.Property<int>("GSTClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Pincode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("StatusId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AddressTypeId");
+
+                    b.HasIndex("StatusId");
+
+                    b.ToTable("GSTClientAddressExtensions");
+                });
+
+            modelBuilder.Entity("AtoTax.Domain.Entities.GSTFilingType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("FilingType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StatusId");
 
                     b.ToTable("GSTFilingTypes");
                 });
@@ -276,90 +496,137 @@ namespace AtoTax.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<double>("GSTAmount")
+                    b.Property<double>("Amount")
                         .HasColumnType("double precision");
 
-                    b.Property<string>("GSTClientID")
+                    b.Property<Guid>("GSTClientId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool?>("IsPending")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("PaymentDueMonth")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("PaidMonth")
-                        .HasColumnType("text");
-
-                    b.Property<int>("PaidYear")
-                        .HasColumnType("integer");
+                    b.Property<short>("PaymentDueYear")
+                        .HasColumnType("smallint");
 
                     b.Property<int>("PaymentTypeId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("ServiceCategoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("SettledDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("GSTClientId");
+
+                    b.HasIndex("PaymentTypeId");
+
+                    b.HasIndex("ServiceCategoryId");
 
                     b.ToTable("GSTPaidDetails");
                 });
 
             modelBuilder.Entity("AtoTax.Domain.Entities.MediaType", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Media")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("StatusTypeId")
+                    b.Property<int>("StatusId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("StatusId");
 
                     b.ToTable("MediaTypes");
                 });
 
             modelBuilder.Entity("AtoTax.Domain.Entities.PaymentType", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("PaymentMethod")
                         .HasColumnType("text");
 
-                    b.Property<int>("StatusTypeId")
+                    b.Property<int>("StatusId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("StatusId");
 
                     b.ToTable("PaymentTypes");
                 });
 
             modelBuilder.Entity("AtoTax.Domain.Entities.ServiceCategory", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("ServiceName")
                         .HasColumnType("text");
 
-                    b.Property<int>("StatusTypeId")
+                    b.Property<int>("StatusId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("StatusId");
+
                     b.ToTable("ServiceCategory");
                 });
 
-            modelBuilder.Entity("AtoTax.Domain.Entities.ServiceChargeUpdateTracker", b =>
+            modelBuilder.Entity("AtoTax.Domain.Entities.ServiceChargeUpdateHistory", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("DateAmended")
+                    b.Property<DateTime>("AmendedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("GSTClientId")
@@ -376,7 +643,7 @@ namespace AtoTax.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ServiceChargeUpdateTrackers");
+                    b.ToTable("ServiceChargeUpdateHistory");
                 });
 
             modelBuilder.Entity("AtoTax.Domain.Entities.Status", b =>
@@ -595,7 +862,219 @@ namespace AtoTax.API.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("AtoTax.Domain.Entities.AddressType", b =>
+                {
+                    b.HasOne("AtoTax.Domain.Entities.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("AtoTax.Domain.Entities.AmendType", b =>
+                {
+                    b.HasOne("AtoTax.Domain.Entities.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("AtoTax.Domain.Entities.Amendment", b =>
+                {
+                    b.HasOne("AtoTax.Domain.Entities.AmendType", "AmendType")
+                        .WithMany()
+                        .HasForeignKey("AmendTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AtoTax.Domain.Entities.GSTClient", "GSTClient")
+                        .WithMany()
+                        .HasForeignKey("GSTClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AtoTax.Domain.Entities.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AmendType");
+
+                    b.Navigation("GSTClient");
+
+                    b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("AtoTax.Domain.Entities.EmpJobRole", b =>
+                {
+                    b.HasOne("AtoTax.Domain.Entities.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("AtoTax.Domain.Entities.Employee", b =>
+                {
+                    b.HasOne("AtoTax.Domain.Entities.EmpJobRole", "EmpJobRole")
+                        .WithMany()
+                        .HasForeignKey("EmpJobRoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AtoTax.Domain.Entities.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EmpJobRole");
+
+                    b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("AtoTax.Domain.Entities.GSTBillAndFeeCollection", b =>
+                {
+                    b.HasOne("AtoTax.Domain.Entities.Employee", "FiledByEmployee")
+                        .WithMany()
+                        .HasForeignKey("FiledByEmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AtoTax.Domain.Entities.GSTClient", "GSTClient")
+                        .WithMany()
+                        .HasForeignKey("GSTClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AtoTax.Domain.Entities.GSTFilingType", "GSTFilingType")
+                        .WithMany()
+                        .HasForeignKey("GSTFilingTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AtoTax.Domain.Entities.Employee", "ReceivedByEmployee")
+                        .WithMany()
+                        .HasForeignKey("ReceivedByEmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AtoTax.Domain.Entities.ServiceCategory", "ServiceCategory")
+                        .WithMany()
+                        .HasForeignKey("ServiceCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FiledByEmployee");
+
+                    b.Navigation("GSTClient");
+
+                    b.Navigation("GSTFilingType");
+
+                    b.Navigation("ReceivedByEmployee");
+
+                    b.Navigation("ServiceCategory");
+                });
+
             modelBuilder.Entity("AtoTax.Domain.Entities.GSTClient", b =>
+                {
+                    b.HasOne("AtoTax.Domain.Entities.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("AtoTax.Domain.Entities.GSTClientAddressExtension", b =>
+                {
+                    b.HasOne("AtoTax.Domain.Entities.AddressType", "AddressType")
+                        .WithMany()
+                        .HasForeignKey("AddressTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AtoTax.Domain.Entities.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AddressType");
+
+                    b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("AtoTax.Domain.Entities.GSTFilingType", b =>
+                {
+                    b.HasOne("AtoTax.Domain.Entities.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("AtoTax.Domain.Entities.GSTPaidDetail", b =>
+                {
+                    b.HasOne("AtoTax.Domain.Entities.GSTClient", "GSTClient")
+                        .WithMany()
+                        .HasForeignKey("GSTClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AtoTax.Domain.Entities.PaymentType", "PaymentType")
+                        .WithMany()
+                        .HasForeignKey("PaymentTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AtoTax.Domain.Entities.ServiceCategory", "ServiceCategory")
+                        .WithMany()
+                        .HasForeignKey("ServiceCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GSTClient");
+
+                    b.Navigation("PaymentType");
+
+                    b.Navigation("ServiceCategory");
+                });
+
+            modelBuilder.Entity("AtoTax.Domain.Entities.MediaType", b =>
+                {
+                    b.HasOne("AtoTax.Domain.Entities.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("AtoTax.Domain.Entities.PaymentType", b =>
+                {
+                    b.HasOne("AtoTax.Domain.Entities.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("AtoTax.Domain.Entities.ServiceCategory", b =>
                 {
                     b.HasOne("AtoTax.Domain.Entities.Status", "Status")
                         .WithMany()

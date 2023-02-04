@@ -31,7 +31,8 @@ namespace AtoTax.Domain.DTOs
         public string? EWAYBillPassword { get; set; }
         public string? RackFileNo { get; set; }
         public string? TallyDataFilePath { get; set; }
-
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? LastModifiedDate { get; set; }
         public int? StatusId { get; set; }
         public StatusDTO Status { get; set; }
 

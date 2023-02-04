@@ -18,7 +18,7 @@ namespace AtoTax.API.Repository.Repos
 
         public async Task<GSTClient> UpdateAsync(GSTClient entity)
         {
-            entity.UpdatedOn = DateTime.UtcNow;
+            entity.LastModifiedDate = DateTime.UtcNow;
 
             _context.Update(entity);
             await _context.SaveChangesAsync();

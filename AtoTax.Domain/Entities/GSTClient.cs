@@ -33,8 +33,8 @@ namespace AtoTax.Domain.Entities
         public string? RackFileNo { get; set; }
         public string? TallyDataFilePath { get; set; }
 
-        public DateTime? CreatedOn { get; set; }
-        public DateTime? UpdatedOn { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? LastModifiedDate { get; set; }
 
         [Required]
         [ForeignKey("Status")]

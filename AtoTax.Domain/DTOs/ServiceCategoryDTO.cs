@@ -14,7 +14,9 @@ namespace AtoTax.Domain.DTOs
        public Guid Id { get; set; }
         public string? ServiceName { get; set; }
         public string? Description { get; set; }
-        public int StatusTypeId { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? LastModifiedDate { get; set; }
+        public int StatusId { get; set; }
 
     }
 }

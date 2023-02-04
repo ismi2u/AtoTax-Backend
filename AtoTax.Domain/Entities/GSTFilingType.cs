@@ -9,10 +9,16 @@ namespace AtoTax.Domain.Entities
 
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-       public Guid Id { get; set; }
+        public int Id { get; set; }
+        [Required]
         public string? FilingType { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? LastModifiedDate { get; set; }
 
-        public int StatusTypeId { get; set; }
+        [Required]
+        [ForeignKey("Status")]
+        public int StatusId { get; set; }
+        public virtual Status Status { get; set; }
 
     }
 }

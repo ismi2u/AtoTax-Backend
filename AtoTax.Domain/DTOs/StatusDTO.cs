@@ -1,4 +1,6 @@
-﻿namespace AtoTax.Domain.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace AtoTax.Domain.DTOs
 {
     public class StatusDTO
     {
@@ -10,6 +12,7 @@
 
     public class StatusCreateDTO
     {
+        [Required]
         public string? StatusType { get; set; }
 
     }
