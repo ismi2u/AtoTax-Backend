@@ -9,6 +9,9 @@ using AtoTax.Domain.Entities;
 using AtoTaxAPI.Data;
 using AtoTax.Domain.DTOs;
 using AutoMapper;
+using Azure;
+using System.Net;
+using AtoTax.API.Repository.Interfaces;
 
 namespace AtoTax.API.Controllers
 {
@@ -16,47 +19,99 @@ namespace AtoTax.API.Controllers
     [ApiController]
     public class StatusController : ControllerBase
     {
-        private readonly AtoTaxDbContext _context;
+        protected APIResponse _response;
+        private readonly IStatusRepository _dbStatusTbl;
         private readonly IMapper _mapper;
 
 
-        public StatusController(AtoTaxDbContext context, IMapper mapper)
+        public StatusController(AtoTaxDbContext context, IMapper mapper, IStatusRepository dbStatusTbl)
         {
-            _context = context;
+            _dbStatusTbl = dbStatusTbl;
             _mapper = mapper;
+            this._response = new();
         }
 
         // GET: api/Status
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<StatusDTO>>> GetStatus()
+        public async Task<ActionResult<APIResponse>> GetStatus()
         {
-          if (_context.Status == null)
-          {
-              return NotFound();
-          }
+            try
+            {
+                IEnumerable<Status> statuses = await _dbStatusTbl.GetAllAsync();
 
-            IEnumerable<Status> ListStatus = await _context.Status.ToListAsync();
-            return Ok(_mapper.Map<IEnumerable<StatusDTO>>(ListStatus));
+                _response.Result = _mapper.Map<IEnumerable<Status>>(statuses);
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+            return _response;
+
+
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetStatus(int id)
+        {
+            try
+            {
+                Status status = await _dbStatusTbl.GetAsync(u => u.Id == id);
+
+                _response.Result = _mapper.Map<Status>(status);
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+            return _response;
+
+
         }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Status>> CreateStatus(StatusCreateDTO statusCreateDTO)
+        public async Task<ActionResult<APIResponse>> CreateStatus(StatusCreateDTO statusCreateDTO)
         {
-            if (_context.Status == null)
+            try
             {
-                return Problem("Entity set 'Status'  is null.");
+
+                if (await _dbStatusTbl.GetAsync(u => u.StatusType == statusCreateDTO.StatusType.ToUpper()) != null)
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.Result = statusCreateDTO;
+                    _response.ErrorMessages = new List<string>() { "StatusType Already exists" };
+                    return _response;
+                }
+
+                statusCreateDTO.StatusType = statusCreateDTO.StatusType.ToUpper();
+                var status = _mapper.Map<Status>(statusCreateDTO);
+                await _dbStatusTbl.CreateAsync(status);
+                _response.Result = status;
+                _response.StatusCode = HttpStatusCode.Created;
+
+                return CreatedAtAction("GetStatus", new { id = status.Id }, _response);
             }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+            return _response;
 
-            var status = _mapper.Map<Status>(statusCreateDTO);
-            await _context.Status.AddAsync(status);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetStatus", new { id = status.Id }, status);
         }
     }
 }

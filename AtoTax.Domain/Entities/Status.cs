@@ -8,7 +8,8 @@ namespace AtoTax.Domain.Entities
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string? StatusType { get; set; }
+        [Required]
+        public string StatusType { get; set; }
 
     }
 }

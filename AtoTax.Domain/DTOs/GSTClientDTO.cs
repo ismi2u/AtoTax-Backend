@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AtoTax.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AtoTax.Domain.DTOs
@@ -7,8 +8,10 @@ namespace AtoTax.Domain.DTOs
     public class GSTClientDTO
     {
 
+  
         public Guid Id { get; set; }
         public string? ProprietorName { get; set; }
+
         public string? GSTIN { get; set; }
         public string? ContactName { get; set; }
         public string? GSTUserName { get; set; }
@@ -30,17 +33,22 @@ namespace AtoTax.Domain.DTOs
         public string? TallyDataFilePath { get; set; }
 
         public int? StatusId { get; set; }
-       
-     
+        public StatusDTO Status { get; set; }
+
+
+
     }
     public class GSTClientCreateDTO
     {
-        public string? ProprietorName { get; set; }
-        public string? GSTIN { get; set; }
+        [Required]
+        public string ProprietorName { get; set; }
+        [Required]
+        public string GSTIN { get; set; }
         public string? ContactName { get; set; }
         public string? GSTUserName { get; set; }
         public string? GSTUserPassword { get; set; }
-        public DateTime? GSTRegDate { get; set; }
+        [Required]
+        public DateTime GSTRegDate { get; set; }
         public DateTime? GSTSurrenderedDate { get; set; }
         public DateTime? GSTRelievedDate { get; set; }
         public double? GSTAnnualTurnOver { get; set; }
@@ -55,8 +63,8 @@ namespace AtoTax.Domain.DTOs
         public string? EWAYBillPassword { get; set; }
         public string? RackFileNo { get; set; }
         public string? TallyDataFilePath { get; set; }
-
-        public int? StatusId { get; set; }
+        [Required]
+        public int StatusId { get; set; }
 
 
 
@@ -67,14 +75,16 @@ namespace AtoTax.Domain.DTOs
 
     public class GSTClientUpdateDTO
     {
-
+        [Required]
         public Guid Id { get; set; }
-        public string? GSTIN { get; set; }
+        [Required]
         public string? ProprietorName { get; set; }
+        public string? GSTIN { get; set; }
         public string? ContactName { get; set; }
         public string? GSTUserName { get; set; }
         public string? GSTUserPassword { get; set; }
-        public DateTime? GSTRegDate { get; set; }
+        [Required]
+        public DateTime GSTRegDate { get; set; }
         public DateTime? GSTSurrenderedDate { get; set; }
         public DateTime? GSTRelievedDate { get; set; }
         public double? GSTAnnualTurnOver { get; set; }
@@ -89,7 +99,9 @@ namespace AtoTax.Domain.DTOs
         public string? EWAYBillPassword { get; set; }
         public string? RackFileNo { get; set; }
         public string? TallyDataFilePath { get; set; }
-        public int? StatusId { get; set; }
+
+        [Required]
+        public int StatusId { get; set; }
 
 
     }

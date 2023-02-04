@@ -9,9 +9,8 @@ using AtoTax.Domain.Entities;
 using AtoTaxAPI.Data;
 using AtoTax.Domain.DTOs;
 using AutoMapper;
-using AtoTax.API.Repository;
-using AtoTax.API.Repository.IRepository;
 using System.Net;
+using AtoTax.API.Repository.Interfaces;
 
 namespace AtoTax.API.Controllers
 {
@@ -22,12 +21,14 @@ namespace AtoTax.API.Controllers
         protected APIResponse _response;
         private readonly IGSTClientRepository _dbGSTClient;
         private readonly IMapper _mapper;
+        private readonly AtoTaxDbContext _context;
 
-        public GSTClientsController(IGSTClientRepository dbGSTClient, IMapper mapper)
+        public GSTClientsController(IGSTClientRepository dbGSTClient, IMapper mapper, AtoTaxDbContext context)
         {
             _dbGSTClient = dbGSTClient;
             _mapper = mapper;
             this._response= new();
+            _context = context;
         }
 
         // GET: api/GSTClients
@@ -36,9 +37,14 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> GetGSTClients()
         {
+
+            List<string> includelist = new List<string>();
+            includelist.Add("Status");
+            string[] arrIncludes = includelist.ToArray();
+
             try
             {
-                IEnumerable<GSTClient> GSTClientsList = await _dbGSTClient.GetAllAsync();
+                IEnumerable<GSTClient> GSTClientsList = await _dbGSTClient.GetAllAsync(null, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<GSTClientDTO>>(GSTClientsList);
                 _response.StatusCode = HttpStatusCode.OK;
@@ -60,9 +66,12 @@ namespace AtoTax.API.Controllers
         public async Task<ActionResult<APIResponse>> GetGSTClient(Guid id)
         {
 
+            List<string> includelist = new List<string>();
+            includelist.Add("Status");
+            string[] arrIncludes = includelist.ToArray();
             try
             {
-                GSTClient GSTClient = await _dbGSTClient.GetAsync(u => u.Id == id);
+                GSTClient GSTClient = await _dbGSTClient.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
                 _response.Result = _mapper.Map<GSTClientDTO>(GSTClient);
@@ -104,10 +113,10 @@ namespace AtoTax.API.Controllers
 
                 var gstClient = _mapper.Map<GSTClient>(gstClientUpdateDTO);
 
-                // dont update the GSTIN number which is the Identity of the GST Client
+                //// dont update the GSTIN number which is the Identity of the GST Client
                 gstClient.GSTIN = oldgstclient.GSTIN;
 
-                // dont update the below field as they are not part of updateDTO  and hence will become null
+                //// dont update the below field as they are not part of updateDTO  and hence will become null
                 gstClient.CreatedOn = oldgstclient.CreatedOn;
 
                 await _dbGSTClient.UpdateAsync(gstClient);
@@ -169,7 +178,7 @@ namespace AtoTax.API.Controllers
         }
 
         // DELETE: api/GSTClients/5
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpDelete("{id}")]

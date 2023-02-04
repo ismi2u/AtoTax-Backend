@@ -1,9 +1,10 @@
-﻿using AtoTax.API.Repository.IRepository;
-using AtoTaxAPI.Data;
+﻿using AtoTaxAPI.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
-namespace AtoTax.API.Repository
+
+namespace AtoTax.API.GenericRepository
 {
     public class Repository<T> : IRepository<T> where T : class
     {
@@ -13,8 +14,8 @@ namespace AtoTax.API.Repository
 
         public Repository(AtoTaxDbContext context)
         {
-            _context= context;
-            this.dbSet= _context.Set<T>();
+            _context = context;
+            dbSet = _context.Set<T>();
         }
         public async Task CreateAsync(T entity)
         {
@@ -22,27 +23,38 @@ namespace AtoTax.API.Repository
             await SaveAsync();
         }
 
-        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null)
+        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, params string[] allIncludeStrings)
         {
+
             IQueryable<T> query = dbSet;
-         
+
+
+            query = allIncludeStrings.Aggregate(query,
+                     (current, include) => current.Include(include));
+
+
             if (filter != null)
             {
                 query = query.Where(filter);
             }
 
+
             return await query.ToListAsync();
         }
 
-        public async Task<T> GetAsync(Expression<Func<T, bool>> filter = null, bool tracked = true)
+        public async Task<T> GetAsync(Expression<Func<T, bool>> filter = null, bool tracked = true, params string[] allIncludeStrings)
         {
             IQueryable<T> query = dbSet;
-            if(!tracked)
+            if (!tracked)
             {
                 query = query.AsNoTracking();
             }
 
-            if(filter != null)
+            query = allIncludeStrings.Aggregate(query,
+                     (current, include) => current.Include(include));
+
+
+            if (filter != null)
             {
                 query = query.Where(filter);
             }
@@ -52,13 +64,15 @@ namespace AtoTax.API.Repository
 
         public async Task RemoveAsync(T entity)
         {
-             dbSet.Remove(entity);
+            dbSet.Remove(entity);
             await SaveAsync();
         }
 
         public async Task SaveAsync()
         {
-          await  _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
+
+
     }
 }

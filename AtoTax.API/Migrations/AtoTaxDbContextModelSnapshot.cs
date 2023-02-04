@@ -199,6 +199,7 @@ namespace AtoTax.API.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("GSTIN")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("GSTRecoveryEmailId")
@@ -207,7 +208,7 @@ namespace AtoTax.API.Migrations
                     b.Property<string>("GSTRecoveryEmailPassword")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("GSTRegDate")
+                    b.Property<DateTime>("GSTRegDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("GSTRelievedDate")
@@ -229,12 +230,14 @@ namespace AtoTax.API.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("ProprietorName")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<string>("RackFileNo")
                         .HasColumnType("text");
 
-                    b.Property<int?>("StatusId")
+                    b.Property<int>("StatusId")
                         .HasColumnType("integer");
 
                     b.Property<string>("TallyDataFilePath")
@@ -244,6 +247,8 @@ namespace AtoTax.API.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("StatusId");
 
                     b.ToTable("GSTClients");
                 });
@@ -383,6 +388,7 @@ namespace AtoTax.API.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("StatusType")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -587,6 +593,17 @@ namespace AtoTax.API.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("AtoTax.Domain.Entities.GSTClient", b =>
+                {
+                    b.HasOne("AtoTax.Domain.Entities.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AtoTax.API.Migrations
 {
     /// <inheritdoc />
-    public partial class intial : Migration
+    public partial class intials : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -131,40 +131,6 @@ namespace AtoTax.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "GSTClients",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ProprietorName = table.Column<string>(type: "text", nullable: true),
-                    GSTIN = table.Column<string>(type: "text", nullable: true),
-                    ContactName = table.Column<string>(type: "text", nullable: true),
-                    GSTUserName = table.Column<string>(type: "text", nullable: true),
-                    GSTUserPassword = table.Column<string>(type: "text", nullable: true),
-                    GSTRegDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    GSTSurrenderedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    GSTRelievedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    GSTAnnualTurnOver = table.Column<double>(type: "double precision", nullable: true),
-                    MobileNumber = table.Column<string>(type: "text", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
-                    ContactEmailId = table.Column<string>(type: "text", nullable: true),
-                    GSTEmailId = table.Column<string>(type: "text", nullable: true),
-                    GSTEmailPassword = table.Column<string>(type: "text", nullable: true),
-                    GSTRecoveryEmailId = table.Column<string>(type: "text", nullable: true),
-                    GSTRecoveryEmailPassword = table.Column<string>(type: "text", nullable: true),
-                    EWAYBillUserName = table.Column<string>(type: "text", nullable: true),
-                    EWAYBillPassword = table.Column<string>(type: "text", nullable: true),
-                    RackFileNo = table.Column<string>(type: "text", nullable: true),
-                    TallyDataFilePath = table.Column<string>(type: "text", nullable: true),
-                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    StatusId = table.Column<int>(type: "integer", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GSTClients", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "GSTFilingTypes",
                 columns: table => new
                 {
@@ -256,7 +222,7 @@ namespace AtoTax.API.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    StatusType = table.Column<string>(type: "text", nullable: true)
+                    StatusType = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -369,6 +335,46 @@ namespace AtoTax.API.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "GSTClients",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ProprietorName = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    GSTIN = table.Column<string>(type: "text", nullable: false),
+                    ContactName = table.Column<string>(type: "text", nullable: true),
+                    GSTUserName = table.Column<string>(type: "text", nullable: true),
+                    GSTUserPassword = table.Column<string>(type: "text", nullable: true),
+                    GSTRegDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    GSTSurrenderedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    GSTRelievedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    GSTAnnualTurnOver = table.Column<double>(type: "double precision", nullable: true),
+                    MobileNumber = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    ContactEmailId = table.Column<string>(type: "text", nullable: true),
+                    GSTEmailId = table.Column<string>(type: "text", nullable: true),
+                    GSTEmailPassword = table.Column<string>(type: "text", nullable: true),
+                    GSTRecoveryEmailId = table.Column<string>(type: "text", nullable: true),
+                    GSTRecoveryEmailPassword = table.Column<string>(type: "text", nullable: true),
+                    EWAYBillUserName = table.Column<string>(type: "text", nullable: true),
+                    EWAYBillPassword = table.Column<string>(type: "text", nullable: true),
+                    RackFileNo = table.Column<string>(type: "text", nullable: true),
+                    TallyDataFilePath = table.Column<string>(type: "text", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    StatusId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GSTClients", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GSTClients_Status_StatusId",
+                        column: x => x.StatusId,
+                        principalTable: "Status",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -405,6 +411,11 @@ namespace AtoTax.API.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GSTClients_StatusId",
+                table: "GSTClients",
+                column: "StatusId");
         }
 
         /// <inheritdoc />
@@ -459,13 +470,13 @@ namespace AtoTax.API.Migrations
                 name: "ServiceChargeUpdateTrackers");
 
             migrationBuilder.DropTable(
-                name: "Status");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Status");
         }
     }
 }

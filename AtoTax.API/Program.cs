@@ -1,7 +1,7 @@
 
 using AtoTax.API.Mapping;
-using AtoTax.API.Repository;
-using AtoTax.API.Repository.IRepository;
+using AtoTax.API.Repository.Interfaces;
+using AtoTax.API.Repository.Repos;
 using AtoTaxAPI.Authentication;
 using AtoTaxAPI.Data;
 using EmailService;
@@ -23,6 +23,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 
 
 builder.Services.AddScoped<IGSTClientRepository, GSTClientRepository>();
+builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 
 builder.Services.AddAuthentication(options =>
 {
