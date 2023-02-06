@@ -12,7 +12,7 @@ namespace AtoTax.Domain.Entities
         public Guid GSTClientId { get; set; }
         public virtual GSTClient GSTClient { get; set; }
 
-        public int DueMonth { get; set; }
+        public string DueMonth { get; set; }
         public int DueYear { get; set; }
 
 

@@ -23,7 +23,18 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 
 
 builder.Services.AddScoped<IGSTClientRepository, GSTClientRepository>();
-builder.Services.AddScoped<IStatusRepository, StatusRepository>();
+builder.Services.AddScoped<IMediaTypeRepository, MediaTypeRepository>();
+builder.Services.AddScoped<IAddressTypeRepository, AddressTypeRepository>();
+builder.Services.AddScoped<IPaymentTypeRepository, PaymentTypeRepository>();
+builder.Services.AddScoped<IEmpJobRoleRepository, EmpJobRoleRepository>();
+builder.Services.AddScoped<IAmendTypeRepository, AmendTypeRepository>();
+builder.Services.AddScoped<IAmendmentRepository, AmendmentRepository>();
+builder.Services.AddScoped<IClientFeeChargeRepository, ClientFeeChargeRepository>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IGSTFilingTypeRepository, GSTFilingTypeRepository>();
+builder.Services.AddScoped<IGSTClientAddressExtensionRepository, GSTClientAddressExtensionRepository>();
+builder.Services.AddScoped<IGSTBillAndFeeCollectionRepository, GSTBillAndFeeCollectionRepository>();
+builder.Services.AddScoped<IGSTPaidDetailRepository, GSTPaidDetailRepository>();
 
 builder.Services.AddAuthentication(options =>
 {

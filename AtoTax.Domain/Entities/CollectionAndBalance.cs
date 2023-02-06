@@ -9,7 +9,7 @@ namespace AtoTax.Domain.Entities
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
         public int? GSTClientId { get; set; }
-        public int? Month { get; set; }
+        public string? DueMonth { get; set; }
         public int? Year { get; set; }
         public double? FeesAmount { get; set; }
         public double? PreviousBalance { get; set; }
