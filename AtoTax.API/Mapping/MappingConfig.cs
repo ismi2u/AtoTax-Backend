@@ -19,7 +19,61 @@ namespace AtoTax.API.Mapping
 
             CreateMap<Status, StatusDTO>().ReverseMap();
             CreateMap<StatusCreateDTO, Status>().ReverseMap();
-            //
+
+
+
+            //Address Type
+            CreateMap<AddressType, AddressTypeDTO>().ReverseMap();
+            CreateMap<AddressTypeCreateDTO, AddressType>()
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow)); ;
+            CreateMap<AddressTypeUpdateDTO, AddressType>()
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+
+
+            //Media Type
+            CreateMap<MediaType, MediaTypeDTO>().ReverseMap();
+            CreateMap<MediaTypeCreateDTO, MediaType>()
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow)); ;
+            CreateMap<MediaTypeUpdateDTO, MediaType>()
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+            //Payment Type
+            CreateMap<PaymentType, PaymentTypeDTO>().ReverseMap();
+            CreateMap<PaymentTypeCreateDTO, PaymentType>()
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow)); ;
+            CreateMap<PaymentTypeUpdateDTO, PaymentType>()
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+
+            //EmpJobRoles
+            CreateMap<EmpJobRole, EmpJobRoleDTO>().ReverseMap();
+            CreateMap<EmpJobRoleCreateDTO, EmpJobRole>()
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow)); ;
+            CreateMap<EmpJobRoleUpdateDTO, EmpJobRole>()
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+
+            //Amend Type
+            CreateMap<AmendType, AmendTypeDTO>().ReverseMap();
+            CreateMap<AmendTypeCreateDTO, AmendType>()
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow)); ;
+            CreateMap<AmendTypeUpdateDTO, AmendType>()
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+
+            //Amendments
+            CreateMap<Amendment, AmendmentDTO>().ReverseMap();
+            CreateMap<AmendmentCreateDTO, Amendment>()
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow)); ;
+            CreateMap<AmendmentUpdateDTO, Amendment>()
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
         }
     }
 }
