@@ -114,7 +114,7 @@ namespace AtoTax.API.Controllers
                 var PaymentType = _mapper.Map<PaymentType>(PaymentTypeUpdateDTO);
 
                 //// dont update the GSTIN number which is the Identity of the GST Client
-                PaymentType.PaymentMethod = oldPaymentType.PaymentMethod;
+               // PaymentType.PaymentMethod = oldPaymentType.PaymentMethod;
 
                 //// dont update the below field as they are not part of updateDTO  and hence will become null
                 PaymentType.CreatedDate = oldPaymentType.CreatedDate;
