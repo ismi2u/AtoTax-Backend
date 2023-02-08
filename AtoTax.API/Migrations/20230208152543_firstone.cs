@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AtoTax.API.Migrations
 {
     /// <inheritdoc />
-    public partial class codeinitials : Migration
+    public partial class firstone : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -553,7 +553,7 @@ namespace AtoTax.API.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     GSTClientId = table.Column<Guid>(type: "uuid", nullable: false),
-                    DueMonth = table.Column<int>(type: "integer", nullable: false),
+                    DueMonth = table.Column<string>(type: "text", nullable: false),
                     DueYear = table.Column<int>(type: "integer", nullable: false),
                     ServiceCategoryId = table.Column<int>(type: "integer", nullable: false),
                     GSTFilingTypeId = table.Column<int>(type: "integer", nullable: false),

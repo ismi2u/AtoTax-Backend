@@ -82,8 +82,18 @@ namespace AtoTax.API.Mapping
             CreateMap<GSTFilingType, GSTFilingTypeDTO>().ReverseMap();
             CreateMap<GSTFilingTypeCreateDTO, GSTFilingType>()
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
-                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow)); ;
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
             CreateMap<GSTFilingTypeUpdateDTO, GSTFilingType>()
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+
+
+            //DefaultCharges
+            CreateMap<DefaultCharge, DefaultChargeDTO>().ReverseMap();
+            CreateMap<DefaultChargeCreateDTO, DefaultCharge>()
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow)); 
+            CreateMap<DefaultChargeUpdateDTO, DefaultCharge>()
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
         }
     }

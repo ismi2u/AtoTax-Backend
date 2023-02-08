@@ -246,8 +246,9 @@ namespace AtoTax.API.Migrations
                     b.Property<double?>("Balance")
                         .HasColumnType("double precision");
 
-                    b.Property<int>("DueMonth")
-                        .HasColumnType("integer");
+                    b.Property<string>("DueMonth")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("DueYear")
                         .HasColumnType("integer");

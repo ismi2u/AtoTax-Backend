@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AtoTax.API.Migrations
 {
     [DbContext(typeof(AtoTaxDbContext))]
-    [Migration("20230204124259_codeinitials")]
-    partial class codeinitials
+    [Migration("20230208152543_firstone")]
+    partial class firstone
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -249,8 +249,9 @@ namespace AtoTax.API.Migrations
                     b.Property<double?>("Balance")
                         .HasColumnType("double precision");
 
-                    b.Property<int>("DueMonth")
-                        .HasColumnType("integer");
+                    b.Property<string>("DueMonth")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("DueYear")
                         .HasColumnType("integer");
