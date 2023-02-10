@@ -14,6 +14,9 @@ namespace AtoTax.Domain.Entities
         public DateTime? CreatedDate { get; set; }
         public DateTime? LastModifiedDate { get; set; }
 
-
+        [Required]
+        [ForeignKey("Status")]
+        public int StatusId { get; set; }
+        public virtual Status Status { get; set; }
     }
 }

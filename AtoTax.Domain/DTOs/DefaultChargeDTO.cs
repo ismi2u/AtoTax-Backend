@@ -13,6 +13,9 @@ namespace AtoTax.Domain.DTOs
         public double FeeAmount { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? LastModifiedDate { get; set; }
+
+        public int? StatusId { get; set; }
+        public StatusDTO Status { get; set; }
     }
 
 
@@ -22,6 +25,10 @@ namespace AtoTax.Domain.DTOs
         public string GSTClientServiceType { get; set; }
         [Required]
         public double FeeAmount { get; set; }
+
+        [Required]
+        public int StatusId { get; set; }
+
     }
 
 
@@ -33,5 +40,9 @@ namespace AtoTax.Domain.DTOs
         public string GSTClientServiceType { get; set; }
         [Required]
         public double FeeAmount { get; set; }
+
+        [Required]
+        public int StatusId { get; set; }
+
     }
 }

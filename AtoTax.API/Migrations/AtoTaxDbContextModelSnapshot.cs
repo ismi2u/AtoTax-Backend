@@ -179,7 +179,12 @@ namespace AtoTax.API.Migrations
                     b.Property<DateTime?>("LastModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("StatusId");
 
                     b.ToTable("DefaultCharges");
                 });
@@ -934,6 +939,17 @@ namespace AtoTax.API.Migrations
                     b.Navigation("AmendType");
 
                     b.Navigation("GSTClient");
+
+                    b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("AtoTax.Domain.Entities.DefaultCharge", b =>
+                {
+                    b.HasOne("AtoTax.Domain.Entities.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Status");
                 });
