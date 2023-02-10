@@ -38,13 +38,11 @@ namespace AtoTax.API.Controllers
         public async Task<ActionResult<APIResponse>> GetDefaultCharges()
         {
 
-            List<string> includelist = new List<string>();
-            includelist.Add("Status");
-            string[] arrIncludes = includelist.ToArray();
+
 
             try
             {
-                IEnumerable<DefaultCharge> DefaultChargesList = await _dbDefaultCharge.GetAllAsync(null, arrIncludes);
+                IEnumerable<DefaultCharge> DefaultChargesList = await _dbDefaultCharge.GetAllAsync();
 
                 _response.Result = _mapper.Map<IEnumerable<DefaultChargeDTO>>(DefaultChargesList);
                 _response.StatusCode = HttpStatusCode.OK;
@@ -66,12 +64,10 @@ namespace AtoTax.API.Controllers
         public async Task<ActionResult<APIResponse>> GetDefaultCharge(int id)
         {
 
-            List<string> includelist = new List<string>();
-            includelist.Add("Status");
-            string[] arrIncludes = includelist.ToArray();
+           
             try
             {
-                DefaultCharge DefaultCharge = await _dbDefaultCharge.GetAsync(u => u.Id == id, false, arrIncludes);
+                DefaultCharge DefaultCharge = await _dbDefaultCharge.GetAsync(u => u.Id == id, false);
 
 
                 _response.Result = _mapper.Map<DefaultChargeDTO>(DefaultCharge);
