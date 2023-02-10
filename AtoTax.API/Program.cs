@@ -24,7 +24,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 
 builder.Services.AddScoped<IGSTClientRepository, GSTClientRepository>();
 builder.Services.AddScoped<IStatusRepository, StatusRepository>();
-
+builder.Services.AddScoped<IDefaultChargeRepository, DefaultChargeRepository>();
 builder.Services.AddScoped<IMediaTypeRepository, MediaTypeRepository>();
 builder.Services.AddScoped<IAddressTypeRepository, AddressTypeRepository>();
 builder.Services.AddScoped<IPaymentTypeRepository, PaymentTypeRepository>();
