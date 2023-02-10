@@ -158,6 +158,32 @@ namespace AtoTax.API.Migrations
                     b.ToTable("ClientFeeCharges");
                 });
 
+            modelBuilder.Entity("AtoTax.Domain.Entities.DefaultCharge", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<double>("FeeAmount")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("GSTClientServiceType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DefaultCharges");
+                });
+
             modelBuilder.Entity("AtoTax.Domain.Entities.EmpJobRole", b =>
                 {
                     b.Property<int>("Id")

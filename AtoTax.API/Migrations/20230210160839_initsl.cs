@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AtoTax.API.Migrations
 {
     /// <inheritdoc />
-    public partial class firstone : Migration
+    public partial class initsl : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -68,6 +68,22 @@ namespace AtoTax.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ClientFeeCharges", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DefaultCharges",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    GSTClientServiceType = table.Column<string>(type: "text", nullable: false),
+                    FeeAmount = table.Column<double>(type: "double precision", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DefaultCharges", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -785,6 +801,9 @@ namespace AtoTax.API.Migrations
 
             migrationBuilder.DropTable(
                 name: "ClientFeeCharges");
+
+            migrationBuilder.DropTable(
+                name: "DefaultCharges");
 
             migrationBuilder.DropTable(
                 name: "GSTBillAndFeeCollections");

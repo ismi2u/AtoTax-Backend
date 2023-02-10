@@ -31,6 +31,8 @@ namespace AtoTaxAPI.Data
         public DbSet<Employee> Employees { get; set; }
         public DbSet<GSTFilingType> GSTFilingTypes { get; set; }
 
+        public DbSet<DefaultCharge> DefaultCharges { get; set; }
+
         public DbSet<GSTPaidDetail> GSTPaidDetails { get; set; }
 
         public DbSet<AddressType> AddressTypes { get; set; }

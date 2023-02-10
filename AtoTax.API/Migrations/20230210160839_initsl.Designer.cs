@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AtoTax.API.Migrations
 {
     [DbContext(typeof(AtoTaxDbContext))]
-    [Migration("20230208152543_firstone")]
-    partial class firstone
+    [Migration("20230210160839_initsl")]
+    partial class initsl
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -159,6 +159,32 @@ namespace AtoTax.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ClientFeeCharges");
+                });
+
+            modelBuilder.Entity("AtoTax.Domain.Entities.DefaultCharge", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<double>("FeeAmount")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("GSTClientServiceType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DefaultCharges");
                 });
 
             modelBuilder.Entity("AtoTax.Domain.Entities.EmpJobRole", b =>
