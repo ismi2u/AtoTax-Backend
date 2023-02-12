@@ -12,6 +12,7 @@ using AutoMapper;
 using System.Net;
 using AtoTax.API.Repository.Interfaces;
 using static AtoTax.Domain.DTOs.ServiceChargeUpdateHistoryCreateDTO;
+using AtoTax.API.GenericRepository;
 
 namespace AtoTax.API.Controllers
 {
@@ -20,16 +21,16 @@ namespace AtoTax.API.Controllers
     public class ServiceChargeUpdateHistoryController : ControllerBase
     {
         protected APIResponse _response;
-        private readonly IServiceChargeUpdateHistoryRepository _dbServiceChargeUpdateHistory;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
 
-        public ServiceChargeUpdateHistoryController(IServiceChargeUpdateHistoryRepository dbServiceChargeUpdateHistory, IMapper mapper, AtoTaxDbContext context)
+        public ServiceChargeUpdateHistoryController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
         {
-            _dbServiceChargeUpdateHistory = dbServiceChargeUpdateHistory;
             _mapper = mapper;
             this._response= new();
             _context = context;
+            _unitOfWork= unitOfWork;    
         }
 
         // GET: api/ServiceChargeUpdateHistory
@@ -45,7 +46,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<ServiceChargeUpdateHistory> ServiceChargeUpdateHistoryList = await _dbServiceChargeUpdateHistory.GetAllAsync(null, arrIncludes);
+                IEnumerable<ServiceChargeUpdateHistory> ServiceChargeUpdateHistoryList = await _unitOfWork.ServiceChargeUpdateHistories.GetAllAsync(null, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<ServiceChargeUpdateHistoryDTO>>(ServiceChargeUpdateHistoryList);
                 _response.StatusCode = HttpStatusCode.OK;
@@ -72,7 +73,7 @@ namespace AtoTax.API.Controllers
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                ServiceChargeUpdateHistory ServiceChargeUpdateHistory = await _dbServiceChargeUpdateHistory.GetAsync(u => u.Id == id, false, arrIncludes);
+                ServiceChargeUpdateHistory ServiceChargeUpdateHistory = await _unitOfWork.ServiceChargeUpdateHistories.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
                 _response.Result = _mapper.Map<ServiceChargeUpdateHistoryDTO>(ServiceChargeUpdateHistory);
@@ -105,7 +106,7 @@ namespace AtoTax.API.Controllers
                 }
 
 
-                var oldServiceChargeUpdateHistory = await _dbServiceChargeUpdateHistory.GetAsync(u => u.Id == id, tracked: false);
+                var oldServiceChargeUpdateHistory = await _unitOfWork.ServiceChargeUpdateHistories.GetAsync(u => u.Id == id, tracked: false);
 
                 if (oldServiceChargeUpdateHistory == null)
                 {
@@ -121,7 +122,7 @@ namespace AtoTax.API.Controllers
                 ////// dont update the below field as they are not part of updateDTO  and hence will become null
                 //ServiceChargeUpdateHistory.CreatedDate = oldServiceChargeUpdateHistory.CreatedDate;
 
-                await _dbServiceChargeUpdateHistory.UpdateAsync(ServiceChargeUpdateHistory);
+                await _unitOfWork.ServiceChargeUpdateHistories.UpdateAsync(ServiceChargeUpdateHistory);
 
                 if (!ModelState.IsValid)
                 {
@@ -130,6 +131,7 @@ namespace AtoTax.API.Controllers
                     return _response;
                  }
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = ServiceChargeUpdateHistory;
                 return Ok(_response);
@@ -159,8 +161,9 @@ namespace AtoTax.API.Controllers
                 //}
                 var ServiceChargeUpdateHistory = _mapper.Map<ServiceChargeUpdateHistory>(ServiceChargeUpdateHistoryCreateDTO);
                 //ServiceChargeUpdateHistory.CreatedDate= DateTime.UtcNow;
-                await _dbServiceChargeUpdateHistory.CreateAsync(ServiceChargeUpdateHistory);
+                await _unitOfWork.ServiceChargeUpdateHistories.CreateAsync(ServiceChargeUpdateHistory);
 
+                await _unitOfWork.CompleteAsync();
                 _response.Result = _mapper.Map<ServiceChargeUpdateHistoryDTO>(ServiceChargeUpdateHistory);
                 _response.StatusCode = HttpStatusCode.Created;
 
@@ -188,15 +191,16 @@ namespace AtoTax.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var ServiceChargeUpdateHistory = await _dbServiceChargeUpdateHistory.GetAsync(u => u.Id == id);
+                var ServiceChargeUpdateHistory = await _unitOfWork.ServiceChargeUpdateHistories.GetAsync(u => u.Id == id);
                 if (ServiceChargeUpdateHistory == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                await _dbServiceChargeUpdateHistory.RemoveAsync(ServiceChargeUpdateHistory);
+                await _unitOfWork.ServiceChargeUpdateHistories.RemoveAsync(ServiceChargeUpdateHistory);
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);
             }

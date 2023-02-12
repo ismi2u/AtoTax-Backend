@@ -11,6 +11,7 @@ using AtoTax.Domain.DTOs;
 using AutoMapper;
 using System.Net;
 using AtoTax.API.Repository.Interfaces;
+using AtoTax.API.GenericRepository;
 
 namespace AtoTax.API.Controllers
 {
@@ -19,16 +20,16 @@ namespace AtoTax.API.Controllers
     public class GSTPaidDetailsController : ControllerBase
     {
         protected APIResponse _response;
-        private readonly IGSTPaidDetailRepository _dbGSTPaidDetail;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
 
-        public GSTPaidDetailsController(IGSTPaidDetailRepository dbGSTPaidDetail, IMapper mapper, AtoTaxDbContext context)
+        public GSTPaidDetailsController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
         {
-            _dbGSTPaidDetail = dbGSTPaidDetail;
             _mapper = mapper;
             this._response= new();
             _context = context;
+            _unitOfWork= unitOfWork;
         }
 
         // GET: api/GSTPaidDetails
@@ -47,7 +48,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<GSTPaidDetail> GSTPaidDetailsList = await _dbGSTPaidDetail.GetAllAsync(null, arrIncludes);
+                IEnumerable<GSTPaidDetail> GSTPaidDetailsList = await _unitOfWork.GSTPaidDetails.GetAllAsync(null, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<GSTPaidDetailDTO>>(GSTPaidDetailsList);
                 _response.StatusCode = HttpStatusCode.OK;
@@ -77,7 +78,7 @@ namespace AtoTax.API.Controllers
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                GSTPaidDetail GSTPaidDetail = await _dbGSTPaidDetail.GetAsync(u => u.Id == id, false, arrIncludes);
+                GSTPaidDetail GSTPaidDetail = await _unitOfWork.GSTPaidDetails.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
                 _response.Result = _mapper.Map<GSTPaidDetailDTO>(GSTPaidDetail);
@@ -109,7 +110,7 @@ namespace AtoTax.API.Controllers
                 }
 
 
-                var oldGSTPaidDetail = await _dbGSTPaidDetail.GetAsync(u => u.Id == id, tracked: false);
+                var oldGSTPaidDetail = await _unitOfWork.GSTPaidDetails.GetAsync(u => u.Id == id, tracked: false);
 
                 if (oldGSTPaidDetail == null)
                 {
@@ -119,7 +120,7 @@ namespace AtoTax.API.Controllers
 
                 var GSTPaidDetail = _mapper.Map<GSTPaidDetail>(GSTPaidDetailUpdateDTO);
 
-                await _dbGSTPaidDetail.UpdateAsync(GSTPaidDetail);
+                await _unitOfWork.GSTPaidDetails.UpdateAsync(GSTPaidDetail);
 
                 if (!ModelState.IsValid)
                 {
@@ -128,6 +129,7 @@ namespace AtoTax.API.Controllers
                     return _response;
                  }
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = GSTPaidDetail;
                 return Ok(_response);
@@ -157,8 +159,9 @@ namespace AtoTax.API.Controllers
 
                 var GSTPaidDetail = _mapper.Map<GSTPaidDetail>(GSTPaidDetailCreateDTO);
                 //GSTPaidDetail.CreatedDate= DateTime.UtcNow;
-                await _dbGSTPaidDetail.CreateAsync(GSTPaidDetail);
+                await _unitOfWork.GSTPaidDetails.CreateAsync(GSTPaidDetail);
 
+                await _unitOfWork.CompleteAsync();
                 _response.Result = _mapper.Map<GSTPaidDetailDTO>(GSTPaidDetail);
                 _response.StatusCode = HttpStatusCode.Created;
 
@@ -186,15 +189,16 @@ namespace AtoTax.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var GSTPaidDetail = await _dbGSTPaidDetail.GetAsync(u => u.Id == id);
+                var GSTPaidDetail = await _unitOfWork.GSTPaidDetails.GetAsync(u => u.Id == id);
                 if (GSTPaidDetail == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                await _dbGSTPaidDetail.RemoveAsync(GSTPaidDetail);
+                await _unitOfWork.GSTPaidDetails.RemoveAsync(GSTPaidDetail);
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);
             }

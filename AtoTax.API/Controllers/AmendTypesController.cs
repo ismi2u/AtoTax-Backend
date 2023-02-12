@@ -11,6 +11,7 @@ using AtoTax.Domain.DTOs;
 using AutoMapper;
 using System.Net;
 using AtoTax.API.Repository.Interfaces;
+using AtoTax.API.GenericRepository;
 
 namespace AtoTax.API.Controllers
 {
@@ -19,16 +20,16 @@ namespace AtoTax.API.Controllers
     public class AmendTypesController : ControllerBase
     {
         protected APIResponse _response;
-        private readonly IAmendTypeRepository _dbAmendType;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
 
-        public AmendTypesController(IAmendTypeRepository dbAmendType, IMapper mapper, AtoTaxDbContext context)
+        public AmendTypesController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
         {
-            _dbAmendType = dbAmendType;
             _mapper = mapper;
             this._response= new();
             _context = context;
+            _unitOfWork= unitOfWork;
         }
 
         // GET: api/AmendTypes
@@ -44,7 +45,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<AmendType> AmendTypesList = await _dbAmendType.GetAllAsync(null, arrIncludes);
+                IEnumerable<AmendType> AmendTypesList = await _unitOfWork.AmendTypes.GetAllAsync(null, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<AmendTypeDTO>>(AmendTypesList);
                 _response.StatusCode = HttpStatusCode.OK;
@@ -71,7 +72,7 @@ namespace AtoTax.API.Controllers
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                AmendType AmendType = await _dbAmendType.GetAsync(u => u.Id == id, false, arrIncludes);
+                AmendType AmendType = await _unitOfWork.AmendTypes.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
                 _response.Result = _mapper.Map<AmendTypeDTO>(AmendType);
@@ -103,7 +104,7 @@ namespace AtoTax.API.Controllers
                 }
 
 
-                var oldAmendType = await _dbAmendType.GetAsync(u => u.Id == id, tracked: false);
+                var oldAmendType = await _unitOfWork.AmendTypes.GetAsync(u => u.Id == id, tracked: false);
 
                 if (oldAmendType == null)
                 {
@@ -119,7 +120,7 @@ namespace AtoTax.API.Controllers
                 //// dont update the below field as they are not part of updateDTO  and hence will become null
                 AmendType.CreatedDate = oldAmendType.CreatedDate;
 
-                await _dbAmendType.UpdateAsync(AmendType);
+                await _unitOfWork.AmendTypes.UpdateAsync(AmendType);
 
                 if (!ModelState.IsValid)
                 {
@@ -128,6 +129,7 @@ namespace AtoTax.API.Controllers
                     return _response;
                  }
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = AmendType;
                 return Ok(_response);
@@ -149,7 +151,7 @@ namespace AtoTax.API.Controllers
             try
             {
 
-                if (await _dbAmendType.GetAsync(u => u.AmendTypeName == AmendTypeCreateDTO.AmendTypeName) != null)
+                if (await _unitOfWork.AmendTypes.GetAsync(u => u.AmendTypeName == AmendTypeCreateDTO.AmendTypeName) != null)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return _response;
@@ -157,8 +159,10 @@ namespace AtoTax.API.Controllers
                
                 var AmendType = _mapper.Map<AmendType>(AmendTypeCreateDTO);
                 AmendType.CreatedDate= DateTime.UtcNow;
-                await _dbAmendType.CreateAsync(AmendType);
+                await _unitOfWork.AmendTypes.CreateAsync(AmendType);
 
+
+                await _unitOfWork.CompleteAsync();
                 _response.Result = _mapper.Map<AmendTypeDTO>(AmendType);
                 _response.StatusCode = HttpStatusCode.Created;
 
@@ -186,15 +190,16 @@ namespace AtoTax.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var AmendType = await _dbAmendType.GetAsync(u => u.Id == id);
+                var AmendType = await _unitOfWork.AmendTypes.GetAsync(u => u.Id == id);
                 if (AmendType == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                await _dbAmendType.RemoveAsync(AmendType);
+                await _unitOfWork.AmendTypes.RemoveAsync(AmendType);
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);
             }

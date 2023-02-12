@@ -9,11 +9,12 @@ namespace AtoTax.API.GenericRepository
         IAmendTypeRepository AmendTypes { get; }
 
         IClientFeeMapRepository ClientFeeMaps { get; }
-        IDefaultChargeRepository DefaultCharges { get; }
         IEmpJobRoleRepository EmpJobRoles { get; }
         IEmployeeRepository Employees { get; }
+        ICollectionAndBalanceRepository CollectionAndBalances { get; }
         IGSTBillAndFeeCollectionRepository GSTBillAndFeeCollections { get; }
         IGSTClientAddressExtensionRepository GSTClientAddressExtensions { get; }
+        IFeeCollectionLedgerRepository FeeCollectionLedgers { get; }
         IGSTClientRepository GSTClients { get; }
 
         IGSTFilingTypeRepository GSTFilingTypes { get; }
@@ -23,6 +24,7 @@ namespace AtoTax.API.GenericRepository
         IServiceCategoryRepository ServiceCategories { get; }
         IStatusRepository Statuses { get; }
         IUserLoggedActivityRepository UserLoggedActivities { get; }
+        IServiceChargeUpdateHistoryRepository ServiceChargeUpdateHistories { get; }
 
         Task CompleteAsync();
     }

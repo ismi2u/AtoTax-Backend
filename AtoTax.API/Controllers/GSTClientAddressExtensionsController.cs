@@ -11,6 +11,7 @@ using AtoTax.Domain.DTOs;
 using AutoMapper;
 using System.Net;
 using AtoTax.API.Repository.Interfaces;
+using AtoTax.API.GenericRepository;
 
 namespace AtoTax.API.Controllers
 {
@@ -19,16 +20,16 @@ namespace AtoTax.API.Controllers
     public class GSTClientAddressExtensionsController : ControllerBase
     {
         protected APIResponse _response;
-        private readonly IGSTClientAddressExtensionRepository _dbGSTClientAddressExtension;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
 
-        public GSTClientAddressExtensionsController(IGSTClientAddressExtensionRepository dbGSTClientAddressExtension, IMapper mapper, AtoTaxDbContext context)
+        public GSTClientAddressExtensionsController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
         {
-            _dbGSTClientAddressExtension = dbGSTClientAddressExtension;
             _mapper = mapper;
             this._response= new();
             _context = context;
+            _unitOfWork= unitOfWork;
         }
 
         // GET: api/GSTClientAddressExtension
@@ -46,7 +47,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<GSTClientAddressExtension> GSTClientAddressExtensionList = await _dbGSTClientAddressExtension.GetAllAsync(null, arrIncludes);
+                IEnumerable<GSTClientAddressExtension> GSTClientAddressExtensionList = await _unitOfWork.GSTClientAddressExtensions.GetAllAsync(null, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<GSTClientAddressExtensionDTO>>(GSTClientAddressExtensionList);
                 _response.StatusCode = HttpStatusCode.OK;
@@ -75,7 +76,7 @@ namespace AtoTax.API.Controllers
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                GSTClientAddressExtension GSTClientAddressExtension = await _dbGSTClientAddressExtension.GetAsync(u => u.Id == id, false, arrIncludes);
+                GSTClientAddressExtension GSTClientAddressExtension = await _unitOfWork.GSTClientAddressExtensions.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
                 _response.Result = _mapper.Map<GSTClientAddressExtensionDTO>(GSTClientAddressExtension);
@@ -107,7 +108,7 @@ namespace AtoTax.API.Controllers
                 }
 
 
-                var oldGSTClientAddressExtension = await _dbGSTClientAddressExtension.GetAsync(u => u.Id == id, tracked: false);
+                var oldGSTClientAddressExtension = await _unitOfWork.GSTClientAddressExtensions.GetAsync(u => u.Id == id, tracked: false);
 
                 if (oldGSTClientAddressExtension == null)
                 {
@@ -123,7 +124,7 @@ namespace AtoTax.API.Controllers
                 //// dont update the below field as they are not part of updateDTO  and hence will become null
                 GSTClientAddressExtension.CreatedDate = oldGSTClientAddressExtension.CreatedDate;
 
-                await _dbGSTClientAddressExtension.UpdateAsync(GSTClientAddressExtension);
+                await _unitOfWork.GSTClientAddressExtensions.UpdateAsync(GSTClientAddressExtension);
 
                 if (!ModelState.IsValid)
                 {
@@ -132,6 +133,7 @@ namespace AtoTax.API.Controllers
                     return _response;
                  }
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = GSTClientAddressExtension;
                 return Ok(_response);
@@ -153,7 +155,7 @@ namespace AtoTax.API.Controllers
             try
             {
 
-                if (await _dbGSTClientAddressExtension.GetAsync(u => u.GSTClientId == GSTClientAddressExtensionCreateDTO.GSTClientId
+                if (await _unitOfWork.GSTClientAddressExtensions.GetAsync(u => u.GSTClientId == GSTClientAddressExtensionCreateDTO.GSTClientId
                 && u.AddressTypeId == GSTClientAddressExtensionCreateDTO.AddressTypeId) != null)
                 {
                     _response.ErrorMessages = new List<string>() { "Duplicate for address Type for GST Client not allowed"};
@@ -162,8 +164,9 @@ namespace AtoTax.API.Controllers
                 }
                 var GSTClientAddressExtension = _mapper.Map<GSTClientAddressExtension>(GSTClientAddressExtensionCreateDTO);
                 GSTClientAddressExtension.CreatedDate= DateTime.UtcNow;
-                await _dbGSTClientAddressExtension.CreateAsync(GSTClientAddressExtension);
+                await _unitOfWork.GSTClientAddressExtensions.CreateAsync(GSTClientAddressExtension);
 
+                await _unitOfWork.CompleteAsync();
                 _response.Result = _mapper.Map<GSTClientAddressExtensionDTO>(GSTClientAddressExtension);
                 _response.StatusCode = HttpStatusCode.Created;
 
@@ -191,15 +194,16 @@ namespace AtoTax.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var GSTClientAddressExtension = await _dbGSTClientAddressExtension.GetAsync(u => u.Id == id);
+                var GSTClientAddressExtension = await _unitOfWork.GSTClientAddressExtensions.GetAsync(u => u.Id == id);
                 if (GSTClientAddressExtension == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                await _dbGSTClientAddressExtension.RemoveAsync(GSTClientAddressExtension);
+                await _unitOfWork.GSTClientAddressExtensions.RemoveAsync(GSTClientAddressExtension);
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);
             }

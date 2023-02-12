@@ -26,9 +26,8 @@ namespace AtoTax.API.Controllers
 
         public GSTClientsController(IMapper mapper, AtoTaxDbContext context, IUnitOfWork unitOfWork)
         {
-            //_dbGSTClient = dbGSTClient;
             _mapper = mapper;
-            this._response= new();
+            this._response = new();
             _context = context;
             _unitOfWork = unitOfWork;
         }
@@ -54,8 +53,8 @@ namespace AtoTax.API.Controllers
             }
             catch (Exception ex)
             {
-                _response.IsSuccess= false;
-                _response.ErrorMessages= new List<string>() { ex.ToString()};
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
             return _response;
         }
@@ -86,7 +85,7 @@ namespace AtoTax.API.Controllers
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
             return _response;
-           
+
         }
 
         // PUT: api/GSTClients/5
@@ -123,12 +122,38 @@ namespace AtoTax.API.Controllers
 
                 await _unitOfWork.GSTClients.UpdateAsync(gstClient);
 
+
+
+                //Client Fee Map table update check
+
+                var ListOfServiceCategories = await _unitOfWork.ServiceCategories.GetAllAsync();
+                foreach (var serviceCategory in ListOfServiceCategories)
+                {
+                    var existingClientFee = await _unitOfWork.ClientFeeMaps.GetAsync(u => u.ServiceCategoryId == serviceCategory.Id && u.GSTClientId == oldgstclient.Id, tracked: false);
+                    if (existingClientFee == null)
+                    {
+                        ClientFeeMap clientFeeMap = new ClientFeeMap();
+
+                        clientFeeMap.GSTClientId = gstClient.Id;
+                        clientFeeMap.ServiceCategoryId = serviceCategory.Id;
+                        clientFeeMap.DefaultCharge = serviceCategory.DefaultCharge;
+                        clientFeeMap.CreatedDate = DateTime.UtcNow;
+                        clientFeeMap.LastModifiedDate = DateTime.UtcNow;
+
+                        await _unitOfWork.ClientFeeMaps.CreateAsync(clientFeeMap);
+                    }
+
+                }
+
+                await _unitOfWork.CompleteAsync();
+
+
                 if (!ModelState.IsValid)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.Result = ModelState;
                     return _response;
-                 }
+                }
 
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = gstClient;
@@ -163,8 +188,24 @@ namespace AtoTax.API.Controllers
                     return _response;
                 }
                 var gstClient = _mapper.Map<GSTClient>(gstClientCreateDTO);
-                gstClient.CreatedDate= DateTime.UtcNow;
+                gstClient.CreatedDate = DateTime.UtcNow;
                 await _unitOfWork.GSTClients.CreateAsync(gstClient);
+
+                var ListOfServiceCategories = await _unitOfWork.ServiceCategories.GetAllAsync();
+                foreach (var serviceCategory in ListOfServiceCategories)
+                {
+                    ClientFeeMap clientFeeMap = new ClientFeeMap();
+
+                    clientFeeMap.GSTClientId = gstClient.Id;
+                    clientFeeMap.ServiceCategoryId = serviceCategory.Id;
+                    clientFeeMap.DefaultCharge = serviceCategory.DefaultCharge;
+                    clientFeeMap.CreatedDate = DateTime.UtcNow;
+                    clientFeeMap.LastModifiedDate = DateTime.UtcNow;
+
+                    await _unitOfWork.ClientFeeMaps.CreateAsync(clientFeeMap);
+                }
+
+                await _unitOfWork.CompleteAsync();
 
                 _response.Result = _mapper.Map<GSTClientDTO>(gstClient);
                 _response.StatusCode = HttpStatusCode.Created;
@@ -202,6 +243,13 @@ namespace AtoTax.API.Controllers
 
                 await _unitOfWork.GSTClients.RemoveAsync(gstClient);
 
+                var ListClientFeeMaps = await _unitOfWork.ClientFeeMaps.GetAllAsync(u => u.GSTClientId == id);
+                foreach (var clientFeeMap in ListClientFeeMaps)
+                {
+                   await  _unitOfWork.ClientFeeMaps.RemoveAsync(clientFeeMap);
+                }
+
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);
             }

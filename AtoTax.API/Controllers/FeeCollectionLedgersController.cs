@@ -11,6 +11,7 @@ using AtoTax.Domain.DTOs;
 using AutoMapper;
 using System.Net;
 using AtoTax.API.Repository.Interfaces;
+using AtoTax.API.GenericRepository;
 
 namespace AtoTax.API.Controllers
 {
@@ -19,16 +20,16 @@ namespace AtoTax.API.Controllers
     public class FeeCollectionLedgersController : ControllerBase
     {
         protected APIResponse _response;
-        private readonly IFeeCollectionLedgerRepository _dbFeeCollectionLedger;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
 
-        public FeeCollectionLedgersController(IFeeCollectionLedgerRepository dbFeeCollectionLedger, IMapper mapper, AtoTaxDbContext context)
+        public FeeCollectionLedgersController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
         {
-            _dbFeeCollectionLedger = dbFeeCollectionLedger;
             _mapper = mapper;
             this._response= new();
             _context = context;
+            _unitOfWork= unitOfWork;
         }
 
         // GET: api/FeeCollectionLedger
@@ -46,7 +47,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<FeeCollectionLedger> FeeCollectionLedgerList = await _dbFeeCollectionLedger.GetAllAsync(null, arrIncludes);
+                IEnumerable<FeeCollectionLedger> FeeCollectionLedgerList = await _unitOfWork.FeeCollectionLedgers.GetAllAsync(null, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<FeeCollectionLedgerDTO>>(FeeCollectionLedgerList);
                 _response.StatusCode = HttpStatusCode.OK;
@@ -75,7 +76,7 @@ namespace AtoTax.API.Controllers
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                FeeCollectionLedger FeeCollectionLedger = await _dbFeeCollectionLedger.GetAsync(u => u.Id == id, false, arrIncludes);
+                FeeCollectionLedger FeeCollectionLedger = await _unitOfWork.FeeCollectionLedgers.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
                 _response.Result = _mapper.Map<FeeCollectionLedgerDTO>(FeeCollectionLedger);
@@ -107,7 +108,7 @@ namespace AtoTax.API.Controllers
                 }
 
 
-                var oldFeeCollectionLedger = await _dbFeeCollectionLedger.GetAsync(u => u.Id == id, tracked: false);
+                var oldFeeCollectionLedger = await _unitOfWork.FeeCollectionLedgers.GetAsync(u => u.Id == id, tracked: false);
 
                 if (oldFeeCollectionLedger == null)
                 {
@@ -123,7 +124,7 @@ namespace AtoTax.API.Controllers
                 //// dont update the below field as they are not part of updateDTO  and hence will become null
                 ///FeeCollectionLedger.CreatedDate = oldFeeCollectionLedger.CreatedDate;
 
-                await _dbFeeCollectionLedger.UpdateAsync(FeeCollectionLedger);
+                await _unitOfWork.FeeCollectionLedgers.UpdateAsync(FeeCollectionLedger);
 
                 if (!ModelState.IsValid)
                 {
@@ -132,6 +133,7 @@ namespace AtoTax.API.Controllers
                     return _response;
                  }
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = FeeCollectionLedger;
                 return Ok(_response);
@@ -162,8 +164,9 @@ namespace AtoTax.API.Controllers
                 //}
                 var FeeCollectionLedger = _mapper.Map<FeeCollectionLedger>(FeeCollectionLedgerCreateDTO);
                 //FeeCollectionLedger.CreatedDate = DateTime.UtcNow;
-                await _dbFeeCollectionLedger.CreateAsync(FeeCollectionLedger);
+                await _unitOfWork.FeeCollectionLedgers.CreateAsync(FeeCollectionLedger);
 
+                await _unitOfWork.CompleteAsync();
                 _response.Result = _mapper.Map<FeeCollectionLedgerDTO>(FeeCollectionLedger);
                 _response.StatusCode = HttpStatusCode.Created;
 
@@ -191,15 +194,16 @@ namespace AtoTax.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var FeeCollectionLedger = await _dbFeeCollectionLedger.GetAsync(u => u.Id == id);
+                var FeeCollectionLedger = await _unitOfWork.FeeCollectionLedgers.GetAsync(u => u.Id == id);
                 if (FeeCollectionLedger == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                await _dbFeeCollectionLedger.RemoveAsync(FeeCollectionLedger);
+                await _unitOfWork.FeeCollectionLedgers.RemoveAsync(FeeCollectionLedger);
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);
             }

@@ -11,6 +11,7 @@ using AtoTax.Domain.DTOs;
 using AutoMapper;
 using System.Net;
 using AtoTax.API.Repository.Interfaces;
+using AtoTax.API.GenericRepository;
 
 namespace AtoTax.API.Controllers
 {
@@ -19,17 +20,18 @@ namespace AtoTax.API.Controllers
     public class UserLoggedActivityController : ControllerBase
     {
         protected APIResponse _response;
-        private readonly IUserLoggedActivityRepository _dbUserLoggedActivity;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
 
-        public UserLoggedActivityController(IUserLoggedActivityRepository dbUserLoggedActivity, IMapper mapper, AtoTaxDbContext context)
+        public UserLoggedActivityController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
         {
-            _dbUserLoggedActivity = dbUserLoggedActivity;
             _mapper = mapper;
             this._response= new();
             _context = context;
+            _unitOfWork = unitOfWork;   
         }
+        
 
         // GET: api/UserLoggedActivity
         [HttpGet]
@@ -44,7 +46,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<UserLoggedActivity> UserLoggedActivityList = await _dbUserLoggedActivity.GetAllAsync(null, arrIncludes);
+                IEnumerable<UserLoggedActivity> UserLoggedActivityList = await _unitOfWork.UserLoggedActivities.GetAllAsync(null, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<UserLoggedActivityDTO>>(UserLoggedActivityList);
                 _response.StatusCode = HttpStatusCode.OK;
@@ -71,7 +73,7 @@ namespace AtoTax.API.Controllers
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                UserLoggedActivity UserLoggedActivity = await _dbUserLoggedActivity.GetAsync(u => u.Id == id, false, arrIncludes);
+                UserLoggedActivity UserLoggedActivity = await _unitOfWork.UserLoggedActivities.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
                 _response.Result = _mapper.Map<UserLoggedActivityDTO>(UserLoggedActivity);
@@ -103,7 +105,7 @@ namespace AtoTax.API.Controllers
                 }
 
 
-                var oldUserLoggedActivity = await _dbUserLoggedActivity.GetAsync(u => u.Id == id, tracked: false);
+                var oldUserLoggedActivity = await _unitOfWork.UserLoggedActivities.GetAsync(u => u.Id == id, tracked: false);
 
                 if (oldUserLoggedActivity == null)
                 {
@@ -129,6 +131,7 @@ namespace AtoTax.API.Controllers
                     return _response;
                  }
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = UserLoggedActivity;
                 return Ok(_response);
@@ -160,8 +163,9 @@ namespace AtoTax.API.Controllers
                 //}
                 var UserLoggedActivity = _mapper.Map<UserLoggedActivity>(UserLoggedActivityCreateDTO);
                 //UserLoggedActivity.CreatedDate= DateTime.UtcNow;
-                await _dbUserLoggedActivity.CreateAsync(UserLoggedActivity);
+                await _unitOfWork.UserLoggedActivities.CreateAsync(UserLoggedActivity);
 
+                await _unitOfWork.CompleteAsync();
                 _response.Result = _mapper.Map<UserLoggedActivityDTO>(UserLoggedActivity);
                 _response.StatusCode = HttpStatusCode.Created;
 
@@ -189,15 +193,16 @@ namespace AtoTax.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var UserLoggedActivity = await _dbUserLoggedActivity.GetAsync(u => u.Id == id);
+                var UserLoggedActivity = await _unitOfWork.UserLoggedActivities.GetAsync(u => u.Id == id);
                 if (UserLoggedActivity == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                await _dbUserLoggedActivity.RemoveAsync(UserLoggedActivity);
+                await _unitOfWork.UserLoggedActivities.RemoveAsync(UserLoggedActivity);
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);
             }

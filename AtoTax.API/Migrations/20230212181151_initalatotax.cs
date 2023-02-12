@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AtoTax.API.Migrations
 {
     /// <inheritdoc />
-    public partial class maininitial : Migration
+    public partial class initalatotax : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -254,29 +254,6 @@ namespace AtoTax.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DefaultCharges",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    GSTClientServiceType = table.Column<string>(type: "text", nullable: false),
-                    FeeAmount = table.Column<double>(type: "double precision", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    StatusId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DefaultCharges", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DefaultCharges_Status_StatusId",
-                        column: x => x.StatusId,
-                        principalTable: "Status",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "EmpJobRoles",
                 columns: table => new
                 {
@@ -412,8 +389,10 @@ namespace AtoTax.API.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ServiceName = table.Column<string>(type: "text", nullable: true),
+                    ServiceName = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
+                    DefaultCharge = table.Column<double>(type: "double precision", nullable: false),
+                    PreviousCharge = table.Column<double>(type: "double precision", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     StatusId = table.Column<int>(type: "integer", nullable: false)
@@ -536,30 +515,6 @@ namespace AtoTax.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ClientFeeMaps",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    GSTClientId = table.Column<Guid>(type: "uuid", nullable: false),
-                    GSTMonthlySubmission = table.Column<double>(type: "double precision", nullable: false),
-                    GSTAmendment = table.Column<double>(type: "double precision", nullable: false),
-                    GSTAnnualReturnFiling = table.Column<double>(type: "double precision", nullable: false),
-                    GSTNoticeService = table.Column<double>(type: "double precision", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClientFeeMaps", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ClientFeeMaps_GSTClients_GSTClientId",
-                        column: x => x.GSTClientId,
-                        principalTable: "GSTClients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "FeeCollectionLedgers",
                 columns: table => new
                 {
@@ -580,6 +535,34 @@ namespace AtoTax.API.Migrations
                         name: "FK_FeeCollectionLedgers_GSTClients_GSTClientId",
                         column: x => x.GSTClientId,
                         principalTable: "GSTClients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientFeeMaps",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    GSTClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ServiceCategoryId = table.Column<int>(type: "integer", nullable: false),
+                    DefaultCharge = table.Column<double>(type: "double precision", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientFeeMaps", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClientFeeMaps_GSTClients_GSTClientId",
+                        column: x => x.GSTClientId,
+                        principalTable: "GSTClients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientFeeMaps_ServiceCategories_ServiceCategoryId",
+                        column: x => x.ServiceCategoryId,
+                        principalTable: "ServiceCategories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -716,7 +699,18 @@ namespace AtoTax.API.Migrations
             migrationBuilder.InsertData(
                 table: "GSTClients",
                 columns: new[] { "Id", "ContactEmailId", "ContactName", "CreatedDate", "EWAYBillPassword", "EWAYBillUserName", "GSTAnnualTurnOver", "GSTEmailId", "GSTEmailPassword", "GSTIN", "GSTRecoveryEmailId", "GSTRecoveryEmailPassword", "GSTRegDate", "GSTRelievedDate", "GSTSurrenderedDate", "GSTUserName", "GSTUserPassword", "LastModifiedDate", "MobileNumber", "PhoneNumber", "ProprietorName", "RackFileNo", "StatusId", "TallyDataFilePath" },
-                values: new object[] { new Guid("ebf7cf6d-26fa-40a7-90ab-b86402a7e594"), "test@test.com", "Raja Mohamed", new DateTime(2023, 2, 12, 8, 0, 20, 507, DateTimeKind.Utc).AddTicks(9469), "EWAYBillPassword", "EWAYBillUserName", 10000.0, "test1@test.com", "testerpass", "123456789", "recover@test.com", "GSTRecoveryEmailPassword", new DateTime(2023, 2, 12, 8, 0, 20, 507, DateTimeKind.Utc).AddTicks(9459), null, null, "gstusername", "GSTUserPassword", new DateTime(2023, 2, 12, 8, 0, 20, 507, DateTimeKind.Utc).AddTicks(9472), "829733325", "829733325", "Rexona Co", "RackFileNo", 1, "F:\\\\userfolder\\txt1.txt" });
+                values: new object[] { new Guid("ebf7cf6d-26fa-40a7-90ab-b86402a7e594"), "test@test.com", "Raja Mohamed", new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3579), "EWAYBillPassword", "EWAYBillUserName", 10000.0, "test1@test.com", "testerpass", "123456789", "recover@test.com", "GSTRecoveryEmailPassword", new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3566), null, null, "gstusername", "GSTUserPassword", new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3582), "829733325", "829733325", "Rexona Co", "RackFileNo", 1, "F:\\\\userfolder\\txt1.txt" });
+
+            migrationBuilder.InsertData(
+                table: "ServiceCategories",
+                columns: new[] { "Id", "CreatedDate", "DefaultCharge", "Description", "LastModifiedDate", "PreviousCharge", "ServiceName", "StatusId" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3624), 1000.0, "GST Monthly Submission", new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3625), 1000.0, "GSTMonthlySubmission", 1 },
+                    { 2, new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3628), 2000.0, "GST Amendment", new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3629), 2000.0, "GSTAmendment", 1 },
+                    { 3, new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3631), 500.0, "GST Annual Return Filing", new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3632), 500.0, "GSTAnnualReturnFiling", 1 },
+                    { 4, new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3634), 200.0, "GST Notice Service", new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3634), 200.0, "GSTNoticeService", 1 }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AddressTypes_StatusId",
@@ -786,9 +780,9 @@ namespace AtoTax.API.Migrations
                 column: "GSTClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DefaultCharges_StatusId",
-                table: "DefaultCharges",
-                column: "StatusId");
+                name: "IX_ClientFeeMaps_ServiceCategoryId",
+                table: "ClientFeeMaps",
+                column: "ServiceCategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmpJobRoles_StatusId",
@@ -917,9 +911,6 @@ namespace AtoTax.API.Migrations
 
             migrationBuilder.DropTable(
                 name: "CollectionAndBalances");
-
-            migrationBuilder.DropTable(
-                name: "DefaultCharges");
 
             migrationBuilder.DropTable(
                 name: "FeeCollectionLedgers");

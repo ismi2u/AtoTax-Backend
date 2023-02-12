@@ -11,6 +11,7 @@ using AtoTax.Domain.DTOs;
 using AutoMapper;
 using System.Net;
 using AtoTax.API.Repository.Interfaces;
+using AtoTax.API.GenericRepository;
 
 namespace AtoTax.API.Controllers
 {
@@ -19,16 +20,16 @@ namespace AtoTax.API.Controllers
     public class GSTFilingTypesController : ControllerBase
     {
         protected APIResponse _response;
-        private readonly IGSTFilingTypeRepository _dbGSTFilingType;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
 
-        public GSTFilingTypesController(IGSTFilingTypeRepository dbGSTFilingType, IMapper mapper, AtoTaxDbContext context)
+        public GSTFilingTypesController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
         {
-            _dbGSTFilingType = dbGSTFilingType;
             _mapper = mapper;
             this._response= new();
             _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/GSTFilingTypes
@@ -44,7 +45,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<GSTFilingType> GSTFilingTypesList = await _dbGSTFilingType.GetAllAsync(null, arrIncludes);
+                IEnumerable<GSTFilingType> GSTFilingTypesList = await _unitOfWork.GSTFilingTypes.GetAllAsync(null, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<GSTFilingTypeDTO>>(GSTFilingTypesList);
                 _response.StatusCode = HttpStatusCode.OK;
@@ -71,7 +72,7 @@ namespace AtoTax.API.Controllers
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                GSTFilingType GSTFilingType = await _dbGSTFilingType.GetAsync(u => u.Id == id, false, arrIncludes);
+                GSTFilingType GSTFilingType = await _unitOfWork.GSTFilingTypes.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
                 _response.Result = _mapper.Map<GSTFilingTypeDTO>(GSTFilingType);
@@ -103,7 +104,7 @@ namespace AtoTax.API.Controllers
                 }
 
 
-                var oldGSTFilingType = await _dbGSTFilingType.GetAsync(u => u.Id == id, tracked: false);
+                var oldGSTFilingType = await _unitOfWork.GSTFilingTypes.GetAsync(u => u.Id == id, tracked: false);
 
                 if (oldGSTFilingType == null)
                 {
@@ -119,7 +120,7 @@ namespace AtoTax.API.Controllers
                 //// dont update the below field as they are not part of updateDTO  and hence will become null
                 GSTFilingType.CreatedDate = oldGSTFilingType.CreatedDate;
 
-                await _dbGSTFilingType.UpdateAsync(GSTFilingType);
+                await _unitOfWork.GSTFilingTypes.UpdateAsync(GSTFilingType);
 
                 if (!ModelState.IsValid)
                 {
@@ -128,6 +129,7 @@ namespace AtoTax.API.Controllers
                     return _response;
                  }
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = GSTFilingType;
                 return Ok(_response);
@@ -149,7 +151,7 @@ namespace AtoTax.API.Controllers
             try
             {
 
-                if (await _dbGSTFilingType.GetAsync(u => u.FilingType == GSTFilingTypeCreateDTO.FilingType) != null)
+                if (await _unitOfWork.GSTFilingTypes.GetAsync(u => u.FilingType == GSTFilingTypeCreateDTO.FilingType) != null)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return _response;
@@ -157,8 +159,9 @@ namespace AtoTax.API.Controllers
 
                 var GSTFilingType = _mapper.Map<GSTFilingType>(GSTFilingTypeCreateDTO);
                 GSTFilingType.CreatedDate= DateTime.UtcNow;
-                await _dbGSTFilingType.CreateAsync(GSTFilingType);
+                await _unitOfWork.GSTFilingTypes.CreateAsync(GSTFilingType);
 
+                await _unitOfWork.CompleteAsync();
                 _response.Result = _mapper.Map<GSTFilingTypeDTO>(GSTFilingType);
                 _response.StatusCode = HttpStatusCode.Created;
 
@@ -186,15 +189,16 @@ namespace AtoTax.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var GSTFilingType = await _dbGSTFilingType.GetAsync(u => u.Id == id);
+                var GSTFilingType = await _unitOfWork.GSTFilingTypes.GetAsync(u => u.Id == id);
                 if (GSTFilingType == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                await _dbGSTFilingType.RemoveAsync(GSTFilingType);
+                await _unitOfWork.GSTFilingTypes.RemoveAsync(GSTFilingType);
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);
             }

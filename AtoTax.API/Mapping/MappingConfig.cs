@@ -91,20 +91,11 @@ namespace AtoTax.API.Mapping
 
 
 
-            //DefaultCharges
-            CreateMap<DefaultCharge, DefaultChargeDTO>().ReverseMap();
-            CreateMap<DefaultChargeCreateDTO, DefaultCharge>()
-                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
-                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
-            CreateMap<DefaultChargeUpdateDTO, DefaultCharge>()
-                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
-
-
             //ServiceCategory
             CreateMap<ServiceCategory, ServiceCategoryDTO>().ReverseMap();
             CreateMap<ServiceCategoryCreateDTO, ServiceCategory>()
              .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
-                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+             .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
             CreateMap<ServiceCategoryUpdateDTO, ServiceCategory>()
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
 

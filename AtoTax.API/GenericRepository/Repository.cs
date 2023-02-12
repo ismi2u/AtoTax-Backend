@@ -22,7 +22,7 @@ namespace AtoTax.API.GenericRepository
         public async Task CreateAsync(T entity)
         {
             await dbSet.AddAsync(entity);
-            await SaveAsync();
+            
         }
 
         public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, params string[] allIncludeStrings)
@@ -67,7 +67,7 @@ namespace AtoTax.API.GenericRepository
         public async Task RemoveAsync(T entity)
         {
             dbSet.Remove(entity);
-            await SaveAsync();
+            
         }
 
         public async Task SaveAsync()

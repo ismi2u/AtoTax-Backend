@@ -29,10 +29,10 @@ var _loggerconf = new LoggerConfiguration().ReadFrom.Configuration(builder.Confi
     .CreateLogger();
 
 builder.Logging.AddSerilog(_loggerconf);
-
-
+//flyiopostgres
+//PostgreSQLInLocalAppInContainer
 builder.Services.AddAutoMapper(typeof(MappingConfig));
-builder.Services.AddDbContextPool<AtoTaxDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLInLocalAppInContainer")));
+builder.Services.AddDbContextPool<AtoTaxDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("flyiopostgres")));
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<AtoTaxDbContext>()
                 .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>(TokenOptions.DefaultProvider);
@@ -40,7 +40,6 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 
 builder.Services.AddScoped<IGSTClientRepository, GSTClientRepository>();
 builder.Services.AddScoped<IStatusRepository, StatusRepository>();
-builder.Services.AddScoped<IDefaultChargeRepository, DefaultChargeRepository>();
 builder.Services.AddScoped<IMultimediaTypeRepository, MultimediaTypeRepository>();
 builder.Services.AddScoped<IAddressTypeRepository, AddressTypeRepository>();
 builder.Services.AddScoped<IPaymentTypeRepository, PaymentTypeRepository>();

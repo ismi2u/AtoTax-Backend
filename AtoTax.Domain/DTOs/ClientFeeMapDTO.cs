@@ -14,10 +14,10 @@ namespace AtoTax.Domain.DTOs
         public Guid Id { get; set; }
         public Guid GSTClientId { get; set; }
         public GSTClientDTO GSTClient { get; set; }
-        public double GSTMonthlySubmission { get; set; }
-        public double GSTAmendment { get; set; }
-        public double GSTAnnualReturnFiling { get; set; }
-        public double GSTNoticeService { get; set; }
+
+        public double DefaultCharge { get; set; }
+        public int? ServiceCategoryId { get; set; }
+        public ServiceCategoryDTO ServiceCategory { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? LastModifiedDate { get; set; }
 
@@ -27,13 +27,9 @@ namespace AtoTax.Domain.DTOs
         [Required]
         public Guid GSTClientId { get; set; }
         [Required]
-        public double GSTMonthlySubmission { get; set; }
+        public int ServiceCategoryId { get; set; }
         [Required]
-        public double GSTAmendment { get; set; }
-        [Required]
-        public double GSTAnnualReturnFiling { get; set; }
-        [Required]
-        public double GSTNoticeService { get; set; }
+        public double DefaultCharge { get; set; }
 
     }
 
@@ -45,14 +41,10 @@ namespace AtoTax.Domain.DTOs
         [Required]
         public Guid GSTClientId { get; set; }
         [Required]
-        public double GSTMonthlySubmission { get; set; }
-        [Required]
-        public double GSTAmendment { get; set; }
-        [Required]
-        public double GSTAnnualReturnFiling { get; set; }
-        [Required]
-        public double GSTNoticeService { get; set; }
+        public int ServiceCategoryId { get; set; }
 
+        [Required]
+        public double DefaultCharge { get; set; }
     }
 
 

@@ -11,6 +11,7 @@ using AtoTax.Domain.DTOs;
 using AutoMapper;
 using System.Net;
 using AtoTax.API.Repository.Interfaces;
+using AtoTax.API.GenericRepository;
 
 namespace AtoTax.API.Controllers
 {
@@ -19,16 +20,16 @@ namespace AtoTax.API.Controllers
     public class CollectionAndBalancesController : ControllerBase
     {
         protected APIResponse _response;
-        private readonly ICollectionAndBalanceRepository _dbCollectionAndBalance;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
 
-        public CollectionAndBalancesController(ICollectionAndBalanceRepository dbCollectionAndBalance, IMapper mapper, AtoTaxDbContext context)
+        public CollectionAndBalancesController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
         {
-            _dbCollectionAndBalance = dbCollectionAndBalance;
             _mapper = mapper;
             this._response= new();
             _context = context;
+            _unitOfWork= unitOfWork;
         }
 
         // GET: api/CollectionAndBalances
@@ -47,7 +48,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<CollectionAndBalance> CollectionAndBalancesList = await _dbCollectionAndBalance.GetAllAsync(null, arrIncludes);
+                IEnumerable<CollectionAndBalance> CollectionAndBalancesList = await _unitOfWork.CollectionAndBalances.GetAllAsync(null, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<CollectionAndBalanceDTO>>(CollectionAndBalancesList);
                 _response.StatusCode = HttpStatusCode.OK;
@@ -77,7 +78,7 @@ namespace AtoTax.API.Controllers
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                CollectionAndBalance CollectionAndBalance = await _dbCollectionAndBalance.GetAsync(u => u.Id == id, false, arrIncludes);
+                CollectionAndBalance CollectionAndBalance = await _unitOfWork.CollectionAndBalances.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
                 _response.Result = _mapper.Map<CollectionAndBalanceDTO>(CollectionAndBalance);
@@ -109,7 +110,7 @@ namespace AtoTax.API.Controllers
                 }
 
 
-                var oldCollectionAndBalance = await _dbCollectionAndBalance.GetAsync(u => u.Id == id, tracked: false);
+                var oldCollectionAndBalance = await _unitOfWork.CollectionAndBalances.GetAsync(u => u.Id == id, tracked: false);
 
                 if (oldCollectionAndBalance == null)
                 {
@@ -119,7 +120,7 @@ namespace AtoTax.API.Controllers
 
                 var CollectionAndBalance = _mapper.Map<CollectionAndBalance>(CollectionAndBalanceUpdateDTO);
 
-                await _dbCollectionAndBalance.UpdateAsync(CollectionAndBalance);
+                await _unitOfWork.CollectionAndBalances.UpdateAsync(CollectionAndBalance);
 
                 if (!ModelState.IsValid)
                 {
@@ -128,6 +129,7 @@ namespace AtoTax.API.Controllers
                     return _response;
                  }
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = CollectionAndBalance;
                 return Ok(_response);
@@ -157,10 +159,12 @@ namespace AtoTax.API.Controllers
 
                 var CollectionAndBalance = _mapper.Map<CollectionAndBalance>(CollectionAndBalanceCreateDTO);
                 //CollectionAndBalance.CreatedDate= DateTime.UtcNow;
-                await _dbCollectionAndBalance.CreateAsync(CollectionAndBalance);
+                await _unitOfWork.CollectionAndBalances.CreateAsync(CollectionAndBalance);
 
+                await _unitOfWork.CompleteAsync();
                 _response.Result = _mapper.Map<CollectionAndBalanceDTO>(CollectionAndBalance);
                 _response.StatusCode = HttpStatusCode.Created;
+
 
                 return CreatedAtAction("GetCollectionAndBalance", new { id = CollectionAndBalance.Id }, _response);
             }
@@ -186,15 +190,16 @@ namespace AtoTax.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var CollectionAndBalance = await _dbCollectionAndBalance.GetAsync(u => u.Id == id);
+                var CollectionAndBalance = await _unitOfWork.CollectionAndBalances.GetAsync(u => u.Id == id);
                 if (CollectionAndBalance == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                await _dbCollectionAndBalance.RemoveAsync(CollectionAndBalance);
+                await _unitOfWork.CollectionAndBalances.RemoveAsync(CollectionAndBalance);
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);
             }

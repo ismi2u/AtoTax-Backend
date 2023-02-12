@@ -11,6 +11,7 @@ using AtoTax.Domain.DTOs;
 using AutoMapper;
 using System.Net;
 using AtoTax.API.Repository.Interfaces;
+using AtoTax.API.GenericRepository;
 
 namespace AtoTax.API.Controllers
 {
@@ -19,16 +20,16 @@ namespace AtoTax.API.Controllers
     public class MultimediaTypesController : ControllerBase
     {
         protected APIResponse _response;
-        private readonly IMultimediaTypeRepository _dbMultimediaType;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
 
-        public MultimediaTypesController(IMultimediaTypeRepository dbMultimediaType, IMapper mapper, AtoTaxDbContext context)
+        public MultimediaTypesController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
         {
-            _dbMultimediaType = dbMultimediaType;
             _mapper = mapper;
             this._response= new();
             _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/MultimediaTypes
@@ -44,7 +45,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<MultimediaType> MultimediaTypesList = await _dbMultimediaType.GetAllAsync(null, arrIncludes);
+                IEnumerable<MultimediaType> MultimediaTypesList = await _unitOfWork.MultimediaTypes.GetAllAsync(null, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<MultimediaTypeDTO>>(MultimediaTypesList);
                 _response.StatusCode = HttpStatusCode.OK;
@@ -71,7 +72,7 @@ namespace AtoTax.API.Controllers
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                MultimediaType MultimediaType = await _dbMultimediaType.GetAsync(u => u.Id == id, false, arrIncludes);
+                MultimediaType MultimediaType = await _unitOfWork.MultimediaTypes.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
                 _response.Result = _mapper.Map<MultimediaTypeDTO>(MultimediaType);
@@ -103,7 +104,7 @@ namespace AtoTax.API.Controllers
                 }
 
 
-                var oldMultimediaType = await _dbMultimediaType.GetAsync(u => u.Id == id, tracked: false);
+                var oldMultimediaType = await _unitOfWork.MultimediaTypes.GetAsync(u => u.Id == id, tracked: false);
 
                 if (oldMultimediaType == null)
                 {
@@ -119,7 +120,7 @@ namespace AtoTax.API.Controllers
                 //// dont update the below field as they are not part of updateDTO  and hence will become null
                 MultimediaType.CreatedDate = oldMultimediaType.CreatedDate;
 
-                await _dbMultimediaType.UpdateAsync(MultimediaType);
+                await _unitOfWork.MultimediaTypes.UpdateAsync(MultimediaType);
 
                 if (!ModelState.IsValid)
                 {
@@ -128,6 +129,7 @@ namespace AtoTax.API.Controllers
                     return _response;
                  }
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = MultimediaType;
                 return Ok(_response);
@@ -149,7 +151,7 @@ namespace AtoTax.API.Controllers
             try
             {
 
-                if (await _dbMultimediaType.GetAsync(u => u.Media == MultimediaTypeCreateDTO.Media) != null)
+                if (await _unitOfWork.MultimediaTypes.GetAsync(u => u.Media == MultimediaTypeCreateDTO.Media) != null)
                 {
                     _response.ErrorMessages = new List<string>() { "MultimediaType already Exists"};
                     _response.StatusCode = HttpStatusCode.BadRequest;
@@ -157,8 +159,9 @@ namespace AtoTax.API.Controllers
                 }
                 var MultimediaType = _mapper.Map<MultimediaType>(MultimediaTypeCreateDTO);
                 MultimediaType.CreatedDate= DateTime.UtcNow;
-                await _dbMultimediaType.CreateAsync(MultimediaType);
+                await _unitOfWork.MultimediaTypes.CreateAsync(MultimediaType);
 
+                await _unitOfWork.CompleteAsync();
                 _response.Result = _mapper.Map<MultimediaTypeDTO>(MultimediaType);
                 _response.StatusCode = HttpStatusCode.Created;
 
@@ -186,15 +189,16 @@ namespace AtoTax.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var MultimediaType = await _dbMultimediaType.GetAsync(u => u.Id == id);
+                var MultimediaType = await _unitOfWork.MultimediaTypes.GetAsync(u => u.Id == id);
                 if (MultimediaType == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                await _dbMultimediaType.RemoveAsync(MultimediaType);
+                await _unitOfWork.MultimediaTypes.RemoveAsync(MultimediaType);
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);
             }

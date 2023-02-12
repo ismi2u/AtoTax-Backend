@@ -100,6 +100,7 @@ namespace AtoTax.API.Controllers
                 statusCreateDTO.StatusType = statusCreateDTO.StatusType.ToLower();
                 var status = _mapper.Map<Status>(statusCreateDTO);
                 await _dbStatusTbl.CreateAsync(status);
+                await _dbStatusTbl.SaveAsync();
                 _response.Result = status;
                 _response.StatusCode = HttpStatusCode.Created;
 

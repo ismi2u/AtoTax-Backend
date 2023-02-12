@@ -11,6 +11,7 @@ using AtoTax.Domain.DTOs;
 using AutoMapper;
 using System.Net;
 using AtoTax.API.Repository.Interfaces;
+using AtoTax.API.GenericRepository;
 
 namespace AtoTax.API.Controllers
 {
@@ -19,16 +20,16 @@ namespace AtoTax.API.Controllers
     public class EmpJobRoleController : ControllerBase
     {
         protected APIResponse _response;
-        private readonly IEmpJobRoleRepository _dbEmpJobRole;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
 
-        public EmpJobRoleController(IEmpJobRoleRepository dbEmpJobRole, IMapper mapper, AtoTaxDbContext context)
+        public EmpJobRoleController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
         {
-            _dbEmpJobRole = dbEmpJobRole;
             _mapper = mapper;
             this._response= new();
             _context = context;
+            _unitOfWork= unitOfWork;
         }
 
         // GET: api/EmpJobRole
@@ -44,7 +45,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<EmpJobRole> EmpJobRoleList = await _dbEmpJobRole.GetAllAsync(null, arrIncludes);
+                IEnumerable<EmpJobRole> EmpJobRoleList = await _unitOfWork.EmpJobRoles.GetAllAsync(null, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<EmpJobRoleDTO>>(EmpJobRoleList);
                 _response.StatusCode = HttpStatusCode.OK;
@@ -71,7 +72,7 @@ namespace AtoTax.API.Controllers
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                EmpJobRole EmpJobRole = await _dbEmpJobRole.GetAsync(u => u.Id == id, false, arrIncludes);
+                EmpJobRole EmpJobRole = await _unitOfWork.EmpJobRoles.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
                 _response.Result = _mapper.Map<EmpJobRoleDTO>(EmpJobRole);
@@ -103,7 +104,7 @@ namespace AtoTax.API.Controllers
                 }
 
 
-                var oldEmpJobRole = await _dbEmpJobRole.GetAsync(u => u.Id == id, tracked: false);
+                var oldEmpJobRole = await _unitOfWork.EmpJobRoles.GetAsync(u => u.Id == id, tracked: false);
 
                 if (oldEmpJobRole == null)
                 {
@@ -119,7 +120,7 @@ namespace AtoTax.API.Controllers
                 //// dont update the below field as they are not part of updateDTO  and hence will become null
                 EmpJobRole.CreatedDate = oldEmpJobRole.CreatedDate;
 
-                await _dbEmpJobRole.UpdateAsync(EmpJobRole);
+                await _unitOfWork.EmpJobRoles.UpdateAsync(EmpJobRole);
 
                 if (!ModelState.IsValid)
                 {
@@ -128,6 +129,7 @@ namespace AtoTax.API.Controllers
                     return _response;
                  }
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = EmpJobRole;
                 return Ok(_response);
@@ -149,7 +151,7 @@ namespace AtoTax.API.Controllers
             try
             {
 
-                if (await _dbEmpJobRole.GetAsync(u => u.JobRole == EmpJobRoleCreateDTO.JobRole) != null)
+                if (await _unitOfWork.EmpJobRoles.GetAsync(u => u.JobRole == EmpJobRoleCreateDTO.JobRole) != null)
                 {
                     _response.ErrorMessages = new List<string>() { "Job Role already Exists"};
                     _response.StatusCode = HttpStatusCode.BadRequest;
@@ -157,8 +159,9 @@ namespace AtoTax.API.Controllers
                 }
                 var EmpJobRole = _mapper.Map<EmpJobRole>(EmpJobRoleCreateDTO);
                 EmpJobRole.CreatedDate= DateTime.UtcNow;
-                await _dbEmpJobRole.CreateAsync(EmpJobRole);
+                await _unitOfWork.EmpJobRoles.CreateAsync(EmpJobRole);
 
+                await _unitOfWork.CompleteAsync();
                 _response.Result = _mapper.Map<EmpJobRoleDTO>(EmpJobRole);
                 _response.StatusCode = HttpStatusCode.Created;
 
@@ -186,15 +189,16 @@ namespace AtoTax.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var EmpJobRole = await _dbEmpJobRole.GetAsync(u => u.Id == id);
+                var EmpJobRole = await _unitOfWork.EmpJobRoles.GetAsync(u => u.Id == id);
                 if (EmpJobRole == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                await _dbEmpJobRole.RemoveAsync(EmpJobRole);
+                await _unitOfWork.EmpJobRoles.RemoveAsync(EmpJobRole);
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);
             }

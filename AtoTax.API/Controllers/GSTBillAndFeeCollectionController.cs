@@ -11,6 +11,7 @@ using AtoTax.Domain.DTOs;
 using AutoMapper;
 using System.Net;
 using AtoTax.API.Repository.Interfaces;
+using AtoTax.API.GenericRepository;
 
 namespace AtoTax.API.Controllers
 {
@@ -19,16 +20,16 @@ namespace AtoTax.API.Controllers
     public class GSTBillAndFeeCollectionController : ControllerBase
     {
         protected APIResponse _response;
-        private readonly IGSTBillAndFeeCollectionRepository _dbGSTBillAndFeeCollection;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
 
-        public GSTBillAndFeeCollectionController(IGSTBillAndFeeCollectionRepository dbGSTBillAndFeeCollection, IMapper mapper, AtoTaxDbContext context)
+        public GSTBillAndFeeCollectionController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
         {
-            _dbGSTBillAndFeeCollection = dbGSTBillAndFeeCollection;
             _mapper = mapper;
             this._response= new();
             _context = context;
+            _unitOfWork= unitOfWork;
         }
 
         // GET: api/GSTBillAndFeeCollection
@@ -44,7 +45,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<GSTBillAndFeeCollection> GSTBillAndFeeCollectionList = await _dbGSTBillAndFeeCollection.GetAllAsync(null, arrIncludes);
+                IEnumerable<GSTBillAndFeeCollection> GSTBillAndFeeCollectionList = await _unitOfWork.GSTBillAndFeeCollections.GetAllAsync(null, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<GSTBillAndFeeCollectionDTO>>(GSTBillAndFeeCollectionList);
                 _response.StatusCode = HttpStatusCode.OK;
@@ -71,7 +72,7 @@ namespace AtoTax.API.Controllers
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                GSTBillAndFeeCollection GSTBillAndFeeCollection = await _dbGSTBillAndFeeCollection.GetAsync(u => u.Id == id, false, arrIncludes);
+                GSTBillAndFeeCollection GSTBillAndFeeCollection = await _unitOfWork.GSTBillAndFeeCollections.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
                 _response.Result = _mapper.Map<GSTBillAndFeeCollectionDTO>(GSTBillAndFeeCollection);
@@ -103,7 +104,7 @@ namespace AtoTax.API.Controllers
                 }
 
 
-                var oldGSTBillAndFeeCollection = await _dbGSTBillAndFeeCollection.GetAsync(u => u.Id == id, tracked: false);
+                var oldGSTBillAndFeeCollection = await _unitOfWork.GSTBillAndFeeCollections.GetAsync(u => u.Id == id, tracked: false);
 
                 if (oldGSTBillAndFeeCollection == null)
                 {
@@ -119,7 +120,7 @@ namespace AtoTax.API.Controllers
                 ////// dont update the below field as they are not part of updateDTO  and hence will become null
                 //GSTBillAndFeeCollection.CreatedDate = oldGSTBillAndFeeCollection.CreatedDate;
 
-                await _dbGSTBillAndFeeCollection.UpdateAsync(GSTBillAndFeeCollection);
+                await _unitOfWork.GSTBillAndFeeCollections.UpdateAsync(GSTBillAndFeeCollection);
 
                 if (!ModelState.IsValid)
                 {
@@ -128,6 +129,7 @@ namespace AtoTax.API.Controllers
                     return _response;
                  }
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = GSTBillAndFeeCollection;
                 return Ok(_response);
@@ -157,8 +159,9 @@ namespace AtoTax.API.Controllers
 
                 var GSTBillAndFeeCollection = _mapper.Map<GSTBillAndFeeCollection>(GSTBillAndFeeCollectionCreateDTO);
                 //GSTBillAndFeeCollection.CreatedDate= DateTime.UtcNow;
-                await _dbGSTBillAndFeeCollection.CreateAsync(GSTBillAndFeeCollection);
+                await _unitOfWork.GSTBillAndFeeCollections.CreateAsync(GSTBillAndFeeCollection);
 
+                await _unitOfWork.CompleteAsync();
                 _response.Result = _mapper.Map<GSTBillAndFeeCollectionDTO>(GSTBillAndFeeCollection);
                 _response.StatusCode = HttpStatusCode.Created;
 
@@ -186,15 +189,16 @@ namespace AtoTax.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var GSTBillAndFeeCollection = await _dbGSTBillAndFeeCollection.GetAsync(u => u.Id == id);
+                var GSTBillAndFeeCollection = await _unitOfWork.GSTBillAndFeeCollections.GetAsync(u => u.Id == id);
                 if (GSTBillAndFeeCollection == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                await _dbGSTBillAndFeeCollection.RemoveAsync(GSTBillAndFeeCollection);
+                await _unitOfWork.GSTBillAndFeeCollections.RemoveAsync(GSTBillAndFeeCollection);
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);
             }

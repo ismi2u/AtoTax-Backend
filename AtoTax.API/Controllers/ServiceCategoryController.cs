@@ -11,6 +11,7 @@ using AtoTax.Domain.DTOs;
 using AutoMapper;
 using System.Net;
 using AtoTax.API.Repository.Interfaces;
+using AtoTax.API.GenericRepository;
 
 namespace AtoTax.API.Controllers
 {
@@ -19,16 +20,17 @@ namespace AtoTax.API.Controllers
     public class ServiceCategoryController : ControllerBase
     {
         protected APIResponse _response;
-        private readonly IServiceCategoryRepository _dbServiceCategory;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
 
-        public ServiceCategoryController(IServiceCategoryRepository dbServiceCategory, IMapper mapper, AtoTaxDbContext context)
+        public ServiceCategoryController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
         {
-            _dbServiceCategory = dbServiceCategory;
+           
             _mapper = mapper;
             this._response= new();
             _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/ServiceCategorys
@@ -44,7 +46,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<ServiceCategory> ServiceCategorysList = await _dbServiceCategory.GetAllAsync(null, arrIncludes);
+                IEnumerable<ServiceCategory> ServiceCategorysList = await _unitOfWork.ServiceCategories.GetAllAsync(null, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<ServiceCategoryDTO>>(ServiceCategorysList);
                 _response.StatusCode = HttpStatusCode.OK;
@@ -71,7 +73,7 @@ namespace AtoTax.API.Controllers
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                ServiceCategory ServiceCategory = await _dbServiceCategory.GetAsync(u => u.Id == id, false, arrIncludes);
+                ServiceCategory ServiceCategory = await _unitOfWork.ServiceCategories.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
                 _response.Result = _mapper.Map<ServiceCategoryDTO>(ServiceCategory);
@@ -103,7 +105,7 @@ namespace AtoTax.API.Controllers
                 }
 
 
-                var oldServiceCategory = await _dbServiceCategory.GetAsync(u => u.Id == id, tracked: false);
+                var oldServiceCategory = await _unitOfWork.ServiceCategories.GetAsync(u => u.Id == id, tracked: false);
 
                 if (oldServiceCategory == null)
                 {
@@ -115,8 +117,9 @@ namespace AtoTax.API.Controllers
 
                 //// dont update the below field as they are not part of updateDTO  and hence will become null
                 ServiceCategory.CreatedDate = oldServiceCategory.CreatedDate;
+                ServiceCategory.PreviousCharge = oldServiceCategory.DefaultCharge;
 
-                await _dbServiceCategory.UpdateAsync(ServiceCategory);
+                await _unitOfWork.ServiceCategories.UpdateAsync(ServiceCategory);
 
                 if (!ModelState.IsValid)
                 {
@@ -125,6 +128,7 @@ namespace AtoTax.API.Controllers
                     return _response;
                  }
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = ServiceCategory;
                 return Ok(_response);
@@ -146,16 +150,17 @@ namespace AtoTax.API.Controllers
             try
             {
 
-                if (await _dbServiceCategory.GetAsync(u => u.ServiceName == ServiceCategoryCreateDTO.ServiceName) != null)
+                if (await _unitOfWork.ServiceCategories.GetAsync(u => u.ServiceName == ServiceCategoryCreateDTO.ServiceName) != null)
                 {
                     _response.ErrorMessages = new List<string>() { "ServiceCategory already Exists"};
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return _response;
                 }
                 var ServiceCategory = _mapper.Map<ServiceCategory>(ServiceCategoryCreateDTO);
-                ServiceCategory.CreatedDate= DateTime.UtcNow;
-                await _dbServiceCategory.CreateAsync(ServiceCategory);
+                ServiceCategory.PreviousCharge= ServiceCategoryCreateDTO.DefaultCharge;
+                await _unitOfWork.ServiceCategories.CreateAsync(ServiceCategory);
 
+                await _unitOfWork.CompleteAsync();
                 _response.Result = _mapper.Map<ServiceCategoryDTO>(ServiceCategory);
                 _response.StatusCode = HttpStatusCode.Created;
 
@@ -183,15 +188,16 @@ namespace AtoTax.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var ServiceCategory = await _dbServiceCategory.GetAsync(u => u.Id == id);
+                var ServiceCategory = await _unitOfWork.ServiceCategories.GetAsync(u => u.Id == id);
                 if (ServiceCategory == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                await _dbServiceCategory.RemoveAsync(ServiceCategory);
+                await _unitOfWork.ServiceCategories.RemoveAsync(ServiceCategory);
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);
             }

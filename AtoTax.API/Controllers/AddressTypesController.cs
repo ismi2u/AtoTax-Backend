@@ -11,6 +11,7 @@ using AtoTax.Domain.DTOs;
 using AutoMapper;
 using System.Net;
 using AtoTax.API.Repository.Interfaces;
+using AtoTax.API.GenericRepository;
 
 namespace AtoTax.API.Controllers
 {
@@ -19,16 +20,16 @@ namespace AtoTax.API.Controllers
     public class AddressTypesController : ControllerBase
     {
         protected APIResponse _response;
-        private readonly IAddressTypeRepository _dbAddressType;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
 
-        public AddressTypesController(IAddressTypeRepository dbAddressType, IMapper mapper, AtoTaxDbContext context)
+        public AddressTypesController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
         {
-            _dbAddressType = dbAddressType;
             _mapper = mapper;
             this._response= new();
             _context = context;
+            _unitOfWork= unitOfWork;
         }
 
         // GET: api/AddressTypes
@@ -44,7 +45,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<AddressType> AddressTypesList = await _dbAddressType.GetAllAsync(null, arrIncludes);
+                IEnumerable<AddressType> AddressTypesList = await _unitOfWork.AddressTypes.GetAllAsync(null, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<AddressTypeDTO>>(AddressTypesList);
                 _response.StatusCode = HttpStatusCode.OK;
@@ -71,7 +72,7 @@ namespace AtoTax.API.Controllers
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                AddressType AddressType = await _dbAddressType.GetAsync(u => u.Id == id, false, arrIncludes);
+                AddressType AddressType = await _unitOfWork.AddressTypes.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
                 _response.Result = _mapper.Map<AddressTypeDTO>(AddressType);
@@ -103,7 +104,7 @@ namespace AtoTax.API.Controllers
                 }
 
 
-                var oldAddressType = await _dbAddressType.GetAsync(u => u.Id == id, tracked: false);
+                var oldAddressType = await _unitOfWork.AddressTypes.GetAsync(u => u.Id == id, tracked: false);
 
                 if (oldAddressType == null)
                 {
@@ -119,7 +120,7 @@ namespace AtoTax.API.Controllers
                 //// dont update the below field as they are not part of updateDTO  and hence will become null
                 AddressType.CreatedDate = oldAddressType.CreatedDate;
 
-                await _dbAddressType.UpdateAsync(AddressType);
+                await _unitOfWork.AddressTypes.UpdateAsync(AddressType);
 
                 if (!ModelState.IsValid)
                 {
@@ -128,6 +129,7 @@ namespace AtoTax.API.Controllers
                     return _response;
                  }
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = AddressType;
                 return Ok(_response);
@@ -149,7 +151,7 @@ namespace AtoTax.API.Controllers
             try
             {
 
-                if (await _dbAddressType.GetAsync(u => u.AddressTypeName == AddressTypeCreateDTO.AddressTypeName) != null)
+                if (await _unitOfWork.AddressTypes.GetAsync(u => u.AddressTypeName == AddressTypeCreateDTO.AddressTypeName) != null)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return _response;
@@ -157,8 +159,9 @@ namespace AtoTax.API.Controllers
                
                 var AddressType = _mapper.Map<AddressType>(AddressTypeCreateDTO);
                 AddressType.CreatedDate= DateTime.UtcNow;
-                await _dbAddressType.CreateAsync(AddressType);
+                await _unitOfWork.AddressTypes.CreateAsync(AddressType);
 
+                await _unitOfWork.CompleteAsync();
                 _response.Result = _mapper.Map<AddressTypeDTO>(AddressType);
                 _response.StatusCode = HttpStatusCode.Created;
 
@@ -186,15 +189,16 @@ namespace AtoTax.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var AddressType = await _dbAddressType.GetAsync(u => u.Id == id);
+                var AddressType = await _unitOfWork.AddressTypes.GetAsync(u => u.Id == id);
                 if (AddressType == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                await _dbAddressType.RemoveAsync(AddressType);
+                await _unitOfWork.AddressTypes.RemoveAsync(AddressType);
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);
             }

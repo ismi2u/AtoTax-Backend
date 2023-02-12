@@ -11,6 +11,7 @@ using AtoTax.Domain.DTOs;
 using AutoMapper;
 using System.Net;
 using AtoTax.API.Repository.Interfaces;
+using AtoTax.API.GenericRepository;
 
 namespace AtoTax.API.Controllers
 {
@@ -19,16 +20,16 @@ namespace AtoTax.API.Controllers
     public class EmployeesController : ControllerBase
     {
         protected APIResponse _response;
-        private readonly IEmployeeRepository _dbEmployee;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
 
-        public EmployeesController(IEmployeeRepository dbEmployee, IMapper mapper, AtoTaxDbContext context)
+        public EmployeesController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
         {
-            _dbEmployee = dbEmployee;
             _mapper = mapper;
             this._response= new();
             _context = context;
+            _unitOfWork= unitOfWork;
         }
 
         // GET: api/Employee
@@ -44,7 +45,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<Employee> EmployeeList = await _dbEmployee.GetAllAsync(null, arrIncludes);
+                IEnumerable<Employee> EmployeeList = await _unitOfWork.Employees.GetAllAsync(null, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<EmployeeDTO>>(EmployeeList);
                 _response.StatusCode = HttpStatusCode.OK;
@@ -71,7 +72,7 @@ namespace AtoTax.API.Controllers
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                Employee Employee = await _dbEmployee.GetAsync(u => u.Id == id, false, arrIncludes);
+                Employee Employee = await _unitOfWork.Employees.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
                 _response.Result = _mapper.Map<EmployeeDTO>(Employee);
@@ -103,7 +104,7 @@ namespace AtoTax.API.Controllers
                 }
 
 
-                var oldEmployee = await _dbEmployee.GetAsync(u => u.Id == id, tracked: false);
+                var oldEmployee = await _unitOfWork.Employees.GetAsync(u => u.Id == id, tracked: false);
 
                 if (oldEmployee == null)
                 {
@@ -120,7 +121,7 @@ namespace AtoTax.API.Controllers
                 //// dont update the below field as they are not part of updateDTO  and hence will become null
                 Employee.CreatedDate = oldEmployee.CreatedDate;
 
-                await _dbEmployee.UpdateAsync(Employee);
+                await _unitOfWork.Employees.UpdateAsync(Employee);
 
                 if (!ModelState.IsValid)
                 {
@@ -129,6 +130,7 @@ namespace AtoTax.API.Controllers
                     return _response;
                  }
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = Employee;
                 return Ok(_response);
@@ -150,7 +152,7 @@ namespace AtoTax.API.Controllers
             try
             {
 
-                if (await _dbEmployee.GetAsync(u => u.FirstName == EmployeeCreateDTO.FirstName 
+                if (await _unitOfWork.Employees.GetAsync(u => u.FirstName == EmployeeCreateDTO.FirstName 
                                                 && u.LastName == EmployeeCreateDTO.LastName
                                                 && u.DOB == EmployeeCreateDTO.DOB) != null)
                 {
@@ -160,8 +162,9 @@ namespace AtoTax.API.Controllers
                 }
                 var Employee = _mapper.Map<Employee>(EmployeeCreateDTO);
                 Employee.CreatedDate= DateTime.UtcNow;
-                await _dbEmployee.CreateAsync(Employee);
+                await _unitOfWork.Employees.CreateAsync(Employee);
 
+                await _unitOfWork.CompleteAsync();
                 _response.Result = _mapper.Map<EmployeeDTO>(Employee);
                 _response.StatusCode = HttpStatusCode.Created;
 
@@ -189,15 +192,16 @@ namespace AtoTax.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var Employee = await _dbEmployee.GetAsync(u => u.Id == id);
+                var Employee = await _unitOfWork.Employees.GetAsync(u => u.Id == id);
                 if (Employee == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                await _dbEmployee.RemoveAsync(Employee);
+                await _unitOfWork.Employees.RemoveAsync(Employee);
 
+                await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);
             }

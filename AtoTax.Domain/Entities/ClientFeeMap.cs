@@ -13,14 +13,14 @@ namespace AtoTax.Domain.Entities
         [ForeignKey("GSTClient")]
         public Guid GSTClientId { get; set; }
         public virtual GSTClient GSTClient { get; set; }
+
         [Required]
-        public double GSTMonthlySubmission { get; set; }
+        [ForeignKey("ServiceCategory")]
+        public int ServiceCategoryId { get; set; }
+        public virtual ServiceCategory ServiceCategory { get; set; }
+
         [Required]
-        public double GSTAmendment { get; set; }
-        [Required]
-        public double GSTAnnualReturnFiling { get; set; }
-        [Required]
-        public double GSTNoticeService { get; set; }
+        public double DefaultCharge { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? LastModifiedDate { get; set; }
 
