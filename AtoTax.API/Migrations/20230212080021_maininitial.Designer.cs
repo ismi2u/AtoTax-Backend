@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AtoTax.API.Migrations
 {
     [DbContext(typeof(AtoTaxDbContext))]
-    [Migration("20230211223222_maininitial")]
+    [Migration("20230212080021_maininitial")]
     partial class maininitial
     {
         /// <inheritdoc />
@@ -519,7 +519,7 @@ namespace AtoTax.API.Migrations
                             Id = new Guid("ebf7cf6d-26fa-40a7-90ab-b86402a7e594"),
                             ContactEmailId = "test@test.com",
                             ContactName = "Raja Mohamed",
-                            CreatedDate = new DateTime(2023, 2, 11, 22, 32, 21, 853, DateTimeKind.Utc).AddTicks(9623),
+                            CreatedDate = new DateTime(2023, 2, 12, 8, 0, 20, 507, DateTimeKind.Utc).AddTicks(9469),
                             EWAYBillPassword = "EWAYBillPassword",
                             EWAYBillUserName = "EWAYBillUserName",
                             GSTAnnualTurnOver = 10000.0,
@@ -528,10 +528,10 @@ namespace AtoTax.API.Migrations
                             GSTIN = "123456789",
                             GSTRecoveryEmailId = "recover@test.com",
                             GSTRecoveryEmailPassword = "GSTRecoveryEmailPassword",
-                            GSTRegDate = new DateTime(2023, 2, 11, 22, 32, 21, 853, DateTimeKind.Utc).AddTicks(9613),
+                            GSTRegDate = new DateTime(2023, 2, 12, 8, 0, 20, 507, DateTimeKind.Utc).AddTicks(9459),
                             GSTUserName = "gstusername",
                             GSTUserPassword = "GSTUserPassword",
-                            LastModifiedDate = new DateTime(2023, 2, 11, 22, 32, 21, 853, DateTimeKind.Utc).AddTicks(9627),
+                            LastModifiedDate = new DateTime(2023, 2, 12, 8, 0, 20, 507, DateTimeKind.Utc).AddTicks(9472),
                             MobileNumber = "829733325",
                             PhoneNumber = "829733325",
                             ProprietorName = "Rexona Co",
