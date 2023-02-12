@@ -6,17 +6,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AtoTax.API.Repository.Repos
 {
-    public class MediaTypeRepository : Repository<MediaType>, IMediaTypeRepository
+    public class MultimediaTypeRepository : Repository<MultimediaType>, IMultimediaTypeRepository
     {
         private readonly AtoTaxDbContext _context;
-        public MediaTypeRepository(AtoTaxDbContext context) : base(context)
+        private readonly new ILogger<MultimediaType> _logger;
+        public MultimediaTypeRepository(AtoTaxDbContext context, ILogger<MultimediaType> logger) : base(context, logger)
         {
 
             _context = context;
+            _logger = logger;
         }
 
 
-        public async Task<MediaType> UpdateAsync(MediaType entity)
+        public async Task<MultimediaType> UpdateAsync(MultimediaType entity)
         {
             entity.LastModifiedDate = DateTime.UtcNow;
 

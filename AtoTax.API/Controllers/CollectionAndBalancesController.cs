@@ -16,26 +16,26 @@ namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    public class GSTPaidDetailsController : ControllerBase
+    public class CollectionAndBalancesController : ControllerBase
     {
         protected APIResponse _response;
-        private readonly IGSTPaidDetailRepository _dbGSTPaidDetail;
+        private readonly ICollectionAndBalanceRepository _dbCollectionAndBalance;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
 
-        public GSTPaidDetailsController(IGSTPaidDetailRepository dbGSTPaidDetail, IMapper mapper, AtoTaxDbContext context)
+        public CollectionAndBalancesController(ICollectionAndBalanceRepository dbCollectionAndBalance, IMapper mapper, AtoTaxDbContext context)
         {
-            _dbGSTPaidDetail = dbGSTPaidDetail;
+            _dbCollectionAndBalance = dbCollectionAndBalance;
             _mapper = mapper;
             this._response= new();
             _context = context;
         }
 
-        // GET: api/GSTPaidDetails
+        // GET: api/CollectionAndBalances
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetGSTPaidDetails()
+        public async Task<ActionResult<APIResponse>> GetCollectionAndBalances()
         {
 
             List<string> includelist = new List<string>();
@@ -47,9 +47,9 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<GSTPaidDetail> GSTPaidDetailsList = await _dbGSTPaidDetail.GetAllAsync(null, arrIncludes);
+                IEnumerable<CollectionAndBalance> CollectionAndBalancesList = await _dbCollectionAndBalance.GetAllAsync(null, arrIncludes);
 
-                _response.Result = _mapper.Map<IEnumerable<GSTPaidDetailDTO>>(GSTPaidDetailsList);
+                _response.Result = _mapper.Map<IEnumerable<CollectionAndBalanceDTO>>(CollectionAndBalancesList);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
@@ -61,12 +61,12 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
-        // GET: api/GSTPaidDetails/5
+        // GET: api/CollectionAndBalances/5
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetGSTPaidDetail(Guid id)
+        public async Task<ActionResult<APIResponse>> GetCollectionAndBalance(Guid id)
         {
 
             List<string> includelist = new List<string>();
@@ -77,10 +77,10 @@ namespace AtoTax.API.Controllers
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                GSTPaidDetail GSTPaidDetail = await _dbGSTPaidDetail.GetAsync(u => u.Id == id, false, arrIncludes);
+                CollectionAndBalance CollectionAndBalance = await _dbCollectionAndBalance.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
-                _response.Result = _mapper.Map<GSTPaidDetailDTO>(GSTPaidDetail);
+                _response.Result = _mapper.Map<CollectionAndBalanceDTO>(CollectionAndBalance);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
@@ -93,33 +93,33 @@ namespace AtoTax.API.Controllers
            
         }
 
-        // PUT: api/GSTPaidDetails/5
+        // PUT: api/CollectionAndBalances/5
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> UpdateGSTPaidDetail(Guid id, GSTPaidDetailUpdateDTO GSTPaidDetailUpdateDTO)
+        public async Task<ActionResult<APIResponse>> UpdateCollectionAndBalance(Guid id, CollectionAndBalanceUpdateDTO CollectionAndBalanceUpdateDTO)
         {
             try
             {
-                if (id == Guid.Empty || !(id == GSTPaidDetailUpdateDTO.Id))
+                if (id == Guid.Empty || !(id == CollectionAndBalanceUpdateDTO.Id))
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
 
 
-                var oldGSTPaidDetail = await _dbGSTPaidDetail.GetAsync(u => u.Id == id, tracked: false);
+                var oldCollectionAndBalance = await _dbCollectionAndBalance.GetAsync(u => u.Id == id, tracked: false);
 
-                if (oldGSTPaidDetail == null)
+                if (oldCollectionAndBalance == null)
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;
                     return _response;
                 }
 
-                var GSTPaidDetail = _mapper.Map<GSTPaidDetail>(GSTPaidDetailUpdateDTO);
+                var CollectionAndBalance = _mapper.Map<CollectionAndBalance>(CollectionAndBalanceUpdateDTO);
 
-                await _dbGSTPaidDetail.UpdateAsync(GSTPaidDetail);
+                await _dbCollectionAndBalance.UpdateAsync(CollectionAndBalance);
 
                 if (!ModelState.IsValid)
                 {
@@ -129,7 +129,7 @@ namespace AtoTax.API.Controllers
                  }
 
                 _response.StatusCode = HttpStatusCode.NoContent;
-                _response.Result = GSTPaidDetail;
+                _response.Result = CollectionAndBalance;
                 return Ok(_response);
             }
             catch (Exception ex)
@@ -140,29 +140,29 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
-        // POST: api/GSTPaidDetails
+        // POST: api/CollectionAndBalances
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> CreateGSTPaidDetail(GSTPaidDetailCreateDTO GSTPaidDetailCreateDTO)
+        public async Task<ActionResult<APIResponse>> CreateCollectionAndBalance(CollectionAndBalanceCreateDTO CollectionAndBalanceCreateDTO)
         {
             try
             {
 
-                //if (await _dbGSTPaidDetail.GetAsync(u => u.FilingType == GSTPaidDetailCreateDTO.FilingType) != null)
+                //if (await _dbCollectionAndBalance.GetAsync(u => u.FilingType == CollectionAndBalanceCreateDTO.FilingType) != null)
                 //{
                 //    _response.StatusCode = HttpStatusCode.BadRequest;
                 //    return _response;
                 //}
 
-                var GSTPaidDetail = _mapper.Map<GSTPaidDetail>(GSTPaidDetailCreateDTO);
-                //GSTPaidDetail.CreatedDate= DateTime.UtcNow;
-                await _dbGSTPaidDetail.CreateAsync(GSTPaidDetail);
+                var CollectionAndBalance = _mapper.Map<CollectionAndBalance>(CollectionAndBalanceCreateDTO);
+                //CollectionAndBalance.CreatedDate= DateTime.UtcNow;
+                await _dbCollectionAndBalance.CreateAsync(CollectionAndBalance);
 
-                _response.Result = _mapper.Map<GSTPaidDetailDTO>(GSTPaidDetail);
+                _response.Result = _mapper.Map<CollectionAndBalanceDTO>(CollectionAndBalance);
                 _response.StatusCode = HttpStatusCode.Created;
 
-                return CreatedAtAction("GetGSTPaidDetail", new { id = GSTPaidDetail.Id }, _response);
+                return CreatedAtAction("GetCollectionAndBalance", new { id = CollectionAndBalance.Id }, _response);
             }
             catch (Exception ex)
             {
@@ -172,12 +172,12 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
-        // DELETE: api/GSTPaidDetails/5
+        // DELETE: api/CollectionAndBalances/5
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<APIResponse>> DeleteGSTPaidDetail(Guid id)
+        public async Task<ActionResult<APIResponse>> DeleteCollectionAndBalance(Guid id)
         {
             try
             {
@@ -186,14 +186,14 @@ namespace AtoTax.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var GSTPaidDetail = await _dbGSTPaidDetail.GetAsync(u => u.Id == id);
-                if (GSTPaidDetail == null)
+                var CollectionAndBalance = await _dbCollectionAndBalance.GetAsync(u => u.Id == id);
+                if (CollectionAndBalance == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                await _dbGSTPaidDetail.RemoveAsync(GSTPaidDetail);
+                await _dbCollectionAndBalance.RemoveAsync(CollectionAndBalance);
 
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);

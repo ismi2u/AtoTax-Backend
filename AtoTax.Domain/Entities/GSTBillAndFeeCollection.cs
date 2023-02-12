@@ -30,7 +30,7 @@ namespace AtoTax.Domain.Entities
         public virtual Employee ReceivedByEmployee { get; set; }
 
         public DateTime? ReceivedDate { get; set; }
-        public int MediaTypeId { get; set; }
+        public int MultimediaTypeId { get; set; }
 
 
         [ForeignKey("FiledBy")]

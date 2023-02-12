@@ -9,6 +9,7 @@ namespace AtoTax.Domain.DTOs
 
     }
 
+    
 
     public class StatusCreateDTO
     {
@@ -16,4 +17,6 @@ namespace AtoTax.Domain.DTOs
         public string? StatusType { get; set; }
 
     }
+
+   
 }

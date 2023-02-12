@@ -9,10 +9,12 @@ namespace AtoTax.API.Repository.Repos
     public class ServiceCategoryRepository : Repository<ServiceCategory>, IServiceCategoryRepository
     {
         private readonly AtoTaxDbContext _context;
-        public ServiceCategoryRepository(AtoTaxDbContext context) : base(context)
+        private readonly new ILogger<ServiceCategory> _logger;
+        public ServiceCategoryRepository(AtoTaxDbContext context, ILogger<ServiceCategory> logger) : base(context, logger)
         {
 
             _context = context;
+            _logger = logger;
         }
 
 

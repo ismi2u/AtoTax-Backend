@@ -9,10 +9,12 @@ namespace AtoTax.API.Repository.Repos
     public class DefaultChargeRepository : Repository<DefaultCharge>, IDefaultChargeRepository
     {
         private readonly AtoTaxDbContext _context;
-        public DefaultChargeRepository(AtoTaxDbContext context) : base(context)
+        private readonly ILogger<DefaultCharge> _logger;
+        public DefaultChargeRepository(AtoTaxDbContext context, ILogger<DefaultCharge> logger) : base(context, logger)
         {
 
             _context = context;
+            _logger = logger;
         }
 
 

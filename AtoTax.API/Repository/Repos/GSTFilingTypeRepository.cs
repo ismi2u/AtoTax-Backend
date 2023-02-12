@@ -9,10 +9,12 @@ namespace AtoTax.API.Repository.Repos
     public class GSTFilingTypeRepository : Repository<GSTFilingType>, IGSTFilingTypeRepository
     {
         private readonly AtoTaxDbContext _context;
-        public GSTFilingTypeRepository(AtoTaxDbContext context) : base(context)
+        private readonly ILogger<GSTFilingType> _logger;
+        public GSTFilingTypeRepository(AtoTaxDbContext context, ILogger<GSTFilingType> logger) : base(context, logger)
         {
 
             _context = context;
+            _logger = logger;
         }
 
 

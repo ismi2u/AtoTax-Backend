@@ -27,7 +27,7 @@ namespace AtoTax.API.Controllers
         {
             _dbClientFeeCharge = dbClientFeeCharge;
             _mapper = mapper;
-            this._response= new();
+            this._response = new();
             _context = context;
         }
 
@@ -40,6 +40,7 @@ namespace AtoTax.API.Controllers
 
             List<string> includelist = new List<string>();
             includelist.Add("Status");
+            includelist.Add("GSTClient");
             string[] arrIncludes = includelist.ToArray();
 
             try
@@ -52,8 +53,8 @@ namespace AtoTax.API.Controllers
             }
             catch (Exception ex)
             {
-                _response.IsSuccess= false;
-                _response.ErrorMessages= new List<string>() { ex.ToString()};
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
             return _response;
         }
@@ -68,6 +69,7 @@ namespace AtoTax.API.Controllers
 
             List<string> includelist = new List<string>();
             includelist.Add("Status");
+            includelist.Add("GSTClient");
             string[] arrIncludes = includelist.ToArray();
             try
             {
@@ -84,7 +86,7 @@ namespace AtoTax.API.Controllers
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
             return _response;
-           
+
         }
 
         // PUT: api/ClientFeeCharges/5
@@ -123,7 +125,7 @@ namespace AtoTax.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.Result = ModelState;
                     return _response;
-                 }
+                }
 
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = ClientFeeCharge;
@@ -148,12 +150,12 @@ namespace AtoTax.API.Controllers
 
                 if (await _dbClientFeeCharge.GetAsync(u => u.GSTClientId == ClientFeeChargeCreateDTO.GSTClientId) != null)
                 {
-                    _response.ErrorMessages = new List<string>() { "Client Fee Charge already Exists"};
+                    _response.ErrorMessages = new List<string>() { "Client Fee Charge already Exists" };
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return _response;
                 }
                 var ClientFeeCharge = _mapper.Map<ClientFeeCharge>(ClientFeeChargeCreateDTO);
-                ClientFeeCharge.CreatedDate= DateTime.UtcNow;
+                ClientFeeCharge.CreatedDate = DateTime.UtcNow;
                 await _dbClientFeeCharge.CreateAsync(ClientFeeCharge);
 
                 _response.Result = _mapper.Map<ClientFeeChargeDTO>(ClientFeeCharge);

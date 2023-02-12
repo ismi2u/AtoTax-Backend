@@ -9,10 +9,12 @@ namespace AtoTax.API.Repository.Repos
     {
 
         private readonly AtoTaxDbContext _context;
-        public StatusRepository(AtoTaxDbContext context) : base(context)
+        private readonly ILogger<Status> _logger;
+        public StatusRepository(AtoTaxDbContext context, ILogger<Status> logger) : base(context, logger)
         {
 
             _context = context;
+            _logger = logger;
         }
     }
 }

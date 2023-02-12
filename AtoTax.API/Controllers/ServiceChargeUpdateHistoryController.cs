@@ -11,45 +11,43 @@ using AtoTax.Domain.DTOs;
 using AutoMapper;
 using System.Net;
 using AtoTax.API.Repository.Interfaces;
+using static AtoTax.Domain.DTOs.ServiceChargeUpdateHistoryCreateDTO;
 
 namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    public class GSTPaidDetailsController : ControllerBase
+    public class ServiceChargeUpdateHistoryController : ControllerBase
     {
         protected APIResponse _response;
-        private readonly IGSTPaidDetailRepository _dbGSTPaidDetail;
+        private readonly IServiceChargeUpdateHistoryRepository _dbServiceChargeUpdateHistory;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
 
-        public GSTPaidDetailsController(IGSTPaidDetailRepository dbGSTPaidDetail, IMapper mapper, AtoTaxDbContext context)
+        public ServiceChargeUpdateHistoryController(IServiceChargeUpdateHistoryRepository dbServiceChargeUpdateHistory, IMapper mapper, AtoTaxDbContext context)
         {
-            _dbGSTPaidDetail = dbGSTPaidDetail;
+            _dbServiceChargeUpdateHistory = dbServiceChargeUpdateHistory;
             _mapper = mapper;
             this._response= new();
             _context = context;
         }
 
-        // GET: api/GSTPaidDetails
+        // GET: api/ServiceChargeUpdateHistory
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetGSTPaidDetails()
+        public async Task<ActionResult<APIResponse>> GetServiceChargeUpdateHistory()
         {
 
             List<string> includelist = new List<string>();
             includelist.Add("Status");
-            includelist.Add("GSTClient");
-            includelist.Add("ServiceCategory");
-            includelist.Add("PaymentType");
             string[] arrIncludes = includelist.ToArray();
 
             try
             {
-                IEnumerable<GSTPaidDetail> GSTPaidDetailsList = await _dbGSTPaidDetail.GetAllAsync(null, arrIncludes);
+                IEnumerable<ServiceChargeUpdateHistory> ServiceChargeUpdateHistoryList = await _dbServiceChargeUpdateHistory.GetAllAsync(null, arrIncludes);
 
-                _response.Result = _mapper.Map<IEnumerable<GSTPaidDetailDTO>>(GSTPaidDetailsList);
+                _response.Result = _mapper.Map<IEnumerable<ServiceChargeUpdateHistoryDTO>>(ServiceChargeUpdateHistoryList);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
@@ -61,26 +59,23 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
-        // GET: api/GSTPaidDetails/5
+        // GET: api/ServiceChargeUpdateHistory/5
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetGSTPaidDetail(Guid id)
+        public async Task<ActionResult<APIResponse>> GetServiceChargeUpdateHistory(Guid id)
         {
 
             List<string> includelist = new List<string>();
             includelist.Add("Status");
-            includelist.Add("GSTClient");
-            includelist.Add("ServiceCategory");
-            includelist.Add("PaymentType");
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                GSTPaidDetail GSTPaidDetail = await _dbGSTPaidDetail.GetAsync(u => u.Id == id, false, arrIncludes);
+                ServiceChargeUpdateHistory ServiceChargeUpdateHistory = await _dbServiceChargeUpdateHistory.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
-                _response.Result = _mapper.Map<GSTPaidDetailDTO>(GSTPaidDetail);
+                _response.Result = _mapper.Map<ServiceChargeUpdateHistoryDTO>(ServiceChargeUpdateHistory);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
@@ -93,33 +88,40 @@ namespace AtoTax.API.Controllers
            
         }
 
-        // PUT: api/GSTPaidDetails/5
+        // PUT: api/ServiceChargeUpdateHistory/5
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> UpdateGSTPaidDetail(Guid id, GSTPaidDetailUpdateDTO GSTPaidDetailUpdateDTO)
+        public async Task<ActionResult<APIResponse>> UpdateServiceChargeUpdateHistory(Guid id, ServiceChargeUpdateHistoryUpdateDTO ServiceChargeUpdateHistoryUpdateDTO)
         {
+            
             try
             {
-                if (id == Guid.Empty || !(id == GSTPaidDetailUpdateDTO.Id))
+                if (id == Guid.Empty || !(id == ServiceChargeUpdateHistoryUpdateDTO.Id))
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
 
 
-                var oldGSTPaidDetail = await _dbGSTPaidDetail.GetAsync(u => u.Id == id, tracked: false);
+                var oldServiceChargeUpdateHistory = await _dbServiceChargeUpdateHistory.GetAsync(u => u.Id == id, tracked: false);
 
-                if (oldGSTPaidDetail == null)
+                if (oldServiceChargeUpdateHistory == null)
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;
                     return _response;
                 }
 
-                var GSTPaidDetail = _mapper.Map<GSTPaidDetail>(GSTPaidDetailUpdateDTO);
+                var ServiceChargeUpdateHistory = _mapper.Map<ServiceChargeUpdateHistory>(ServiceChargeUpdateHistoryUpdateDTO);
 
-                await _dbGSTPaidDetail.UpdateAsync(GSTPaidDetail);
+                ////// dont update the GSTIN number which is the Identity of the GST Client
+                //ServiceChargeUpdateHistory.Media = oldServiceChargeUpdateHistory.Media;
+
+                ////// dont update the below field as they are not part of updateDTO  and hence will become null
+                //ServiceChargeUpdateHistory.CreatedDate = oldServiceChargeUpdateHistory.CreatedDate;
+
+                await _dbServiceChargeUpdateHistory.UpdateAsync(ServiceChargeUpdateHistory);
 
                 if (!ModelState.IsValid)
                 {
@@ -129,7 +131,7 @@ namespace AtoTax.API.Controllers
                  }
 
                 _response.StatusCode = HttpStatusCode.NoContent;
-                _response.Result = GSTPaidDetail;
+                _response.Result = ServiceChargeUpdateHistory;
                 return Ok(_response);
             }
             catch (Exception ex)
@@ -140,29 +142,29 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
-        // POST: api/GSTPaidDetails
+        // POST: api/ServiceChargeUpdateHistory
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> CreateGSTPaidDetail(GSTPaidDetailCreateDTO GSTPaidDetailCreateDTO)
+        public async Task<ActionResult<APIResponse>> CreateServiceChargeUpdateHistory(ServiceChargeUpdateHistoryCreateDTO ServiceChargeUpdateHistoryCreateDTO)
         {
             try
             {
 
-                //if (await _dbGSTPaidDetail.GetAsync(u => u.FilingType == GSTPaidDetailCreateDTO.FilingType) != null)
+                //if (await _dbServiceChargeUpdateHistory.GetAsync(u => u.Media == ServiceChargeUpdateHistoryCreateDTO.Media) != null)
                 //{
+                //    _response.ErrorMessages = new List<string>() { "ServiceChargeUpdateHistory already Exists"};
                 //    _response.StatusCode = HttpStatusCode.BadRequest;
                 //    return _response;
                 //}
+                var ServiceChargeUpdateHistory = _mapper.Map<ServiceChargeUpdateHistory>(ServiceChargeUpdateHistoryCreateDTO);
+                //ServiceChargeUpdateHistory.CreatedDate= DateTime.UtcNow;
+                await _dbServiceChargeUpdateHistory.CreateAsync(ServiceChargeUpdateHistory);
 
-                var GSTPaidDetail = _mapper.Map<GSTPaidDetail>(GSTPaidDetailCreateDTO);
-                //GSTPaidDetail.CreatedDate= DateTime.UtcNow;
-                await _dbGSTPaidDetail.CreateAsync(GSTPaidDetail);
-
-                _response.Result = _mapper.Map<GSTPaidDetailDTO>(GSTPaidDetail);
+                _response.Result = _mapper.Map<ServiceChargeUpdateHistoryDTO>(ServiceChargeUpdateHistory);
                 _response.StatusCode = HttpStatusCode.Created;
 
-                return CreatedAtAction("GetGSTPaidDetail", new { id = GSTPaidDetail.Id }, _response);
+                return CreatedAtAction("GetServiceChargeUpdateHistory", new { id = ServiceChargeUpdateHistory.Id }, _response);
             }
             catch (Exception ex)
             {
@@ -172,12 +174,12 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
-        // DELETE: api/GSTPaidDetails/5
+        // DELETE: api/ServiceChargeUpdateHistory/5
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<APIResponse>> DeleteGSTPaidDetail(Guid id)
+        public async Task<ActionResult<APIResponse>> DeleteServiceChargeUpdateHistory(Guid id)
         {
             try
             {
@@ -186,14 +188,14 @@ namespace AtoTax.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var GSTPaidDetail = await _dbGSTPaidDetail.GetAsync(u => u.Id == id);
-                if (GSTPaidDetail == null)
+                var ServiceChargeUpdateHistory = await _dbServiceChargeUpdateHistory.GetAsync(u => u.Id == id);
+                if (ServiceChargeUpdateHistory == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                await _dbGSTPaidDetail.RemoveAsync(GSTPaidDetail);
+                await _dbServiceChargeUpdateHistory.RemoveAsync(ServiceChargeUpdateHistory);
 
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);

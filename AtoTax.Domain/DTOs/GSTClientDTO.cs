@@ -39,7 +39,15 @@ namespace AtoTax.Domain.DTOs
 
 
     }
-    public class GSTClientCreateDTO
+    public class ActiveGSTClientsForDD
+    {
+        public Guid Id { get; set; }
+        public string? GSTClientAndGSTIN { get; set; }
+
+    }
+
+
+        public class GSTClientCreateDTO
     {
         [Required]
         public string ProprietorName { get; set; }

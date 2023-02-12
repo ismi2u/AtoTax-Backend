@@ -11,12 +11,46 @@ namespace AtoTax.Domain.DTOs
     public class ServiceCategoryDTO
     {
 
-       public Guid Id { get; set; }
+        public int Id { get; set; }
         public string? ServiceName { get; set; }
         public string? Description { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? LastModifiedDate { get; set; }
-        public int StatusId { get; set; }
+        public int? StatusId { get; set; }
+        public StatusDTO Status { get; set; }
+
+    }
+
+    public class ServiceCategoryCreateDTO
+    {
+        [Required]
+        public string? ServiceName { get; set; }
+        public string? Description { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? LastModifiedDate { get; set; }
+        [Required]
+        public int? StatusId { get; set; }
+
+    }
+
+
+    public class ActiveServiceCategoriesForDD
+    {
+        public int Id { get; set; }
+        public string? ServiceNameAndDesc { get; set; }
+    }
+
+    public class ServiceCategoryUpdateDTO
+    {
+        [Required]
+        public int Id { get; set; }
+        [Required]
+        public string? ServiceName { get; set; }
+        public string? Description { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? LastModifiedDate { get; set; }
+        [Required]
+        public int? StatusId { get; set; }
 
     }
 }

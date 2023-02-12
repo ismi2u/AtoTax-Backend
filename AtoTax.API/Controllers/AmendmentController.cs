@@ -40,6 +40,8 @@ namespace AtoTax.API.Controllers
 
             List<string> includelist = new List<string>();
             includelist.Add("Status");
+            includelist.Add("GSTClient");
+            includelist.Add("AmendType");
             string[] arrIncludes = includelist.ToArray();
 
             try
@@ -63,11 +65,14 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetAmendment(int id)
+        public async Task<ActionResult<APIResponse>> GetAmendment(Guid id)
         {
+
 
             List<string> includelist = new List<string>();
             includelist.Add("Status");
+            includelist.Add("GSTClient");
+            includelist.Add("AmendType");
             string[] arrIncludes = includelist.ToArray();
             try
             {
@@ -129,11 +134,11 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<APIResponse>> DeleteAmendment(int id)
+        public async Task<ActionResult<APIResponse>> DeleteAmendment(Guid id)
         {
             try
             {
-                if (id == 0)
+                if (id == Guid.Empty)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);

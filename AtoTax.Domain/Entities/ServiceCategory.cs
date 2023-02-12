@@ -5,6 +5,7 @@ namespace AtoTax.Domain.Entities
 {
     public class ServiceCategory
     {
+     
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }

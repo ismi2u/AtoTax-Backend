@@ -8,7 +8,7 @@ namespace AtoTax.Domain.Entities
 
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [ForeignKey("GSTClient")]
         public Guid GSTClientId { get; set; }
@@ -18,6 +18,7 @@ namespace AtoTax.Domain.Entities
         [ForeignKey("AmendType")]
         public int AmendTypeId { get; set; }
         public virtual AmendType AmendType { get; set; }
+
         public string ARN { get; set; }
         [Required]
         public DateTime SumittedDate { get; set; }

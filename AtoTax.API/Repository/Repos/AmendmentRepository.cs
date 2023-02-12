@@ -9,10 +9,12 @@ namespace AtoTax.API.Repository.Repos
     public class AmendmentRepository : Repository<Amendment>, IAmendmentRepository
     {
         private readonly AtoTaxDbContext _context;
-        public AmendmentRepository(AtoTaxDbContext context) : base(context)
+        private readonly new ILogger<Amendment> _logger;
+        public AmendmentRepository(AtoTaxDbContext context, ILogger<Amendment> logger) : base(context, logger)
         {
 
             _context = context;
+            _logger = logger;
         }
 
 

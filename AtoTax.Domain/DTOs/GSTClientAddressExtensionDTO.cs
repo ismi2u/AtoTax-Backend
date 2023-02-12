@@ -8,8 +8,10 @@ namespace AtoTax.Domain.DTOs
     public class GSTClientAddressExtensionDTO
     {
         public int Id { get; set; }
-        public int GSTClientId { get; set; }
+        public Guid GSTClientID { get; set; }
+        public GSTClientDTO GSTClient { get; set; }
         public int AddressTypeId { get; set; }
+        public AddressTypeDTO AddressType { get; set; }
         public string? AddressLine1 { get; set; }
         public string? AddressLine2 { get; set; }
         public string? AddressLine3 { get; set; }
@@ -19,7 +21,8 @@ namespace AtoTax.Domain.DTOs
         public string? Pincode { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? LastModifiedDate { get; set; }
-        public int StatusId { get; set; }
+        public int? StatusId { get; set; }
+        public StatusDTO Status { get; set; }
 
     }
 

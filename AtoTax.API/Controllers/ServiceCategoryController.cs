@@ -16,40 +16,37 @@ namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    public class GSTPaidDetailsController : ControllerBase
+    public class ServiceCategoryController : ControllerBase
     {
         protected APIResponse _response;
-        private readonly IGSTPaidDetailRepository _dbGSTPaidDetail;
+        private readonly IServiceCategoryRepository _dbServiceCategory;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
 
-        public GSTPaidDetailsController(IGSTPaidDetailRepository dbGSTPaidDetail, IMapper mapper, AtoTaxDbContext context)
+        public ServiceCategoryController(IServiceCategoryRepository dbServiceCategory, IMapper mapper, AtoTaxDbContext context)
         {
-            _dbGSTPaidDetail = dbGSTPaidDetail;
+            _dbServiceCategory = dbServiceCategory;
             _mapper = mapper;
             this._response= new();
             _context = context;
         }
 
-        // GET: api/GSTPaidDetails
+        // GET: api/ServiceCategorys
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetGSTPaidDetails()
+        public async Task<ActionResult<APIResponse>> GetServiceCategories()
         {
 
             List<string> includelist = new List<string>();
             includelist.Add("Status");
-            includelist.Add("GSTClient");
-            includelist.Add("ServiceCategory");
-            includelist.Add("PaymentType");
             string[] arrIncludes = includelist.ToArray();
 
             try
             {
-                IEnumerable<GSTPaidDetail> GSTPaidDetailsList = await _dbGSTPaidDetail.GetAllAsync(null, arrIncludes);
+                IEnumerable<ServiceCategory> ServiceCategorysList = await _dbServiceCategory.GetAllAsync(null, arrIncludes);
 
-                _response.Result = _mapper.Map<IEnumerable<GSTPaidDetailDTO>>(GSTPaidDetailsList);
+                _response.Result = _mapper.Map<IEnumerable<ServiceCategoryDTO>>(ServiceCategorysList);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
@@ -61,26 +58,23 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
-        // GET: api/GSTPaidDetails/5
+        // GET: api/ServiceCategorys/5
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetGSTPaidDetail(Guid id)
+        public async Task<ActionResult<APIResponse>> GetServiceCategory(int id)
         {
 
             List<string> includelist = new List<string>();
             includelist.Add("Status");
-            includelist.Add("GSTClient");
-            includelist.Add("ServiceCategory");
-            includelist.Add("PaymentType");
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                GSTPaidDetail GSTPaidDetail = await _dbGSTPaidDetail.GetAsync(u => u.Id == id, false, arrIncludes);
+                ServiceCategory ServiceCategory = await _dbServiceCategory.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
-                _response.Result = _mapper.Map<GSTPaidDetailDTO>(GSTPaidDetail);
+                _response.Result = _mapper.Map<ServiceCategoryDTO>(ServiceCategory);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
@@ -93,33 +87,36 @@ namespace AtoTax.API.Controllers
            
         }
 
-        // PUT: api/GSTPaidDetails/5
+        // PUT: api/ServiceCategorys/5
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> UpdateGSTPaidDetail(Guid id, GSTPaidDetailUpdateDTO GSTPaidDetailUpdateDTO)
+        public async Task<ActionResult<APIResponse>> UpdateServiceCategory(int id, ServiceCategoryUpdateDTO ServiceCategoryUpdateDTO)
         {
             try
             {
-                if (id == Guid.Empty || !(id == GSTPaidDetailUpdateDTO.Id))
+                if (id == 0 || !(id == ServiceCategoryUpdateDTO.Id))
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
 
 
-                var oldGSTPaidDetail = await _dbGSTPaidDetail.GetAsync(u => u.Id == id, tracked: false);
+                var oldServiceCategory = await _dbServiceCategory.GetAsync(u => u.Id == id, tracked: false);
 
-                if (oldGSTPaidDetail == null)
+                if (oldServiceCategory == null)
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;
                     return _response;
                 }
 
-                var GSTPaidDetail = _mapper.Map<GSTPaidDetail>(GSTPaidDetailUpdateDTO);
+                var ServiceCategory = _mapper.Map<ServiceCategory>(ServiceCategoryUpdateDTO);
 
-                await _dbGSTPaidDetail.UpdateAsync(GSTPaidDetail);
+                //// dont update the below field as they are not part of updateDTO  and hence will become null
+                ServiceCategory.CreatedDate = oldServiceCategory.CreatedDate;
+
+                await _dbServiceCategory.UpdateAsync(ServiceCategory);
 
                 if (!ModelState.IsValid)
                 {
@@ -129,7 +126,7 @@ namespace AtoTax.API.Controllers
                  }
 
                 _response.StatusCode = HttpStatusCode.NoContent;
-                _response.Result = GSTPaidDetail;
+                _response.Result = ServiceCategory;
                 return Ok(_response);
             }
             catch (Exception ex)
@@ -140,29 +137,29 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
-        // POST: api/GSTPaidDetails
+        // POST: api/ServiceCategorys
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> CreateGSTPaidDetail(GSTPaidDetailCreateDTO GSTPaidDetailCreateDTO)
+        public async Task<ActionResult<APIResponse>> CreateServiceCategory(ServiceCategoryCreateDTO ServiceCategoryCreateDTO)
         {
             try
             {
 
-                //if (await _dbGSTPaidDetail.GetAsync(u => u.FilingType == GSTPaidDetailCreateDTO.FilingType) != null)
-                //{
-                //    _response.StatusCode = HttpStatusCode.BadRequest;
-                //    return _response;
-                //}
+                if (await _dbServiceCategory.GetAsync(u => u.ServiceName == ServiceCategoryCreateDTO.ServiceName) != null)
+                {
+                    _response.ErrorMessages = new List<string>() { "ServiceCategory already Exists"};
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return _response;
+                }
+                var ServiceCategory = _mapper.Map<ServiceCategory>(ServiceCategoryCreateDTO);
+                ServiceCategory.CreatedDate= DateTime.UtcNow;
+                await _dbServiceCategory.CreateAsync(ServiceCategory);
 
-                var GSTPaidDetail = _mapper.Map<GSTPaidDetail>(GSTPaidDetailCreateDTO);
-                //GSTPaidDetail.CreatedDate= DateTime.UtcNow;
-                await _dbGSTPaidDetail.CreateAsync(GSTPaidDetail);
-
-                _response.Result = _mapper.Map<GSTPaidDetailDTO>(GSTPaidDetail);
+                _response.Result = _mapper.Map<ServiceCategoryDTO>(ServiceCategory);
                 _response.StatusCode = HttpStatusCode.Created;
 
-                return CreatedAtAction("GetGSTPaidDetail", new { id = GSTPaidDetail.Id }, _response);
+                return CreatedAtAction("GetServiceCategory", new { id = ServiceCategory.Id }, _response);
             }
             catch (Exception ex)
             {
@@ -172,28 +169,28 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
-        // DELETE: api/GSTPaidDetails/5
+        // DELETE: api/ServiceCategorys/5
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<APIResponse>> DeleteGSTPaidDetail(Guid id)
+        public async Task<ActionResult<APIResponse>> DeleteServiceCategory(int id)
         {
             try
             {
-                if (id == Guid.Empty)
+                if (id == 0)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var GSTPaidDetail = await _dbGSTPaidDetail.GetAsync(u => u.Id == id);
-                if (GSTPaidDetail == null)
+                var ServiceCategory = await _dbServiceCategory.GetAsync(u => u.Id == id);
+                if (ServiceCategory == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                await _dbGSTPaidDetail.RemoveAsync(GSTPaidDetail);
+                await _dbServiceCategory.RemoveAsync(ServiceCategory);
 
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);

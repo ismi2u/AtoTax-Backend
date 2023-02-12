@@ -12,7 +12,23 @@ namespace AtoTax.Domain.DTOs
     {
 
         public Guid Id { get; set; }
-        public int GSTClientId { get; set; }
+        public Guid GSTClientID { get; set; }
+
+        public GSTClientDTO GSTClient { get; set; }
+        public DateTime DateAmended { get; set; }
+        public int ServiceCategoryId { get; set; }
+        public ServiceCategoryDTO ServiceCategory { get; set; }
+        public double PreviousRate { get; set; }
+        public double NewRate { get; set; }
+
+
+
+    }
+
+    public class ServiceChargeUpdateHistoryCreateDTO
+    {
+
+        public Guid GSTClientID { get; set; }
         public DateTime DateAmended { get; set; }
         public int ServiceCategoryId { get; set; }
         public double PreviousRate { get; set; }
@@ -20,5 +36,18 @@ namespace AtoTax.Domain.DTOs
 
 
 
+
+        public class ServiceChargeUpdateHistoryUpdateDTO
+        {
+            public Guid Id { get; set; }
+            public Guid GSTClientID { get; set; }
+            public DateTime DateAmended { get; set; }
+            public int ServiceCategoryId { get; set; }
+            public double PreviousRate { get; set; }
+            public double NewRate { get; set; }
+
+
+
+        }
     }
 }

@@ -3,16 +3,19 @@ using AtoTax.API.Repository.Interfaces;
 using AtoTax.Domain.Entities;
 using AtoTaxAPI.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace AtoTax.API.Repository.Repos
 {
     public class ClientFeeChargeRepository : Repository<ClientFeeCharge>, IClientFeeChargeRepository
     {
         private readonly AtoTaxDbContext _context;
-        public ClientFeeChargeRepository(AtoTaxDbContext context) : base(context)
+        private readonly new ILogger<ClientFeeCharge> _logger;
+        public ClientFeeChargeRepository(AtoTaxDbContext context, ILogger<ClientFeeCharge> logger) : base(context, logger)
         {
 
             _context = context;
+            _logger = logger;
         }
 
 
@@ -22,6 +25,7 @@ namespace AtoTax.API.Repository.Repos
 
             _context.Update(entity);
             await _context.SaveChangesAsync();
+            _logger.LogInformation("ClientFeeCharge Id" + entity.Id.ToString() + " updated");
 
             return entity;
         }

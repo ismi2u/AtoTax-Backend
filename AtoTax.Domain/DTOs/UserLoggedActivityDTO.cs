@@ -8,8 +8,8 @@ namespace AtoTax.Domain.DTOs
     public class UserLoggedActivityDTO
     {
         public Guid Id { get; set; }
-
-        public int EmployeeId { get; set; }
+        public Guid EmployeeId { get; set; }
+        public EmployeeDTO ReceivedByEmployee { get; set; }
         public string Activity { get; set; }
 
         public string AdditionalDetails { get; set; }
@@ -18,7 +18,8 @@ namespace AtoTax.Domain.DTOs
 
     public class UserLoggedActivityCreateDTO
     {
-        public int EmployeeId { get; set; }
+        [Required]
+        public Guid EmployeeId { get; set; }
         public string Activity { get; set; }
 
         public string AdditionalDetails { get; set; }

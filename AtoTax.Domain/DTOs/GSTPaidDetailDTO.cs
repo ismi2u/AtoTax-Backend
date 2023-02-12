@@ -8,11 +8,14 @@ namespace AtoTax.Domain.DTOs
 
         public Guid Id { get; set; }
         public Guid GSTClientId { get; set; }
+        public GSTClientDTO GSTClient { get; set; }
         public string? PaymentDueMonth { get; set; }
         public int PaymentDueYear { get; set; }
         public double Amount { get; set; }
         public int ServiceCategoryId { get; set; }
+        public ServiceCategoryDTO ServiceCategory { get; set; }
         public int PaymentTypeId { get; set; }
+        public PaymentTypeDTO PaymentType { get; set; }
         public DateTime? SettledDate { get; set; }
         public bool? IsPending { get; set; }
 

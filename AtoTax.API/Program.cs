@@ -1,4 +1,5 @@
 
+using AtoTax.API.GenericRepository;
 using AtoTax.API.Mapping;
 using AtoTax.API.Repository.Interfaces;
 using AtoTax.API.Repository.Repos;
@@ -11,9 +12,24 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using System.Configuration;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+//serilog
+var configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .Build();
+var _loggerconf = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).Enrich.FromLogContext()
+    //.MinimumLevel.Information()
+    //.WriteTo.File("AtoTax-.log", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Logging.AddSerilog(_loggerconf);
+
 
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddDbContextPool<AtoTaxDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLInLocalAppInContainer")));
@@ -25,7 +41,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 builder.Services.AddScoped<IGSTClientRepository, GSTClientRepository>();
 builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 builder.Services.AddScoped<IDefaultChargeRepository, DefaultChargeRepository>();
-builder.Services.AddScoped<IMediaTypeRepository, MediaTypeRepository>();
+builder.Services.AddScoped<IMultimediaTypeRepository, MultimediaTypeRepository>();
 builder.Services.AddScoped<IAddressTypeRepository, AddressTypeRepository>();
 builder.Services.AddScoped<IPaymentTypeRepository, PaymentTypeRepository>();
 builder.Services.AddScoped<IEmpJobRoleRepository, EmpJobRoleRepository>();
@@ -37,6 +53,8 @@ builder.Services.AddScoped<IGSTFilingTypeRepository, GSTFilingTypeRepository>();
 builder.Services.AddScoped<IGSTClientAddressExtensionRepository, GSTClientAddressExtensionRepository>();
 builder.Services.AddScoped<IGSTBillAndFeeCollectionRepository, GSTBillAndFeeCollectionRepository>();
 builder.Services.AddScoped<IGSTPaidDetailRepository, GSTPaidDetailRepository>();
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddAuthentication(options =>
 {

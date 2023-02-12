@@ -16,26 +16,26 @@ namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    public class MediaTypesController : ControllerBase
+    public class UserLoggedActivityController : ControllerBase
     {
         protected APIResponse _response;
-        private readonly IMediaTypeRepository _dbMediaType;
+        private readonly IUserLoggedActivityRepository _dbUserLoggedActivity;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
 
-        public MediaTypesController(IMediaTypeRepository dbMediaType, IMapper mapper, AtoTaxDbContext context)
+        public UserLoggedActivityController(IUserLoggedActivityRepository dbUserLoggedActivity, IMapper mapper, AtoTaxDbContext context)
         {
-            _dbMediaType = dbMediaType;
+            _dbUserLoggedActivity = dbUserLoggedActivity;
             _mapper = mapper;
             this._response= new();
             _context = context;
         }
 
-        // GET: api/MediaTypes
+        // GET: api/UserLoggedActivity
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetMediaTypes()
+        public async Task<ActionResult<APIResponse>> GetUserLoggedActivity()
         {
 
             List<string> includelist = new List<string>();
@@ -44,9 +44,9 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<MediaType> MediaTypesList = await _dbMediaType.GetAllAsync(null, arrIncludes);
+                IEnumerable<UserLoggedActivity> UserLoggedActivityList = await _dbUserLoggedActivity.GetAllAsync(null, arrIncludes);
 
-                _response.Result = _mapper.Map<IEnumerable<MediaTypeDTO>>(MediaTypesList);
+                _response.Result = _mapper.Map<IEnumerable<UserLoggedActivityDTO>>(UserLoggedActivityList);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
@@ -58,12 +58,12 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
-        // GET: api/MediaTypes/5
+        // GET: api/UserLoggedActivity/5
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetMediaType(int id)
+        public async Task<ActionResult<APIResponse>> GetUserLoggedActivity(Guid id)
         {
 
             List<string> includelist = new List<string>();
@@ -71,10 +71,10 @@ namespace AtoTax.API.Controllers
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                MediaType MediaType = await _dbMediaType.GetAsync(u => u.Id == id, false, arrIncludes);
+                UserLoggedActivity UserLoggedActivity = await _dbUserLoggedActivity.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
-                _response.Result = _mapper.Map<MediaTypeDTO>(MediaType);
+                _response.Result = _mapper.Map<UserLoggedActivityDTO>(UserLoggedActivity);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
@@ -87,39 +87,40 @@ namespace AtoTax.API.Controllers
            
         }
 
-        // PUT: api/MediaTypes/5
+        // PUT: api/UserLoggedActivity/5
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> UpdateMediaType(int id, MediaTypeUpdateDTO MediaTypeUpdateDTO)
+        public async Task<ActionResult<APIResponse>> UpdateUserLoggedActivity(Guid id, UserLoggedActivityUpdateDTO UserLoggedActivityUpdateDTO)
         {
             try
             {
-                if (id == 0 || !(id == MediaTypeUpdateDTO.Id))
+                if (id == Guid.Empty || !(id == UserLoggedActivityUpdateDTO.Id))
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
 
 
-                var oldMediaType = await _dbMediaType.GetAsync(u => u.Id == id, tracked: false);
+                var oldUserLoggedActivity = await _dbUserLoggedActivity.GetAsync(u => u.Id == id, tracked: false);
 
-                if (oldMediaType == null)
+                if (oldUserLoggedActivity == null)
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;
                     return _response;
                 }
 
-                var MediaType = _mapper.Map<MediaType>(MediaTypeUpdateDTO);
+                var UserLoggedActivity = _mapper.Map<UserLoggedActivity>(UserLoggedActivityUpdateDTO);
 
-                //// dont update the GSTIN number which is the Identity of the GST Client
-                MediaType.Media = oldMediaType.Media;
+                ////// dont update the DOB number which is the Identity of the UserLoggedActivity
+                //UserLoggedActivity.DOB = oldUserLoggedActivity.DOB;
+               
 
-                //// dont update the below field as they are not part of updateDTO  and hence will become null
-                MediaType.CreatedDate = oldMediaType.CreatedDate;
+                ////// dont update the below field as they are not part of updateDTO  and hence will become null
+                //UserLoggedActivity.CreatedDate = oldUserLoggedActivity.CreatedDate;
 
-                await _dbMediaType.UpdateAsync(MediaType);
+                //await _dbUserLoggedActivity.UpdateAsync(UserLoggedActivity);
 
                 if (!ModelState.IsValid)
                 {
@@ -129,7 +130,7 @@ namespace AtoTax.API.Controllers
                  }
 
                 _response.StatusCode = HttpStatusCode.NoContent;
-                _response.Result = MediaType;
+                _response.Result = UserLoggedActivity;
                 return Ok(_response);
             }
             catch (Exception ex)
@@ -140,29 +141,31 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
-        // POST: api/MediaTypes
+        // POST: api/UserLoggedActivity
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> CreateMediaType(MediaTypeCreateDTO MediaTypeCreateDTO)
+        public async Task<ActionResult<APIResponse>> CreateUserLoggedActivity(UserLoggedActivityCreateDTO UserLoggedActivityCreateDTO)
         {
             try
             {
 
-                if (await _dbMediaType.GetAsync(u => u.Media == MediaTypeCreateDTO.Media) != null)
-                {
-                    _response.ErrorMessages = new List<string>() { "MediaType already Exists"};
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    return _response;
-                }
-                var MediaType = _mapper.Map<MediaType>(MediaTypeCreateDTO);
-                MediaType.CreatedDate= DateTime.UtcNow;
-                await _dbMediaType.CreateAsync(MediaType);
+                //if (await _dbUserLoggedActivity.GetAsync(u => u.FirstName == UserLoggedActivityCreateDTO.FirstName 
+                //                                && u.LastName == UserLoggedActivityCreateDTO.LastName
+                //                                && u.DOB == UserLoggedActivityCreateDTO.DOB) != null)
+                //{
+                //    _response.ErrorMessages = new List<string>() { "UserLoggedActivity already Exists"};
+                //    _response.StatusCode = HttpStatusCode.BadRequest;
+                //    return _response;
+                //}
+                var UserLoggedActivity = _mapper.Map<UserLoggedActivity>(UserLoggedActivityCreateDTO);
+                //UserLoggedActivity.CreatedDate= DateTime.UtcNow;
+                await _dbUserLoggedActivity.CreateAsync(UserLoggedActivity);
 
-                _response.Result = _mapper.Map<MediaTypeDTO>(MediaType);
+                _response.Result = _mapper.Map<UserLoggedActivityDTO>(UserLoggedActivity);
                 _response.StatusCode = HttpStatusCode.Created;
 
-                return CreatedAtAction("GetMediaType", new { id = MediaType.Id }, _response);
+                return CreatedAtAction("GetUserLoggedActivity", new { id = UserLoggedActivity.Id }, _response);
             }
             catch (Exception ex)
             {
@@ -172,28 +175,28 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
-        // DELETE: api/MediaTypes/5
+        // DELETE: api/UserLoggedActivity/5
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<APIResponse>> DeleteMediaType(int id)
+        public async Task<ActionResult<APIResponse>> DeleteUserLoggedActivity(Guid id)
         {
             try
             {
-                if (id == 0)
+                if (id == Guid.Empty)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var MediaType = await _dbMediaType.GetAsync(u => u.Id == id);
-                if (MediaType == null)
+                var UserLoggedActivity = await _dbUserLoggedActivity.GetAsync(u => u.Id == id);
+                if (UserLoggedActivity == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                await _dbMediaType.RemoveAsync(MediaType);
+                await _dbUserLoggedActivity.RemoveAsync(UserLoggedActivity);
 
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);

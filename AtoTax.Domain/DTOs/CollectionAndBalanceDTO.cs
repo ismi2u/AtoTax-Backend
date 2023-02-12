@@ -18,4 +18,40 @@ namespace AtoTax.Domain.Entities
         public DateTime? AmtReceivedDate { get; set; }
 
     }
+
+    public class CollectionAndBalanceCreateDTO
+    {
+        [Required]
+        public int? GSTClientId { get; set; }
+        [Required]
+        public string? DueMonth { get; set; }
+        [Required]
+        public int? Year { get; set; }
+        [Required]
+        public double? FeesAmount { get; set; }
+        public double? PreviousBalance { get; set; }
+        public double AmountPaid { get; set; }
+        public double CurrentBalance { get; set; }
+        public DateTime? AmtReceivedDate { get; set; }
+
+    }
+
+    public class CollectionAndBalanceUpdateDTO
+    {
+        [Required]
+        public Guid Id { get; set; }
+        [Required]
+        public int? GSTClientId { get; set; }
+        [Required]
+        public string? DueMonth { get; set; }
+        [Required]
+        public int? Year { get; set; }
+        [Required]
+        public double? FeesAmount { get; set; }
+        public double? PreviousBalance { get; set; }
+        public double AmountPaid { get; set; }
+        public double CurrentBalance { get; set; }
+        public DateTime? AmtReceivedDate { get; set; }
+
+    }
 }

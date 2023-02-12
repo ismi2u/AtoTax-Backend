@@ -11,11 +11,13 @@ namespace AtoTax.API.GenericRepository
 
         private readonly AtoTaxDbContext _context;
         internal DbSet<T> dbSet;
+        protected readonly ILogger<T> _logger;
 
-        public Repository(AtoTaxDbContext context)
+        public Repository(AtoTaxDbContext context, ILogger<T> logger)
         {
             _context = context;
             dbSet = _context.Set<T>();
+            _logger = logger;
         }
         public async Task CreateAsync(T entity)
         {

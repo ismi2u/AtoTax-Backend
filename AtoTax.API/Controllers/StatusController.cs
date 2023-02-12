@@ -97,7 +97,7 @@ namespace AtoTax.API.Controllers
                     return _response;
                 }
 
-                statusCreateDTO.StatusType = statusCreateDTO.StatusType.ToUpper();
+                statusCreateDTO.StatusType = statusCreateDTO.StatusType.ToLower();
                 var status = _mapper.Map<Status>(statusCreateDTO);
                 await _dbStatusTbl.CreateAsync(status);
                 _response.Result = status;

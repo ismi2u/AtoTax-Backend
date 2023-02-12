@@ -13,7 +13,8 @@ namespace AtoTax.Domain.DTOs
         public DateTime? CreatedDate { get; set; }
         public DateTime? LastModifiedDate { get; set; }
 
-        public int StatusId { get; set; }
+        public int? StatusId { get; set; }
+        public StatusDTO Status { get; set; }
     }
 
     public class AmendTypeCreateDTO

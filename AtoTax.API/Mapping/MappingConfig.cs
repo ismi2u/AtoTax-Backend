@@ -1,13 +1,16 @@
-﻿using AtoTax.Domain.DTOs;
+﻿using AtoTax.API.Controllers;
+using AtoTax.Domain.DTOs;
 using AtoTax.Domain.Entities;
 using AutoMapper;
 
 namespace AtoTax.API.Mapping
 {
-    public class MappingConfig: Profile
+    public class MappingConfig : Profile
     {
         public MappingConfig()
         {
+
+            //GSTClient
             CreateMap<GSTClient, GSTClientDTO>().ReverseMap();
             CreateMap<GSTClientCreateDTO, GSTClient>()
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
@@ -16,7 +19,7 @@ namespace AtoTax.API.Mapping
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
 
 
-
+            //Status
             CreateMap<Status, StatusDTO>().ReverseMap();
             CreateMap<StatusCreateDTO, Status>().ReverseMap();
 
@@ -33,11 +36,11 @@ namespace AtoTax.API.Mapping
 
 
             //Media Type
-            CreateMap<MediaType, MediaTypeDTO>().ReverseMap();
-            CreateMap<MediaTypeCreateDTO, MediaType>()
+            CreateMap<MultimediaType, MultimediaTypeDTO>().ReverseMap();
+            CreateMap<MultimediaTypeCreateDTO, MultimediaType>()
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow)); ;
-            CreateMap<MediaTypeUpdateDTO, MediaType>()
+            CreateMap<MultimediaTypeUpdateDTO, MultimediaType>()
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
 
             //Payment Type
@@ -92,9 +95,110 @@ namespace AtoTax.API.Mapping
             CreateMap<DefaultCharge, DefaultChargeDTO>().ReverseMap();
             CreateMap<DefaultChargeCreateDTO, DefaultCharge>()
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
-                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow)); 
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
             CreateMap<DefaultChargeUpdateDTO, DefaultCharge>()
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+
+            //ServiceCategory
+            CreateMap<ServiceCategory, ServiceCategoryDTO>().ReverseMap();
+            CreateMap<ServiceCategoryCreateDTO, ServiceCategory>()
+             .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+            CreateMap<ServiceCategoryUpdateDTO, ServiceCategory>()
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+
+            //ClientFeeCharges
+            CreateMap<ClientFeeCharge, ClientFeeChargeDTO>().ReverseMap();
+            CreateMap<ClientFeeChargeCreateDTO, ClientFeeCharge>()
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+            CreateMap<ClientFeeChargeUpdateDTO, ClientFeeCharge>()
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+
+
+            //Employee
+            CreateMap<Employee, EmployeeDTO>().ReverseMap();
+            CreateMap<EmployeeCreateDTO, Employee>()
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+            CreateMap<EmployeeUpdateDTO, Employee>()
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+
+            //GSTClientAddressExtension
+            CreateMap<GSTClientAddressExtension, GSTClientAddressExtensionDTO>().ReverseMap();
+            CreateMap<GSTClientAddressExtensionCreateDTO, GSTClientAddressExtension>()
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+            CreateMap<GSTClientAddressExtensionUpdateDTO, GSTClientAddressExtension>()
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+
+
+            //GSTFilingType
+            CreateMap<GSTFilingType, GSTFilingTypeDTO>().ReverseMap();
+            CreateMap<GSTFilingTypeCreateDTO, GSTFilingType>()
+                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+            CreateMap<GSTFilingTypeUpdateDTO, GSTFilingType>()
+                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+
+
+            //////>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            //////>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            ///>>>>>>>>>>>>>>>>> START >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            //////>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            //////>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+            //CollectionAndBalance
+            CreateMap<CollectionAndBalance, CollectionAndBalanceDTO>().ReverseMap();
+            CreateMap<CollectionAndBalanceCreateDTO, CollectionAndBalance>().ReverseMap();
+
+            //FeeCollectionLedger
+            CreateMap<FeeCollectionLedger, FeeCollectionLedgerDTO>().ReverseMap();
+            CreateMap<FeeCollectionLedgerCreateDTO, FeeCollectionLedger>().ReverseMap();
+
+            //GSTBillAndFeeCollection
+            CreateMap<GSTBillAndFeeCollection, GSTBillAndFeeCollectionDTO>().ReverseMap();
+            CreateMap<GSTBillAndFeeCollectionCreateDTO, GSTBillAndFeeCollection>().ReverseMap();
+
+
+            //ServiceChargeUpdateHistory
+            CreateMap<ServiceChargeUpdateHistory, ServiceChargeUpdateHistoryDTO>().ReverseMap();
+            CreateMap<ServiceChargeUpdateHistoryCreateDTO, ServiceChargeUpdateHistory>().ReverseMap();
+
+
+
+
+            //GSTPaidDetail
+            CreateMap<GSTPaidDetail, GSTPaidDetailDTO>().ReverseMap();
+            CreateMap<GSTPaidDetailCreateDTO, GSTPaidDetail>().ReverseMap();
+
+
+            //UserLoggedActivity
+            CreateMap<UserLoggedActivity, UserLoggedActivityDTO>().ReverseMap();
+            CreateMap<UserLoggedActivityCreateDTO, UserLoggedActivity>().ReverseMap();
+
+            /////
+            ///>>>>>>>>>>>>>>>END>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+           
+
+           
+
+
+
+
+
         }
     }
 }

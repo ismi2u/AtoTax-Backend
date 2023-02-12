@@ -12,8 +12,8 @@ namespace AtoTax.Domain.DTOs
         public string AddressTypeDesc { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? LastModifiedDate { get; set; }
-
-        public int StatusId { get; set; }
+        public int? StatusId { get; set; }
+        public StatusDTO Status { get; set; }
     }
 
     public class AddressTypeCreateDTO

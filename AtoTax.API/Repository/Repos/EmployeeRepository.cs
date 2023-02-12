@@ -9,10 +9,12 @@ namespace AtoTax.API.Repository.Repos
     public class EmployeeRepository : Repository<Employee>, IEmployeeRepository
     {
         private readonly AtoTaxDbContext _context;
-        public EmployeeRepository(AtoTaxDbContext context) : base(context)
+        private readonly ILogger<Employee> _logger;
+        public EmployeeRepository(AtoTaxDbContext context, ILogger<Employee> logger) : base(context, logger)
         {
 
             _context = context;
+            _logger = logger;
         }
 
 

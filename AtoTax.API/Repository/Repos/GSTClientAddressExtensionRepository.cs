@@ -9,10 +9,12 @@ namespace AtoTax.API.Repository.Repos
     public class GSTClientAddressExtensionRepository : Repository<GSTClientAddressExtension>, IGSTClientAddressExtensionRepository
     {
         private readonly AtoTaxDbContext _context;
-        public GSTClientAddressExtensionRepository(AtoTaxDbContext context) : base(context)
+        private readonly ILogger<GSTClientAddressExtension> _logger;
+        public GSTClientAddressExtensionRepository(AtoTaxDbContext context, ILogger<GSTClientAddressExtension> logger) : base(context, logger)
         {
 
             _context = context;
+            _logger = logger;
         }
 
 

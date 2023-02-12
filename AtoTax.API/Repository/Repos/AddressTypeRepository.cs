@@ -9,10 +9,15 @@ namespace AtoTax.API.Repository.Repos
     public class AddressTypeRepository : Repository<AddressType>, IAddressTypeRepository
     {
         private readonly AtoTaxDbContext _context;
-        public AddressTypeRepository(AtoTaxDbContext context) : base(context)
+        private readonly new ILogger<AddressType> _logger;
+        private AtoTaxDbContext context;
+
+     
+        public AddressTypeRepository(AtoTaxDbContext context, ILogger<AddressType> logger) : base(context, logger)
         {
 
             _context = context;
+            _logger = logger;
         }
 
 

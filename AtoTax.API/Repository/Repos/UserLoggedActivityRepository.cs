@@ -9,10 +9,12 @@ namespace AtoTax.API.Repository.Repos
     public class UserLoggedActivityRepository : Repository<UserLoggedActivity>, IUserLoggedActivityRepository
     {
         private readonly AtoTaxDbContext _context;
-        public UserLoggedActivityRepository(AtoTaxDbContext context) : base(context)
+        private readonly ILogger<UserLoggedActivity> _logger;
+        public UserLoggedActivityRepository(AtoTaxDbContext context, ILogger<UserLoggedActivity> logger) : base(context, logger)
         {
 
             _context = context;
+            _logger = logger;
         }
 
 

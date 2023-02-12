@@ -9,10 +9,12 @@ namespace AtoTax.API.Repository.Repos
     public class GSTPaidDetailRepository : Repository<GSTPaidDetail>, IGSTPaidDetailRepository
     {
         private readonly AtoTaxDbContext _context;
-        public GSTPaidDetailRepository(AtoTaxDbContext context) : base(context)
+        private readonly ILogger<GSTPaidDetail> _logger;
+        public GSTPaidDetailRepository(AtoTaxDbContext context, ILogger<GSTPaidDetail> logger) : base(context, logger)
         {
 
             _context = context;
+            _logger = logger;
         }
 
 

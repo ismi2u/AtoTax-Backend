@@ -4,10 +4,12 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace AtoTax.API.Migrations
 {
     /// <inheritdoc />
-    public partial class initialss : Migration
+    public partial class maininitial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -53,21 +55,22 @@ namespace AtoTax.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ClientFeeCharges",
+                name: "CollectionAndBalances",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    GSTClientId = table.Column<int>(type: "integer", nullable: false),
-                    GSTMonthlySubmission = table.Column<double>(type: "double precision", nullable: false),
-                    GSTAmendment = table.Column<double>(type: "double precision", nullable: false),
-                    GSTAnnualReturnFiling = table.Column<double>(type: "double precision", nullable: false),
-                    GSTNoticeService = table.Column<double>(type: "double precision", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    GSTClientId = table.Column<int>(type: "integer", nullable: true),
+                    DueMonth = table.Column<string>(type: "text", nullable: true),
+                    Year = table.Column<int>(type: "integer", nullable: true),
+                    FeesAmount = table.Column<double>(type: "double precision", nullable: true),
+                    PreviousBalance = table.Column<double>(type: "double precision", nullable: true),
+                    AmountPaid = table.Column<double>(type: "double precision", nullable: false),
+                    CurrentBalance = table.Column<double>(type: "double precision", nullable: false),
+                    AmountReceivedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ClientFeeCharges", x => x.Id);
+                    table.PrimaryKey("PK_CollectionAndBalances", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -359,7 +362,7 @@ namespace AtoTax.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MediaTypes",
+                name: "MultimediaTypes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -372,9 +375,9 @@ namespace AtoTax.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MediaTypes", x => x.Id);
+                    table.PrimaryKey("PK_MultimediaTypes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MediaTypes_Status_StatusId",
+                        name: "FK_MultimediaTypes_Status_StatusId",
                         column: x => x.StatusId,
                         principalTable: "Status",
                         principalColumn: "Id",
@@ -404,7 +407,7 @@ namespace AtoTax.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ServiceCategory",
+                name: "ServiceCategories",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -417,9 +420,9 @@ namespace AtoTax.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ServiceCategory", x => x.Id);
+                    table.PrimaryKey("PK_ServiceCategories", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ServiceCategory_Status_StatusId",
+                        name: "FK_ServiceCategories_Status_StatusId",
                         column: x => x.StatusId,
                         principalTable: "Status",
                         principalColumn: "Id",
@@ -499,8 +502,7 @@ namespace AtoTax.API.Migrations
                 name: "Amendments",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     GSTClientId = table.Column<Guid>(type: "uuid", nullable: false),
                     AmendTypeId = table.Column<int>(type: "integer", nullable: false),
                     ARN = table.Column<string>(type: "text", nullable: false),
@@ -529,6 +531,55 @@ namespace AtoTax.API.Migrations
                         name: "FK_Amendments_Status_StatusId",
                         column: x => x.StatusId,
                         principalTable: "Status",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientFeeCharges",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    GSTClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    GSTMonthlySubmission = table.Column<double>(type: "double precision", nullable: false),
+                    GSTAmendment = table.Column<double>(type: "double precision", nullable: false),
+                    GSTAnnualReturnFiling = table.Column<double>(type: "double precision", nullable: false),
+                    GSTNoticeService = table.Column<double>(type: "double precision", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientFeeCharges", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClientFeeCharges_GSTClients_GSTClientId",
+                        column: x => x.GSTClientId,
+                        principalTable: "GSTClients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FeeCollectionLedgers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    GSTClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    DueMonth = table.Column<string>(type: "text", nullable: false),
+                    Year = table.Column<int>(type: "integer", nullable: false),
+                    FeesAmount = table.Column<double>(type: "double precision", nullable: false),
+                    PreviousBalance = table.Column<double>(type: "double precision", nullable: false),
+                    AmountPaid = table.Column<double>(type: "double precision", nullable: false),
+                    CurrentBalance = table.Column<double>(type: "double precision", nullable: false),
+                    AmtReceivedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FeeCollectionLedgers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FeeCollectionLedgers_GSTClients_GSTClientId",
+                        column: x => x.GSTClientId,
+                        principalTable: "GSTClients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -563,9 +614,9 @@ namespace AtoTax.API.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_GSTPaidDetails_ServiceCategory_ServiceCategoryId",
+                        name: "FK_GSTPaidDetails_ServiceCategories_ServiceCategoryId",
                         column: x => x.ServiceCategoryId,
-                        principalTable: "ServiceCategory",
+                        principalTable: "ServiceCategories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -583,7 +634,7 @@ namespace AtoTax.API.Migrations
                     ReceivedBy = table.Column<int>(type: "integer", nullable: false),
                     ReceivedByEmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
                     ReceivedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    MediaTypeId = table.Column<int>(type: "integer", nullable: false),
+                    MultimediaTypeId = table.Column<int>(type: "integer", nullable: false),
                     FiledBy = table.Column<int>(type: "integer", nullable: false),
                     FiledByEmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
                     FiledDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -625,12 +676,47 @@ namespace AtoTax.API.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_GSTBillAndFeeCollections_ServiceCategory_ServiceCategoryId",
+                        name: "FK_GSTBillAndFeeCollections_ServiceCategories_ServiceCategoryId",
                         column: x => x.ServiceCategoryId,
-                        principalTable: "ServiceCategory",
+                        principalTable: "ServiceCategories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "UserLoggedActivities",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    EmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Activity = table.Column<string>(type: "text", nullable: false),
+                    AdditionalDetails = table.Column<string>(type: "text", nullable: false),
+                    loggedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserLoggedActivities", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserLoggedActivities_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Status",
+                columns: new[] { "Id", "StatusType" },
+                values: new object[,]
+                {
+                    { 1, "active" },
+                    { 2, "inactive" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "GSTClients",
+                columns: new[] { "Id", "ContactEmailId", "ContactName", "CreatedDate", "EWAYBillPassword", "EWAYBillUserName", "GSTAnnualTurnOver", "GSTEmailId", "GSTEmailPassword", "GSTIN", "GSTRecoveryEmailId", "GSTRecoveryEmailPassword", "GSTRegDate", "GSTRelievedDate", "GSTSurrenderedDate", "GSTUserName", "GSTUserPassword", "LastModifiedDate", "MobileNumber", "PhoneNumber", "ProprietorName", "RackFileNo", "StatusId", "TallyDataFilePath" },
+                values: new object[] { new Guid("ebf7cf6d-26fa-40a7-90ab-b86402a7e594"), "test@test.com", "Raja Mohamed", new DateTime(2023, 2, 11, 22, 32, 21, 853, DateTimeKind.Utc).AddTicks(9623), "EWAYBillPassword", "EWAYBillUserName", 10000.0, "test1@test.com", "testerpass", "123456789", "recover@test.com", "GSTRecoveryEmailPassword", new DateTime(2023, 2, 11, 22, 32, 21, 853, DateTimeKind.Utc).AddTicks(9613), null, null, "gstusername", "GSTUserPassword", new DateTime(2023, 2, 11, 22, 32, 21, 853, DateTimeKind.Utc).AddTicks(9627), "829733325", "829733325", "Rexona Co", "RackFileNo", 1, "F:\\\\userfolder\\txt1.txt" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AddressTypes_StatusId",
@@ -695,6 +781,11 @@ namespace AtoTax.API.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_ClientFeeCharges_GSTClientId",
+                table: "ClientFeeCharges",
+                column: "GSTClientId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DefaultCharges_StatusId",
                 table: "DefaultCharges",
                 column: "StatusId");
@@ -713,6 +804,11 @@ namespace AtoTax.API.Migrations
                 name: "IX_Employees_StatusId",
                 table: "Employees",
                 column: "StatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FeeCollectionLedgers_GSTClientId",
+                table: "FeeCollectionLedgers",
+                column: "GSTClientId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GSTBillAndFeeCollections_FiledByEmployeeId",
@@ -775,8 +871,8 @@ namespace AtoTax.API.Migrations
                 column: "ServiceCategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MediaTypes_StatusId",
-                table: "MediaTypes",
+                name: "IX_MultimediaTypes_StatusId",
+                table: "MultimediaTypes",
                 column: "StatusId");
 
             migrationBuilder.CreateIndex(
@@ -785,9 +881,14 @@ namespace AtoTax.API.Migrations
                 column: "StatusId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ServiceCategory_StatusId",
-                table: "ServiceCategory",
+                name: "IX_ServiceCategories_StatusId",
+                table: "ServiceCategories",
                 column: "StatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserLoggedActivities_EmployeeId",
+                table: "UserLoggedActivities",
+                column: "EmployeeId");
         }
 
         /// <inheritdoc />
@@ -815,7 +916,13 @@ namespace AtoTax.API.Migrations
                 name: "ClientFeeCharges");
 
             migrationBuilder.DropTable(
+                name: "CollectionAndBalances");
+
+            migrationBuilder.DropTable(
                 name: "DefaultCharges");
+
+            migrationBuilder.DropTable(
+                name: "FeeCollectionLedgers");
 
             migrationBuilder.DropTable(
                 name: "GSTBillAndFeeCollections");
@@ -827,10 +934,13 @@ namespace AtoTax.API.Migrations
                 name: "GSTPaidDetails");
 
             migrationBuilder.DropTable(
-                name: "MediaTypes");
+                name: "MultimediaTypes");
 
             migrationBuilder.DropTable(
                 name: "ServiceChargeUpdateHistory");
+
+            migrationBuilder.DropTable(
+                name: "UserLoggedActivities");
 
             migrationBuilder.DropTable(
                 name: "AmendTypes");
@@ -840,9 +950,6 @@ namespace AtoTax.API.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "Employees");
 
             migrationBuilder.DropTable(
                 name: "GSTFilingTypes");
@@ -857,7 +964,10 @@ namespace AtoTax.API.Migrations
                 name: "PaymentTypes");
 
             migrationBuilder.DropTable(
-                name: "ServiceCategory");
+                name: "ServiceCategories");
+
+            migrationBuilder.DropTable(
+                name: "Employees");
 
             migrationBuilder.DropTable(
                 name: "EmpJobRoles");

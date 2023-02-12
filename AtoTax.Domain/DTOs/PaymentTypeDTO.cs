@@ -14,8 +14,15 @@ namespace AtoTax.Domain.DTOs
         public string? PaymentMethod { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? LastModifiedDate { get; set; }
-        public int StatusId { get; set; }
+        public int? StatusId { get; set; }
+        public StatusDTO Status { get; set; }
 
+    }
+
+    public class ActivePaymentTypesForDD
+    {
+        public int Id { get; set; }
+        public string? PaymentType { get; set; }
     }
 
     public class PaymentTypeCreateDTO

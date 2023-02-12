@@ -9,10 +9,12 @@ namespace AtoTax.API.Repository.Repos
     public class PaymentTypeRepository : Repository<PaymentType>, IPaymentTypeRepository
     {
         private readonly AtoTaxDbContext _context;
-        public PaymentTypeRepository(AtoTaxDbContext context) : base(context)
+        private readonly ILogger<PaymentType> _logger;
+        public PaymentTypeRepository(AtoTaxDbContext context, ILogger<PaymentType> logger) : base(context, logger)
         {
 
             _context = context;
+            _logger = logger;
         }
 
 
