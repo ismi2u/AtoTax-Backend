@@ -13,7 +13,7 @@ namespace AtoTax.API.GenericRepository
         public IAddressTypeRepository AddressTypes { get; private set; }
         public IAmendmentRepository Amendments { get; private set; }
         public IAmendTypeRepository AmendTypes { get; private set; }
-        public IClientFeeChargeRepository ClientFeeCharges { get; private set; }
+        public IClientFeeMapRepository ClientFeeMaps { get; private set; }
         public IDefaultChargeRepository DefaultCharges { get; private set; }
         public IEmpJobRoleRepository EmpJobRoles { get; private set; }
         public IEmployeeRepository Employees { get; private set; }
@@ -35,7 +35,7 @@ namespace AtoTax.API.GenericRepository
         private readonly ILogger<AddressType> _AddressTypeLogger;
         private readonly ILogger<Amendment> _AmendmentLogger;
         private readonly ILogger<AmendType> _AmendTypeLogger;
-        private readonly ILogger<ClientFeeCharge> _ClientFeeChargeLogger;
+        private readonly ILogger<ClientFeeMap> _ClientFeeMapLogger;
         private readonly ILogger<DefaultCharge> _DefaultChargeLogger;
         private readonly ILogger<EmpJobRole> _EmpJobRoleLogger;
         private readonly ILogger<Employee> _EmployeeLogger;
@@ -56,7 +56,7 @@ namespace AtoTax.API.GenericRepository
             ILogger<AddressType> AddressTypeLogger,
              ILogger<Amendment> AmendmentLogger,
              ILogger<AmendType> AmendTypeLogger,
-               ILogger<ClientFeeCharge> ClientFeeChargeLogger,
+               ILogger<ClientFeeMap> ClientFeeMapLogger,
                ILogger<DefaultCharge> DefaultChargeLogger,
                ILogger<EmpJobRole> EmpJobRoleLogger,
             ILogger<Employee> EmployeeLogger,
@@ -78,7 +78,7 @@ namespace AtoTax.API.GenericRepository
             _AddressTypeLogger = AddressTypeLogger;
             _AmendmentLogger = AmendmentLogger;
             _AmendTypeLogger = AmendTypeLogger;
-            _ClientFeeChargeLogger = ClientFeeChargeLogger;
+            _ClientFeeMapLogger = ClientFeeMapLogger;
             _DefaultChargeLogger = DefaultChargeLogger;
             _EmpJobRoleLogger = EmpJobRoleLogger;
             _EmployeeLogger = EmployeeLogger;
@@ -96,7 +96,7 @@ namespace AtoTax.API.GenericRepository
             AddressTypes = new AddressTypeRepository(_context, _AddressTypeLogger);
             Amendments = new AmendmentRepository(_context, _AmendmentLogger);
             AmendTypes = new AmendTypeRepository(_context, _AmendTypeLogger);
-            ClientFeeCharges = new ClientFeeChargeRepository(_context, _ClientFeeChargeLogger);
+            ClientFeeMaps = new ClientFeeMapRepository(_context, _ClientFeeMapLogger);
             DefaultCharges = new DefaultChargeRepository(_context, _DefaultChargeLogger);
             EmpJobRoles = new EmpJobRoleRepository(_context, _EmpJobRoleLogger);
             Employees = new EmployeeRepository(_context, _EmployeeLogger);

@@ -109,12 +109,12 @@ namespace AtoTax.API.Mapping
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
 
 
-            //ClientFeeCharges
-            CreateMap<ClientFeeCharge, ClientFeeChargeDTO>().ReverseMap();
-            CreateMap<ClientFeeChargeCreateDTO, ClientFeeCharge>()
+            //ClientFeeMaps
+            CreateMap<ClientFeeMap, ClientFeeMapDTO>().ReverseMap();
+            CreateMap<ClientFeeMapCreateDTO, ClientFeeMap>()
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
-            CreateMap<ClientFeeChargeUpdateDTO, ClientFeeCharge>()
+            CreateMap<ClientFeeMapUpdateDTO, ClientFeeMap>()
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
 
 

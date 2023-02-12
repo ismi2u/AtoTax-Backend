@@ -47,7 +47,7 @@ builder.Services.AddScoped<IPaymentTypeRepository, PaymentTypeRepository>();
 builder.Services.AddScoped<IEmpJobRoleRepository, EmpJobRoleRepository>();
 builder.Services.AddScoped<IAmendTypeRepository, AmendTypeRepository>();
 builder.Services.AddScoped<IAmendmentRepository, AmendmentRepository>();
-builder.Services.AddScoped<IClientFeeChargeRepository, ClientFeeChargeRepository>();
+builder.Services.AddScoped<IClientFeeMapRepository, ClientFeeMapRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IGSTFilingTypeRepository, GSTFilingTypeRepository>();
 builder.Services.AddScoped<IGSTClientAddressExtensionRepository, GSTClientAddressExtensionRepository>();
@@ -110,11 +110,10 @@ IWebHostEnvironment env = app.Environment;
 
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
 app.UseCors("AtoTaxCorsPolicy");
 
 app.UseHttpsRedirection();

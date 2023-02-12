@@ -11,6 +11,7 @@ using AtoTax.Domain.DTOs;
 using AutoMapper;
 using System.Net;
 using AtoTax.API.Repository.Interfaces;
+using AtoTax.API.GenericRepository;
 
 namespace AtoTax.API.Controllers
 {
@@ -19,16 +20,17 @@ namespace AtoTax.API.Controllers
     public class GSTClientsController : ControllerBase
     {
         protected APIResponse _response;
-        private readonly IGSTClientRepository _dbGSTClient;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
 
-        public GSTClientsController(IGSTClientRepository dbGSTClient, IMapper mapper, AtoTaxDbContext context)
+        public GSTClientsController(IMapper mapper, AtoTaxDbContext context, IUnitOfWork unitOfWork)
         {
-            _dbGSTClient = dbGSTClient;
+            //_dbGSTClient = dbGSTClient;
             _mapper = mapper;
             this._response= new();
             _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/GSTClients
@@ -44,7 +46,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<GSTClient> GSTClientsList = await _dbGSTClient.GetAllAsync(null, arrIncludes);
+                IEnumerable<GSTClient> GSTClientsList = await _unitOfWork.GSTClients.GetAllAsync(null, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<GSTClientDTO>>(GSTClientsList);
                 _response.StatusCode = HttpStatusCode.OK;
@@ -71,7 +73,7 @@ namespace AtoTax.API.Controllers
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                GSTClient GSTClient = await _dbGSTClient.GetAsync(u => u.Id == id, false, arrIncludes);
+                GSTClient GSTClient = await _unitOfWork.GSTClients.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
                 _response.Result = _mapper.Map<GSTClientDTO>(GSTClient);
@@ -103,7 +105,7 @@ namespace AtoTax.API.Controllers
                 }
 
 
-                var oldgstclient = await _dbGSTClient.GetAsync(u => u.Id == id, tracked: false);
+                var oldgstclient = await _unitOfWork.GSTClients.GetAsync(u => u.Id == id, tracked: false);
 
                 if (oldgstclient == null)
                 {
@@ -119,7 +121,7 @@ namespace AtoTax.API.Controllers
                 //// dont update the below field as they are not part of updateDTO  and hence will become null
                 gstClient.CreatedDate = oldgstclient.CreatedDate;
 
-                await _dbGSTClient.UpdateAsync(gstClient);
+                await _unitOfWork.GSTClients.UpdateAsync(gstClient);
 
                 if (!ModelState.IsValid)
                 {
@@ -149,12 +151,12 @@ namespace AtoTax.API.Controllers
             try
             {
 
-                if (await _dbGSTClient.GetAsync(u => u.GSTIN == gstClientCreateDTO.GSTIN) != null)
+                if (await _unitOfWork.GSTClients.GetAsync(u => u.GSTIN == gstClientCreateDTO.GSTIN) != null)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return _response;
                 }
-                if (await _dbGSTClient.GetAsync(u => u.ProprietorName == gstClientCreateDTO.ProprietorName) != null)
+                if (await _unitOfWork.GSTClients.GetAsync(u => u.ProprietorName == gstClientCreateDTO.ProprietorName) != null)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.Result = gstClientCreateDTO;
@@ -162,7 +164,7 @@ namespace AtoTax.API.Controllers
                 }
                 var gstClient = _mapper.Map<GSTClient>(gstClientCreateDTO);
                 gstClient.CreatedDate= DateTime.UtcNow;
-                await _dbGSTClient.CreateAsync(gstClient);
+                await _unitOfWork.GSTClients.CreateAsync(gstClient);
 
                 _response.Result = _mapper.Map<GSTClientDTO>(gstClient);
                 _response.StatusCode = HttpStatusCode.Created;
@@ -191,14 +193,14 @@ namespace AtoTax.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var gstClient = await _dbGSTClient.GetAsync(u => u.Id == id);
+                var gstClient = await _unitOfWork.GSTClients.GetAsync(u => u.Id == id);
                 if (gstClient == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                await _dbGSTClient.RemoveAsync(gstClient);
+                await _unitOfWork.GSTClients.RemoveAsync(gstClient);
 
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);

@@ -8,7 +8,7 @@ namespace AtoTax.API.GenericRepository
         IAmendmentRepository Amendments { get; }
         IAmendTypeRepository AmendTypes { get; }
 
-        IClientFeeChargeRepository ClientFeeCharges { get; }
+        IClientFeeMapRepository ClientFeeMaps { get; }
         IDefaultChargeRepository DefaultCharges { get; }
         IEmpJobRoleRepository EmpJobRoles { get; }
         IEmployeeRepository Employees { get; }

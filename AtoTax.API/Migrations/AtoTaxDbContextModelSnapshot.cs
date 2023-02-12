@@ -124,7 +124,7 @@ namespace AtoTax.API.Migrations
                     b.ToTable("Amendments");
                 });
 
-            modelBuilder.Entity("AtoTax.Domain.Entities.ClientFeeCharge", b =>
+            modelBuilder.Entity("AtoTax.Domain.Entities.ClientFeeMap", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -155,7 +155,7 @@ namespace AtoTax.API.Migrations
 
                     b.HasIndex("GSTClientId");
 
-                    b.ToTable("ClientFeeCharges");
+                    b.ToTable("ClientFeeMaps");
                 });
 
             modelBuilder.Entity("AtoTax.Domain.Entities.CollectionAndBalance", b =>
@@ -1082,7 +1082,7 @@ namespace AtoTax.API.Migrations
                     b.Navigation("Status");
                 });
 
-            modelBuilder.Entity("AtoTax.Domain.Entities.ClientFeeCharge", b =>
+            modelBuilder.Entity("AtoTax.Domain.Entities.ClientFeeMap", b =>
                 {
                     b.HasOne("AtoTax.Domain.Entities.GSTClient", "GSTClient")
                         .WithMany()

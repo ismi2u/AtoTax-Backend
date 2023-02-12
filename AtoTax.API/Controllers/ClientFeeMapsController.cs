@@ -16,26 +16,26 @@ namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    public class ClientFeeCharges : ControllerBase
+    public class ClientFeeMapsController : ControllerBase
     {
         protected APIResponse _response;
-        private readonly IClientFeeChargeRepository _dbClientFeeCharge;
+        private readonly IClientFeeMapRepository _dbClientFeeMap;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
 
-        public ClientFeeCharges(IClientFeeChargeRepository dbClientFeeCharge, IMapper mapper, AtoTaxDbContext context)
+        public ClientFeeMapsController(IClientFeeMapRepository dbClientFeeMap, IMapper mapper, AtoTaxDbContext context)
         {
-            _dbClientFeeCharge = dbClientFeeCharge;
+            _dbClientFeeMap = dbClientFeeMap;
             _mapper = mapper;
             this._response = new();
             _context = context;
         }
 
-        // GET: api/ClientFeeCharges
+        // GET: api/ClientFeeMaps
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetClientFeeCharges()
+        public async Task<ActionResult<APIResponse>> GetClientFeeMaps()
         {
 
             List<string> includelist = new List<string>();
@@ -45,9 +45,9 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<ClientFeeCharge> ClientFeeChargesList = await _dbClientFeeCharge.GetAllAsync(null, arrIncludes);
+                IEnumerable<ClientFeeMap> ClientFeeMapsList = await _dbClientFeeMap.GetAllAsync(null, arrIncludes);
 
-                _response.Result = _mapper.Map<IEnumerable<ClientFeeChargeDTO>>(ClientFeeChargesList);
+                _response.Result = _mapper.Map<IEnumerable<ClientFeeMapDTO>>(ClientFeeMapsList);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
@@ -59,12 +59,12 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
-        // GET: api/ClientFeeCharges/5
+        // GET: api/ClientFeeMaps/5
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetClientFeeCharge(Guid id)
+        public async Task<ActionResult<APIResponse>> GetClientFeeMap(Guid id)
         {
 
             List<string> includelist = new List<string>();
@@ -73,10 +73,10 @@ namespace AtoTax.API.Controllers
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                ClientFeeCharge ClientFeeCharge = await _dbClientFeeCharge.GetAsync(u => u.Id == id, false, arrIncludes);
+                ClientFeeMap ClientFeeMap = await _dbClientFeeMap.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
-                _response.Result = _mapper.Map<ClientFeeChargeDTO>(ClientFeeCharge);
+                _response.Result = _mapper.Map<ClientFeeMapDTO>(ClientFeeMap);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
@@ -89,36 +89,36 @@ namespace AtoTax.API.Controllers
 
         }
 
-        // PUT: api/ClientFeeCharges/5
+        // PUT: api/ClientFeeMaps/5
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> UpdateClientFeeCharge(Guid id, ClientFeeChargeUpdateDTO ClientFeeChargeUpdateDTO)
+        public async Task<ActionResult<APIResponse>> UpdateClientFeeMap(Guid id, ClientFeeMapUpdateDTO ClientFeeMapUpdateDTO)
         {
             try
             {
-                if (id == Guid.Empty || !(id == ClientFeeChargeUpdateDTO.Id))
+                if (id == Guid.Empty || !(id == ClientFeeMapUpdateDTO.Id))
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
 
 
-                var oldClientFeeCharge = await _dbClientFeeCharge.GetAsync(u => u.Id == id, tracked: false);
+                var oldClientFeeMap = await _dbClientFeeMap.GetAsync(u => u.Id == id, tracked: false);
 
-                if (oldClientFeeCharge == null)
+                if (oldClientFeeMap == null)
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;
                     return _response;
                 }
 
-                var ClientFeeCharge = _mapper.Map<ClientFeeCharge>(ClientFeeChargeUpdateDTO);
+                var ClientFeeMap = _mapper.Map<ClientFeeMap>(ClientFeeMapUpdateDTO);
 
                 //// dont update the below field as they are not part of updateDTO  and hence will become null
-                ClientFeeCharge.CreatedDate = oldClientFeeCharge.CreatedDate;
+                ClientFeeMap.CreatedDate = oldClientFeeMap.CreatedDate;
 
-                await _dbClientFeeCharge.UpdateAsync(ClientFeeCharge);
+                await _dbClientFeeMap.UpdateAsync(ClientFeeMap);
 
                 if (!ModelState.IsValid)
                 {
@@ -128,7 +128,7 @@ namespace AtoTax.API.Controllers
                 }
 
                 _response.StatusCode = HttpStatusCode.NoContent;
-                _response.Result = ClientFeeCharge;
+                _response.Result = ClientFeeMap;
                 return Ok(_response);
             }
             catch (Exception ex)
@@ -139,29 +139,29 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
-        // POST: api/ClientFeeCharges
+        // POST: api/ClientFeeMaps
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> CreateClientFeeCharge(ClientFeeChargeCreateDTO ClientFeeChargeCreateDTO)
+        public async Task<ActionResult<APIResponse>> CreateClientFeeMap(ClientFeeMapCreateDTO ClientFeeMapCreateDTO)
         {
             try
             {
 
-                if (await _dbClientFeeCharge.GetAsync(u => u.GSTClientId == ClientFeeChargeCreateDTO.GSTClientId) != null)
+                if (await _dbClientFeeMap.GetAsync(u => u.GSTClientId == ClientFeeMapCreateDTO.GSTClientId) != null)
                 {
                     _response.ErrorMessages = new List<string>() { "Client Fee Charge already Exists" };
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return _response;
                 }
-                var ClientFeeCharge = _mapper.Map<ClientFeeCharge>(ClientFeeChargeCreateDTO);
-                ClientFeeCharge.CreatedDate = DateTime.UtcNow;
-                await _dbClientFeeCharge.CreateAsync(ClientFeeCharge);
+                var ClientFeeMap = _mapper.Map<ClientFeeMap>(ClientFeeMapCreateDTO);
+                ClientFeeMap.CreatedDate = DateTime.UtcNow;
+                await _dbClientFeeMap.CreateAsync(ClientFeeMap);
 
-                _response.Result = _mapper.Map<ClientFeeChargeDTO>(ClientFeeCharge);
+                _response.Result = _mapper.Map<ClientFeeMapDTO>(ClientFeeMap);
                 _response.StatusCode = HttpStatusCode.Created;
 
-                return CreatedAtAction("GetClientFeeCharge", new { id = ClientFeeCharge.Id }, _response);
+                return CreatedAtAction("GetClientFeeMap", new { id = ClientFeeMap.Id }, _response);
             }
             catch (Exception ex)
             {
@@ -171,12 +171,12 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
-        // DELETE: api/ClientFeeCharges/5
+        // DELETE: api/ClientFeeMaps/5
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<APIResponse>> DeleteClientFeeCharge(Guid id)
+        public async Task<ActionResult<APIResponse>> DeleteClientFeeMap(Guid id)
         {
             try
             {
@@ -185,14 +185,14 @@ namespace AtoTax.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var ClientFeeCharge = await _dbClientFeeCharge.GetAsync(u => u.Id == id);
-                if (ClientFeeCharge == null)
+                var ClientFeeMap = await _dbClientFeeMap.GetAsync(u => u.Id == id);
+                if (ClientFeeMap == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                await _dbClientFeeCharge.RemoveAsync(ClientFeeCharge);
+                await _dbClientFeeMap.RemoveAsync(ClientFeeMap);
 
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);

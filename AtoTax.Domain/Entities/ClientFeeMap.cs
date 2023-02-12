@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AtoTax.Domain.Entities
 {
-    public class ClientFeeCharge
+    public class ClientFeeMap
     {
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]

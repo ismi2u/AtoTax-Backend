@@ -9,7 +9,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace AtoTax.Domain.DTOs
 {
 
-    public class ClientFeeChargeDTO
+    public class ClientFeeMapDTO
     {
         public Guid Id { get; set; }
         public Guid GSTClientId { get; set; }
@@ -22,7 +22,7 @@ namespace AtoTax.Domain.DTOs
         public DateTime? LastModifiedDate { get; set; }
 
     }
-    public class ClientFeeChargeCreateDTO
+    public class ClientFeeMapCreateDTO
     {
         [Required]
         public Guid GSTClientId { get; set; }
@@ -38,7 +38,7 @@ namespace AtoTax.Domain.DTOs
     }
 
 
-    public class ClientFeeChargeUpdateDTO
+    public class ClientFeeMapUpdateDTO
     {
         [Required]
         public Guid Id { get; set; }

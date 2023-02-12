@@ -7,11 +7,11 @@ using Microsoft.Extensions.Logging;
 
 namespace AtoTax.API.Repository.Repos
 {
-    public class ClientFeeChargeRepository : Repository<ClientFeeCharge>, IClientFeeChargeRepository
+    public class ClientFeeMapRepository : Repository<ClientFeeMap>, IClientFeeMapRepository
     {
         private readonly AtoTaxDbContext _context;
-        private readonly new ILogger<ClientFeeCharge> _logger;
-        public ClientFeeChargeRepository(AtoTaxDbContext context, ILogger<ClientFeeCharge> logger) : base(context, logger)
+        private readonly new ILogger<ClientFeeMap> _logger;
+        public ClientFeeMapRepository(AtoTaxDbContext context, ILogger<ClientFeeMap> logger) : base(context, logger)
         {
 
             _context = context;
@@ -19,13 +19,13 @@ namespace AtoTax.API.Repository.Repos
         }
 
 
-        public async Task<ClientFeeCharge> UpdateAsync(ClientFeeCharge entity)
+        public async Task<ClientFeeMap> UpdateAsync(ClientFeeMap entity)
         {
             entity.LastModifiedDate = DateTime.UtcNow;
 
             _context.Update(entity);
             await _context.SaveChangesAsync();
-            _logger.LogInformation("ClientFeeCharge Id" + entity.Id.ToString() + " updated");
+            _logger.LogInformation("ClientFeeMap Id" + entity.Id.ToString() + " updated");
 
             return entity;
         }

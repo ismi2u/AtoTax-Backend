@@ -536,7 +536,7 @@ namespace AtoTax.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ClientFeeCharges",
+                name: "ClientFeeMaps",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -550,9 +550,9 @@ namespace AtoTax.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ClientFeeCharges", x => x.Id);
+                    table.PrimaryKey("PK_ClientFeeMaps", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ClientFeeCharges_GSTClients_GSTClientId",
+                        name: "FK_ClientFeeMaps_GSTClients_GSTClientId",
                         column: x => x.GSTClientId,
                         principalTable: "GSTClients",
                         principalColumn: "Id",
@@ -781,8 +781,8 @@ namespace AtoTax.API.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientFeeCharges_GSTClientId",
-                table: "ClientFeeCharges",
+                name: "IX_ClientFeeMaps_GSTClientId",
+                table: "ClientFeeMaps",
                 column: "GSTClientId");
 
             migrationBuilder.CreateIndex(
@@ -913,7 +913,7 @@ namespace AtoTax.API.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "ClientFeeCharges");
+                name: "ClientFeeMaps");
 
             migrationBuilder.DropTable(
                 name: "CollectionAndBalances");
