@@ -46,7 +46,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<ServiceChargeUpdateHistory> ServiceChargeUpdateHistoryList = await _unitOfWork.ServiceChargeUpdateHistories.GetAllAsync(null, arrIncludes);
+                IEnumerable<ServiceChargeUpdateHistory> ServiceChargeUpdateHistoryList = await _unitOfWork.ServiceChargeUpdateHistories.GetAllAsync(null, 0, 0, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<ServiceChargeUpdateHistoryDTO>>(ServiceChargeUpdateHistoryList);
                 _response.StatusCode = HttpStatusCode.OK;

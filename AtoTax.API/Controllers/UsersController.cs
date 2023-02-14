@@ -26,11 +26,11 @@ namespace AtoTax.API.Controllers
         private readonly IUserRepository _userRepository;
   
 
-        public UsersController(IUserRepository userRepository, APIResponse response)
+        public UsersController(IUserRepository userRepository)
         {
             _userRepository= userRepository;
-            _response= response;
-            
+            this._response = new();
+
         }
 
         [HttpPost("login")]

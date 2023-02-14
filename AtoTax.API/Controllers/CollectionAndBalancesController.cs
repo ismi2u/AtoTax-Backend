@@ -48,7 +48,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<CollectionAndBalance> CollectionAndBalancesList = await _unitOfWork.CollectionAndBalances.GetAllAsync(null, arrIncludes);
+                IEnumerable<CollectionAndBalance> CollectionAndBalancesList = await _unitOfWork.CollectionAndBalances.GetAllAsync(null, 0, 0, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<CollectionAndBalanceDTO>>(CollectionAndBalancesList);
                 _response.StatusCode = HttpStatusCode.OK;

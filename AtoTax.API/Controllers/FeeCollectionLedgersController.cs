@@ -47,7 +47,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<FeeCollectionLedger> FeeCollectionLedgerList = await _unitOfWork.FeeCollectionLedgers.GetAllAsync(null, arrIncludes);
+                IEnumerable<FeeCollectionLedger> FeeCollectionLedgerList = await _unitOfWork.FeeCollectionLedgers.GetAllAsync(null, 0, 0, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<FeeCollectionLedgerDTO>>(FeeCollectionLedgerList);
                 _response.StatusCode = HttpStatusCode.OK;

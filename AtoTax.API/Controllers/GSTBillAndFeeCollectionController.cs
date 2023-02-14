@@ -45,7 +45,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<GSTBillAndFeeCollection> GSTBillAndFeeCollectionList = await _unitOfWork.GSTBillAndFeeCollections.GetAllAsync(null, arrIncludes);
+                IEnumerable<GSTBillAndFeeCollection> GSTBillAndFeeCollectionList = await _unitOfWork.GSTBillAndFeeCollections.GetAllAsync(null, 0, 0, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<GSTBillAndFeeCollectionDTO>>(GSTBillAndFeeCollectionList);
                 _response.StatusCode = HttpStatusCode.OK;

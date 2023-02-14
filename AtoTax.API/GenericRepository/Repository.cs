@@ -25,7 +25,7 @@ namespace AtoTax.API.GenericRepository
             
         }
 
-        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, params string[] allIncludeStrings)
+        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, int pagesize = 3, int pagenumber = 1, params string[] allIncludeStrings)
         {
 
             IQueryable<T> query = dbSet;
@@ -40,6 +40,16 @@ namespace AtoTax.API.GenericRepository
                 query = query.Where(filter);
             }
 
+            if (pagesize > 0)
+            {
+                if (pagesize > 50)
+                {
+                    pagesize = 50;
+                }
+                //skip(0). take (5)
+                
+                query = query.Skip(pagesize * (pagenumber - 1)).Take(pagesize);
+            }
 
             return await query.ToListAsync();
         }

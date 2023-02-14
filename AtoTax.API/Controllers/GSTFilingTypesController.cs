@@ -45,7 +45,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<GSTFilingType> GSTFilingTypesList = await _unitOfWork.GSTFilingTypes.GetAllAsync(null, arrIncludes);
+                IEnumerable<GSTFilingType> GSTFilingTypesList = await _unitOfWork.GSTFilingTypes.GetAllAsync(null, 0, 0, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<GSTFilingTypeDTO>>(GSTFilingTypesList);
                 _response.StatusCode = HttpStatusCode.OK;

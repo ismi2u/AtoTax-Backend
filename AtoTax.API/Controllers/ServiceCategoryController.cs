@@ -46,7 +46,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<ServiceCategory> ServiceCategorysList = await _unitOfWork.ServiceCategories.GetAllAsync(null, arrIncludes);
+                IEnumerable<ServiceCategory> ServiceCategorysList = await _unitOfWork.ServiceCategories.GetAllAsync(null, 0, 0, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<ServiceCategoryDTO>>(ServiceCategorysList);
                 _response.StatusCode = HttpStatusCode.OK;

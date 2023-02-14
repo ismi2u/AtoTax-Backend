@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AtoTax.API.Authentication
 {
-    public class ApplicationUser: IdentityUser
+    public class ApplicationUser : IdentityUser
     {
         [ForeignKey("Employee")]
         public Guid EmployeeId { get; set; }

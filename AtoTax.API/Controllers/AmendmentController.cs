@@ -47,7 +47,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<Amendment> AmendmentsList = await _unitOfWork.Amendments.GetAllAsync(null, arrIncludes);
+                IEnumerable<Amendment> AmendmentsList = await _unitOfWork.Amendments.GetAllAsync(null, 0, 0, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<AmendmentDTO>>(AmendmentsList);
                 _response.StatusCode = HttpStatusCode.OK;

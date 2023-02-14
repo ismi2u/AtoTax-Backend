@@ -48,7 +48,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<GSTPaidDetail> GSTPaidDetailsList = await _unitOfWork.GSTPaidDetails.GetAllAsync(null, arrIncludes);
+                IEnumerable<GSTPaidDetail> GSTPaidDetailsList = await _unitOfWork.GSTPaidDetails.GetAllAsync(null, 0, 0, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<GSTPaidDetailDTO>>(GSTPaidDetailsList);
                 _response.StatusCode = HttpStatusCode.OK;

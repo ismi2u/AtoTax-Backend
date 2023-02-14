@@ -47,7 +47,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<GSTClientAddressExtension> GSTClientAddressExtensionList = await _unitOfWork.GSTClientAddressExtensions.GetAllAsync(null, arrIncludes);
+                IEnumerable<GSTClientAddressExtension> GSTClientAddressExtensionList = await _unitOfWork.GSTClientAddressExtensions.GetAllAsync(null, 0, 0, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<GSTClientAddressExtensionDTO>>(GSTClientAddressExtensionList);
                 _response.StatusCode = HttpStatusCode.OK;

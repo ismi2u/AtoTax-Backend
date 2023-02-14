@@ -1,4 +1,5 @@
-﻿using AtoTax.API.Authentication;
+﻿
+using AtoTax.API.Authentication;
 using AtoTax.API.Repository.Interfaces;
 using AtoTax.Domain.DTOs;
 using AtoTax.Domain.DTOs.AuthDTOs;
@@ -42,12 +43,11 @@ namespace AtoTax.API.Repository.Repos
 
         public async Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO)
         {
-           var user = _context.LocalUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDTO.UserName.ToLower() && u.Password == loginRequestDTO.Password );
+           var user = _context.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDTO.UserName.ToLower() && u.Password == loginRequestDTO.Password );
 
 
-            // bool isValid = await _userManager.CheckPasswordAsync(user, loginRequestDTO.Password);
-            // if(user == null || isValid== false)
-            if (user == null )
+            bool isValid = await _userManager.CheckPasswordAsync(user, loginRequestDTO.Password);
+            if (user == null || isValid == false)
             {
 
                 return new LoginResponseDTO()
@@ -56,7 +56,12 @@ namespace AtoTax.API.Repository.Repos
                     User = null
                 };
             }
+            //assign roles here
 
+            var roles = _userManager.GetRolesAsync(user);
+
+
+            //token generator here
             var tokenhandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(secretkey);
 
@@ -64,8 +69,8 @@ namespace AtoTax.API.Repository.Repos
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, user.Id.ToString()),
-                    new Claim(ClaimTypes.Role, user.Role),
+                    new Claim(ClaimTypes.Name, user.Name.ToString()),
+                    new Claim(ClaimTypes.Role, string.Join(",",roles))
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -73,9 +78,12 @@ namespace AtoTax.API.Repository.Repos
 
             var token = tokenhandler.CreateToken(tokenDescricptor);
 
-            LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
-            loginResponseDTO.User = user;
-            loginResponseDTO.Token = tokenhandler.WriteToken(token);
+            LoginResponseDTO loginResponseDTO = new()
+            {
+                User = _mapper.Map<UserDTO>(user),
+                Roles = string.Join(",", roles),
+                Token = tokenhandler.WriteToken(token)
+            };
 
             return loginResponseDTO;
 

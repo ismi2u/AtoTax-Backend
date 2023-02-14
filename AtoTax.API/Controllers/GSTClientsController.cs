@@ -12,6 +12,7 @@ using AutoMapper;
 using System.Net;
 using AtoTax.API.Repository.Interfaces;
 using AtoTax.API.GenericRepository;
+using System.Text.Json;
 
 namespace AtoTax.API.Controllers
 {
@@ -34,9 +35,10 @@ namespace AtoTax.API.Controllers
 
         // GET: api/GSTClients
         [HttpGet]
+        [ResponseCache(Duration =30)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetGSTClients()
+        public async Task<ActionResult<APIResponse>> GetGSTClients([FromQuery] int pageSize = 0, int pageNumber = 1)
         {
 
             List<string> includelist = new List<string>();
@@ -45,8 +47,12 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<GSTClient> GSTClientsList = await _unitOfWork.GSTClients.GetAllAsync(null, arrIncludes);
+                IEnumerable<GSTClient> GSTClientsList = await _unitOfWork.GSTClients.GetAllAsync(null, pageSize:pageSize, pageNumber:pageNumber, arrIncludes);
 
+
+                PaginationDTO pagination = new() { PageNumber= pageNumber, PageSize = pageSize };
+                //send pagination details to response header
+                Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
                 _response.Result = _mapper.Map<IEnumerable<GSTClientDTO>>(GSTClientsList);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
@@ -61,8 +67,10 @@ namespace AtoTax.API.Controllers
 
         // GET: api/GSTClients/5
         [HttpGet("{id}")]
+        [ResponseCache(CacheProfileName = "Default30")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> GetGSTClient(Guid id)
         {
@@ -246,7 +254,7 @@ namespace AtoTax.API.Controllers
                 var ListClientFeeMaps = await _unitOfWork.ClientFeeMaps.GetAllAsync(u => u.GSTClientId == id);
                 foreach (var clientFeeMap in ListClientFeeMaps)
                 {
-                   await  _unitOfWork.ClientFeeMaps.RemoveAsync(clientFeeMap);
+                    await _unitOfWork.ClientFeeMaps.RemoveAsync(clientFeeMap);
                 }
 
                 await _unitOfWork.CompleteAsync();

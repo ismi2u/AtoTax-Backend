@@ -36,7 +36,7 @@ namespace AtoTax.API.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetAddressTypes()
+        public async Task<ActionResult<APIResponse>> GetAddressTypes([FromQuery] int pageSize = 0, int pageNumber = 1)
         {
 
             List<string> includelist = new List<string>();
@@ -45,7 +45,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<AddressType> AddressTypesList = await _unitOfWork.AddressTypes.GetAllAsync(null, arrIncludes);
+                IEnumerable<AddressType> AddressTypesList = await _unitOfWork.AddressTypes.GetAllAsync(null, pageSize:pageSize, pageNumber:pageNumber, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<AddressTypeDTO>>(AddressTypesList);
                 _response.StatusCode = HttpStatusCode.OK;

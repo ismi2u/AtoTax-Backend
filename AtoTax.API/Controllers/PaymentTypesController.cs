@@ -45,7 +45,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<PaymentType> PaymentTypesList = await _unitOfWork.PaymentTypes.GetAllAsync(null, arrIncludes);
+                IEnumerable<PaymentType> PaymentTypesList = await _unitOfWork.PaymentTypes.GetAllAsync(null, 0, 0, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<PaymentTypeDTO>>(PaymentTypesList);
                 _response.StatusCode = HttpStatusCode.OK;

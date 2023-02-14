@@ -45,7 +45,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<MultimediaType> MultimediaTypesList = await _unitOfWork.MultimediaTypes.GetAllAsync(null, arrIncludes);
+                IEnumerable<MultimediaType> MultimediaTypesList = await _unitOfWork.MultimediaTypes.GetAllAsync(null, 0, 0, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<MultimediaTypeDTO>>(MultimediaTypesList);
                 _response.StatusCode = HttpStatusCode.OK;

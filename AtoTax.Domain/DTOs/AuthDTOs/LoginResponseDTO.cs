@@ -6,7 +6,7 @@ namespace AtoTax.Domain.DTOs.AuthDTOs
     {
         public string Token { get; set; }
 
-        //string user
-        public LocalUser User { get; set; }
+        public string Roles { get; set; }
+        public UserDTO User { get; set; }
     }
 }

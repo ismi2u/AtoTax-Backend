@@ -46,7 +46,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<ClientFeeMap> ClientFeeMapsList = await _unitOfWork.ClientFeeMaps.GetAllAsync(null, arrIncludes);
+                IEnumerable<ClientFeeMap> ClientFeeMapsList = await _unitOfWork.ClientFeeMaps.GetAllAsync(null, 0, 0, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<ClientFeeMapDTO>>(ClientFeeMapsList);
                 _response.StatusCode = HttpStatusCode.OK;

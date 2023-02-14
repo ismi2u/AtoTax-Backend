@@ -45,7 +45,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<Employee> EmployeeList = await _unitOfWork.Employees.GetAllAsync(null, arrIncludes);
+                IEnumerable<Employee> EmployeeList = await _unitOfWork.Employees.GetAllAsync(null, 0, 0, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<EmployeeDTO>>(EmployeeList);
                 _response.StatusCode = HttpStatusCode.OK;

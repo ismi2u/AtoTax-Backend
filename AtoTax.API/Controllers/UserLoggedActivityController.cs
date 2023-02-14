@@ -46,7 +46,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<UserLoggedActivity> UserLoggedActivityList = await _unitOfWork.UserLoggedActivities.GetAllAsync(null, arrIncludes);
+                IEnumerable<UserLoggedActivity> UserLoggedActivityList = await _unitOfWork.UserLoggedActivities.GetAllAsync(null, 0, 0, arrIncludes);
 
                 _response.Result = _mapper.Map<IEnumerable<UserLoggedActivityDTO>>(UserLoggedActivityList);
                 _response.StatusCode = HttpStatusCode.OK;
