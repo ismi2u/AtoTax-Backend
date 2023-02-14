@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AtoTax.API.Migrations
 {
     [DbContext(typeof(AtoTaxDbContext))]
-    [Migration("20230212181151_initalatotax")]
-    partial class initalatotax
+    [Migration("20230214161724_initialss")]
+    partial class initialss
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,84 @@ namespace AtoTax.API.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("AtoTax.API.Authentication.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Role")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.ToTable("AspNetUsers", (string)null);
+                });
 
             modelBuilder.Entity("AtoTax.Domain.Entities.AddressType", b =>
                 {
@@ -484,7 +562,7 @@ namespace AtoTax.API.Migrations
                             Id = new Guid("ebf7cf6d-26fa-40a7-90ab-b86402a7e594"),
                             ContactEmailId = "test@test.com",
                             ContactName = "Raja Mohamed",
-                            CreatedDate = new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3579),
+                            CreatedDate = new DateTime(2023, 2, 14, 16, 17, 23, 732, DateTimeKind.Utc).AddTicks(3862),
                             EWAYBillPassword = "EWAYBillPassword",
                             EWAYBillUserName = "EWAYBillUserName",
                             GSTAnnualTurnOver = 10000.0,
@@ -493,10 +571,10 @@ namespace AtoTax.API.Migrations
                             GSTIN = "123456789",
                             GSTRecoveryEmailId = "recover@test.com",
                             GSTRecoveryEmailPassword = "GSTRecoveryEmailPassword",
-                            GSTRegDate = new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3566),
+                            GSTRegDate = new DateTime(2023, 2, 14, 16, 17, 23, 732, DateTimeKind.Utc).AddTicks(3853),
                             GSTUserName = "gstusername",
                             GSTUserPassword = "GSTUserPassword",
-                            LastModifiedDate = new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3582),
+                            LastModifiedDate = new DateTime(2023, 2, 14, 16, 17, 23, 732, DateTimeKind.Utc).AddTicks(3865),
                             MobileNumber = "829733325",
                             PhoneNumber = "829733325",
                             ProprietorName = "Rexona Co",
@@ -632,6 +710,35 @@ namespace AtoTax.API.Migrations
                     b.ToTable("GSTPaidDetails");
                 });
 
+            modelBuilder.Entity("AtoTax.Domain.Entities.LocalUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LocalUsers");
+                });
+
             modelBuilder.Entity("AtoTax.Domain.Entities.MultimediaType", b =>
                 {
                     b.Property<int>("Id")
@@ -701,11 +808,11 @@ namespace AtoTax.API.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<double>("DefaultCharge")
-                        .HasColumnType("double precision");
-
                     b.Property<string>("Description")
                         .HasColumnType("text");
+
+                    b.Property<double>("FixedCharge")
+                        .HasColumnType("double precision");
 
                     b.Property<DateTime?>("LastModifiedDate")
                         .HasColumnType("timestamp with time zone");
@@ -730,10 +837,10 @@ namespace AtoTax.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3624),
-                            DefaultCharge = 1000.0,
+                            CreatedDate = new DateTime(2023, 2, 14, 16, 17, 23, 732, DateTimeKind.Utc).AddTicks(3891),
                             Description = "GST Monthly Submission",
-                            LastModifiedDate = new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3625),
+                            FixedCharge = 1000.0,
+                            LastModifiedDate = new DateTime(2023, 2, 14, 16, 17, 23, 732, DateTimeKind.Utc).AddTicks(3892),
                             PreviousCharge = 1000.0,
                             ServiceName = "GSTMonthlySubmission",
                             StatusId = 1
@@ -741,10 +848,10 @@ namespace AtoTax.API.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3628),
-                            DefaultCharge = 2000.0,
+                            CreatedDate = new DateTime(2023, 2, 14, 16, 17, 23, 732, DateTimeKind.Utc).AddTicks(3895),
                             Description = "GST Amendment",
-                            LastModifiedDate = new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3629),
+                            FixedCharge = 2000.0,
+                            LastModifiedDate = new DateTime(2023, 2, 14, 16, 17, 23, 732, DateTimeKind.Utc).AddTicks(3896),
                             PreviousCharge = 2000.0,
                             ServiceName = "GSTAmendment",
                             StatusId = 1
@@ -752,10 +859,10 @@ namespace AtoTax.API.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3631),
-                            DefaultCharge = 500.0,
+                            CreatedDate = new DateTime(2023, 2, 14, 16, 17, 23, 732, DateTimeKind.Utc).AddTicks(3899),
                             Description = "GST Annual Return Filing",
-                            LastModifiedDate = new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3632),
+                            FixedCharge = 500.0,
+                            LastModifiedDate = new DateTime(2023, 2, 14, 16, 17, 23, 732, DateTimeKind.Utc).AddTicks(3900),
                             PreviousCharge = 500.0,
                             ServiceName = "GSTAnnualReturnFiling",
                             StatusId = 1
@@ -763,10 +870,10 @@ namespace AtoTax.API.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedDate = new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3634),
-                            DefaultCharge = 200.0,
+                            CreatedDate = new DateTime(2023, 2, 14, 16, 17, 23, 732, DateTimeKind.Utc).AddTicks(3902),
                             Description = "GST Notice Service",
-                            LastModifiedDate = new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3634),
+                            FixedCharge = 200.0,
+                            LastModifiedDate = new DateTime(2023, 2, 14, 16, 17, 23, 732, DateTimeKind.Utc).AddTicks(3903),
                             PreviousCharge = 200.0,
                             ServiceName = "GSTNoticeService",
                             StatusId = 1
@@ -796,7 +903,7 @@ namespace AtoTax.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ServiceChargeUpdateHistory");
+                    b.ToTable("ServiceChargeUpdateHistories");
                 });
 
             modelBuilder.Entity("AtoTax.Domain.Entities.Status", b =>
@@ -853,73 +960,6 @@ namespace AtoTax.API.Migrations
                     b.HasIndex("EmployeeId");
 
                     b.ToTable("UserLoggedActivities");
-                });
-
-            modelBuilder.Entity("AtoTaxAPI.Authentication.ApplicationUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("boolean");
-
-                    b.Property<int?>("EmployeeId")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex");
-
-                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1052,6 +1092,17 @@ namespace AtoTax.API.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("AtoTax.API.Authentication.ApplicationUser", b =>
+                {
+                    b.HasOne("AtoTax.Domain.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("AtoTax.Domain.Entities.AddressType", b =>
@@ -1329,7 +1380,7 @@ namespace AtoTax.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("AtoTaxAPI.Authentication.ApplicationUser", null)
+                    b.HasOne("AtoTax.API.Authentication.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1338,7 +1389,7 @@ namespace AtoTax.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("AtoTaxAPI.Authentication.ApplicationUser", null)
+                    b.HasOne("AtoTax.API.Authentication.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1353,7 +1404,7 @@ namespace AtoTax.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AtoTaxAPI.Authentication.ApplicationUser", null)
+                    b.HasOne("AtoTax.API.Authentication.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1362,7 +1413,7 @@ namespace AtoTax.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("AtoTaxAPI.Authentication.ApplicationUser", null)
+                    b.HasOne("AtoTax.API.Authentication.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

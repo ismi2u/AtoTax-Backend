@@ -14,7 +14,7 @@ namespace AtoTax.Domain.DTOs
         public int Id { get; set; }
         public string? ServiceName { get; set; }
         public string? Description { get; set; }
-        public double DefaultCharge { get; set; }
+        public double FixedCharge { get; set; }
         public double? PreviousCharge { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? LastModifiedDate { get; set; }
@@ -28,7 +28,7 @@ namespace AtoTax.Domain.DTOs
         [Required]
         public string? ServiceName { get; set; }
         public string? Description { get; set; }
-        public double DefaultCharge { get; set; }
+        public double FixedCharge { get; set; }
         //public double? PreviousCharge { get; set; }
         //public DateTime? CreatedDate { get; set; }
         //public DateTime? LastModifiedDate { get; set; }
@@ -51,7 +51,7 @@ namespace AtoTax.Domain.DTOs
         [Required]
         public string? ServiceName { get; set; }
         public string? Description { get; set; }
-        public double DefaultCharge { get; set; }
+        public double FixedCharge { get; set; }
 
         //public double? PreviousCharge { get; set; }
         //public DateTime? CreatedDate { get; set; }

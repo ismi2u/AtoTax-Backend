@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AtoTax.API.Migrations
 {
     /// <inheritdoc />
-    public partial class initalatotax : Migration
+    public partial class initialss : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -26,32 +26,6 @@ namespace AtoTax.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetRoles", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUsers",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    EmployeeId = table.Column<int>(type: "integer", nullable: true),
-                    UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
-                    PasswordHash = table.Column<string>(type: "text", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "text", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "boolean", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -74,7 +48,23 @@ namespace AtoTax.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ServiceChargeUpdateHistory",
+                name: "LocalUsers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    UserName = table.Column<string>(type: "text", nullable: false),
+                    Password = table.Column<string>(type: "text", nullable: false),
+                    Role = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LocalUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ServiceChargeUpdateHistories",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -86,7 +76,7 @@ namespace AtoTax.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ServiceChargeUpdateHistory", x => x.Id);
+                    table.PrimaryKey("PK_ServiceChargeUpdateHistories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -119,91 +109,6 @@ namespace AtoTax.API.Migrations
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserClaims",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    ClaimType = table.Column<string>(type: "text", nullable: true),
-                    ClaimValue = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserLogins",
-                columns: table => new
-                {
-                    LoginProvider = table.Column<string>(type: "text", nullable: false),
-                    ProviderKey = table.Column<string>(type: "text", nullable: false),
-                    ProviderDisplayName = table.Column<string>(type: "text", nullable: true),
-                    UserId = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
-                    table.ForeignKey(
-                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserRoles",
-                columns: table => new
-                {
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    RoleId = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
-                    table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserTokens",
-                columns: table => new
-                {
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    LoginProvider = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Value = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
-                    table.ForeignKey(
-                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -391,7 +296,7 @@ namespace AtoTax.API.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ServiceName = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
-                    DefaultCharge = table.Column<double>(type: "double precision", nullable: false),
+                    FixedCharge = table.Column<double>(type: "double precision", nullable: false),
                     PreviousCharge = table.Column<double>(type: "double precision", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -605,6 +510,41 @@ namespace AtoTax.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    EmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    Password = table.Column<string>(type: "text", nullable: true),
+                    Role = table.Column<string>(type: "text", nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    PasswordHash = table.Column<string>(type: "text", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "text", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "GSTBillAndFeeCollections",
                 columns: table => new
                 {
@@ -687,6 +627,91 @@ namespace AtoTax.API.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "AspNetUserClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    ClaimType = table.Column<string>(type: "text", nullable: true),
+                    ClaimValue = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserLogins",
+                columns: table => new
+                {
+                    LoginProvider = table.Column<string>(type: "text", nullable: false),
+                    ProviderKey = table.Column<string>(type: "text", nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserRoles",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    RoleId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserTokens",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    LoginProvider = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Value = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "Status",
                 columns: new[] { "Id", "StatusType" },
@@ -699,17 +724,17 @@ namespace AtoTax.API.Migrations
             migrationBuilder.InsertData(
                 table: "GSTClients",
                 columns: new[] { "Id", "ContactEmailId", "ContactName", "CreatedDate", "EWAYBillPassword", "EWAYBillUserName", "GSTAnnualTurnOver", "GSTEmailId", "GSTEmailPassword", "GSTIN", "GSTRecoveryEmailId", "GSTRecoveryEmailPassword", "GSTRegDate", "GSTRelievedDate", "GSTSurrenderedDate", "GSTUserName", "GSTUserPassword", "LastModifiedDate", "MobileNumber", "PhoneNumber", "ProprietorName", "RackFileNo", "StatusId", "TallyDataFilePath" },
-                values: new object[] { new Guid("ebf7cf6d-26fa-40a7-90ab-b86402a7e594"), "test@test.com", "Raja Mohamed", new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3579), "EWAYBillPassword", "EWAYBillUserName", 10000.0, "test1@test.com", "testerpass", "123456789", "recover@test.com", "GSTRecoveryEmailPassword", new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3566), null, null, "gstusername", "GSTUserPassword", new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3582), "829733325", "829733325", "Rexona Co", "RackFileNo", 1, "F:\\\\userfolder\\txt1.txt" });
+                values: new object[] { new Guid("ebf7cf6d-26fa-40a7-90ab-b86402a7e594"), "test@test.com", "Raja Mohamed", new DateTime(2023, 2, 14, 16, 17, 23, 732, DateTimeKind.Utc).AddTicks(3862), "EWAYBillPassword", "EWAYBillUserName", 10000.0, "test1@test.com", "testerpass", "123456789", "recover@test.com", "GSTRecoveryEmailPassword", new DateTime(2023, 2, 14, 16, 17, 23, 732, DateTimeKind.Utc).AddTicks(3853), null, null, "gstusername", "GSTUserPassword", new DateTime(2023, 2, 14, 16, 17, 23, 732, DateTimeKind.Utc).AddTicks(3865), "829733325", "829733325", "Rexona Co", "RackFileNo", 1, "F:\\\\userfolder\\txt1.txt" });
 
             migrationBuilder.InsertData(
                 table: "ServiceCategories",
-                columns: new[] { "Id", "CreatedDate", "DefaultCharge", "Description", "LastModifiedDate", "PreviousCharge", "ServiceName", "StatusId" },
+                columns: new[] { "Id", "CreatedDate", "Description", "FixedCharge", "LastModifiedDate", "PreviousCharge", "ServiceName", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3624), 1000.0, "GST Monthly Submission", new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3625), 1000.0, "GSTMonthlySubmission", 1 },
-                    { 2, new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3628), 2000.0, "GST Amendment", new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3629), 2000.0, "GSTAmendment", 1 },
-                    { 3, new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3631), 500.0, "GST Annual Return Filing", new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3632), 500.0, "GSTAnnualReturnFiling", 1 },
-                    { 4, new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3634), 200.0, "GST Notice Service", new DateTime(2023, 2, 12, 18, 11, 51, 122, DateTimeKind.Utc).AddTicks(3634), 200.0, "GSTNoticeService", 1 }
+                    { 1, new DateTime(2023, 2, 14, 16, 17, 23, 732, DateTimeKind.Utc).AddTicks(3891), "GST Monthly Submission", 1000.0, new DateTime(2023, 2, 14, 16, 17, 23, 732, DateTimeKind.Utc).AddTicks(3892), 1000.0, "GSTMonthlySubmission", 1 },
+                    { 2, new DateTime(2023, 2, 14, 16, 17, 23, 732, DateTimeKind.Utc).AddTicks(3895), "GST Amendment", 2000.0, new DateTime(2023, 2, 14, 16, 17, 23, 732, DateTimeKind.Utc).AddTicks(3896), 2000.0, "GSTAmendment", 1 },
+                    { 3, new DateTime(2023, 2, 14, 16, 17, 23, 732, DateTimeKind.Utc).AddTicks(3899), "GST Annual Return Filing", 500.0, new DateTime(2023, 2, 14, 16, 17, 23, 732, DateTimeKind.Utc).AddTicks(3900), 500.0, "GSTAnnualReturnFiling", 1 },
+                    { 4, new DateTime(2023, 2, 14, 16, 17, 23, 732, DateTimeKind.Utc).AddTicks(3902), "GST Notice Service", 200.0, new DateTime(2023, 2, 14, 16, 17, 23, 732, DateTimeKind.Utc).AddTicks(3903), 200.0, "GSTNoticeService", 1 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -767,6 +792,11 @@ namespace AtoTax.API.Migrations
                 name: "EmailIndex",
                 table: "AspNetUsers",
                 column: "NormalizedEmail");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_EmployeeId",
+                table: "AspNetUsers",
+                column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
@@ -925,10 +955,13 @@ namespace AtoTax.API.Migrations
                 name: "GSTPaidDetails");
 
             migrationBuilder.DropTable(
+                name: "LocalUsers");
+
+            migrationBuilder.DropTable(
                 name: "MultimediaTypes");
 
             migrationBuilder.DropTable(
-                name: "ServiceChargeUpdateHistory");
+                name: "ServiceChargeUpdateHistories");
 
             migrationBuilder.DropTable(
                 name: "UserLoggedActivities");

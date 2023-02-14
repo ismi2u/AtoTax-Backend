@@ -13,7 +13,7 @@ namespace AtoTax.Domain.Entities
         public string? ServiceName { get; set; }
         public string? Description { get; set; }
         [Required]
-        public double DefaultCharge { get; set; }
+        public double FixedCharge { get; set; }
 
         public double? PreviousCharge { get; set; }
         public DateTime? CreatedDate { get; set; }

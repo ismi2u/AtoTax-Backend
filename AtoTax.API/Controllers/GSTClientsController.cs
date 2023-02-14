@@ -136,7 +136,7 @@ namespace AtoTax.API.Controllers
 
                         clientFeeMap.GSTClientId = gstClient.Id;
                         clientFeeMap.ServiceCategoryId = serviceCategory.Id;
-                        clientFeeMap.DefaultCharge = serviceCategory.DefaultCharge;
+                        clientFeeMap.DefaultCharge = serviceCategory.FixedCharge;
                         clientFeeMap.CreatedDate = DateTime.UtcNow;
                         clientFeeMap.LastModifiedDate = DateTime.UtcNow;
 
@@ -198,7 +198,7 @@ namespace AtoTax.API.Controllers
 
                     clientFeeMap.GSTClientId = gstClient.Id;
                     clientFeeMap.ServiceCategoryId = serviceCategory.Id;
-                    clientFeeMap.DefaultCharge = serviceCategory.DefaultCharge;
+                    clientFeeMap.DefaultCharge = serviceCategory.FixedCharge;
                     clientFeeMap.CreatedDate = DateTime.UtcNow;
                     clientFeeMap.LastModifiedDate = DateTime.UtcNow;
 

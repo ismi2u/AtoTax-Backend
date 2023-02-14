@@ -117,7 +117,7 @@ namespace AtoTax.API.Controllers
 
                 //// dont update the below field as they are not part of updateDTO  and hence will become null
                 ServiceCategory.CreatedDate = oldServiceCategory.CreatedDate;
-                ServiceCategory.PreviousCharge = oldServiceCategory.DefaultCharge;
+                ServiceCategory.PreviousCharge = oldServiceCategory.FixedCharge;
 
                 await _unitOfWork.ServiceCategories.UpdateAsync(ServiceCategory);
 
@@ -157,7 +157,7 @@ namespace AtoTax.API.Controllers
                     return _response;
                 }
                 var ServiceCategory = _mapper.Map<ServiceCategory>(ServiceCategoryCreateDTO);
-                ServiceCategory.PreviousCharge= ServiceCategoryCreateDTO.DefaultCharge;
+                ServiceCategory.PreviousCharge= ServiceCategoryCreateDTO.FixedCharge;
                 await _unitOfWork.ServiceCategories.CreateAsync(ServiceCategory);
 
                 await _unitOfWork.CompleteAsync();

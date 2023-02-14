@@ -1,5 +1,6 @@
 ﻿using AtoTax.API.Controllers;
 using AtoTax.Domain.DTOs;
+using AtoTax.Domain.DTOs.AuthDTOs;
 using AtoTax.Domain.Entities;
 using AutoMapper;
 
@@ -180,11 +181,15 @@ namespace AtoTax.API.Mapping
             ///>>>>>>>>>>>>>>>END>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
+            //RegistrationRequest
+            CreateMap<LocalUser, RegistrationRequestDTO>().ReverseMap();
+            
 
 
-           
 
-           
+
+
+
 
 
 

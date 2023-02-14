@@ -1,9 +1,10 @@
 
+using AtoTax.API.Authentication;
 using AtoTax.API.GenericRepository;
 using AtoTax.API.Mapping;
 using AtoTax.API.Repository.Interfaces;
 using AtoTax.API.Repository.Repos;
-using AtoTaxAPI.Authentication;
+using AtoTax.API.Authentication;
 using AtoTaxAPI.Data;
 using EmailService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -38,16 +39,26 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>(TokenOptions.DefaultProvider);
 
 
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
 builder.Services.AddScoped<IGSTClientRepository, GSTClientRepository>();
 builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 builder.Services.AddScoped<IMultimediaTypeRepository, MultimediaTypeRepository>();
 builder.Services.AddScoped<IAddressTypeRepository, AddressTypeRepository>();
+builder.Services.AddScoped<IServiceCategoryRepository, ServiceCategoryRepository>();
+
+builder.Services.AddScoped<ICollectionAndBalanceRepository, CollectionAndBalanceRepository>();
+builder.Services.AddScoped<IFeeCollectionLedgerRepository, FeeCollectionLedgerRepository>();
+builder.Services.AddScoped<IServiceChargeUpdateHistoryRepository, ServiceChargeUpdateHistoryRepository>();
+builder.Services.AddScoped<IUserLoggedActivityRepository, UserLoggedActivityRepository>();
 builder.Services.AddScoped<IPaymentTypeRepository, PaymentTypeRepository>();
+
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IEmpJobRoleRepository, EmpJobRoleRepository>();
 builder.Services.AddScoped<IAmendTypeRepository, AmendTypeRepository>();
 builder.Services.AddScoped<IAmendmentRepository, AmendmentRepository>();
 builder.Services.AddScoped<IClientFeeMapRepository, ClientFeeMapRepository>();
-builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+
 builder.Services.AddScoped<IGSTFilingTypeRepository, GSTFilingTypeRepository>();
 builder.Services.AddScoped<IGSTClientAddressExtensionRepository, GSTClientAddressExtensionRepository>();
 builder.Services.AddScoped<IGSTBillAndFeeCollectionRepository, GSTBillAndFeeCollectionRepository>();
@@ -59,19 +70,16 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(opts =>
-{
+}).AddJwtBearer(opts => {
+    opts.RequireHttpsMetadata = false;
+    opts.SaveToken = true;
+
     opts.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = false, // setting it to false, as we dont know the users connecting to this server
-        ValidateAudience = false,
-        ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-
-
-        ValidIssuer = "https://localhost:5000",
-        ValidAudience = "https://localhost:5000",
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("b3dd2402-61bd-469e-9589-f6f5dfec7cbb"))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration.GetValue<string>("ApiSettings:Secret"))),
+        ValidateIssuer = false,
+        ValidateAudience= false
     };
 });
 

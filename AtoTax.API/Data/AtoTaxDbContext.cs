@@ -1,6 +1,6 @@
 ﻿
+using AtoTax.API.Authentication;
 using AtoTax.Domain.Entities;
-using AtoTaxAPI.Authentication;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
@@ -56,14 +56,18 @@ namespace AtoTaxAPI.Data
              );
 
             builder.Entity<ServiceCategory>().HasData(
-             new ServiceCategory { Id = 1, ServiceName = "GSTMonthlySubmission", DefaultCharge=1000, PreviousCharge=1000, Description = "GST Monthly Submission", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-             new ServiceCategory { Id = 2, ServiceName = "GSTAmendment", DefaultCharge = 2000, PreviousCharge=2000, Description = "GST Amendment", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-            new ServiceCategory { Id = 3, ServiceName = "GSTAnnualReturnFiling", DefaultCharge = 500, PreviousCharge = 500, Description = "GST Annual Return Filing", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-             new ServiceCategory { Id = 4, ServiceName = "GSTNoticeService", DefaultCharge = 200, PreviousCharge=200, Description = "GST Notice Service", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 }
+             new ServiceCategory { Id = 1, ServiceName = "GSTMonthlySubmission", FixedCharge = 1000, PreviousCharge=1000, Description = "GST Monthly Submission", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+             new ServiceCategory { Id = 2, ServiceName = "GSTAmendment", FixedCharge = 2000, PreviousCharge=2000, Description = "GST Amendment", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+            new ServiceCategory { Id = 3, ServiceName = "GSTAnnualReturnFiling", FixedCharge = 500, PreviousCharge = 500, Description = "GST Annual Return Filing", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+             new ServiceCategory { Id = 4, ServiceName = "GSTNoticeService", FixedCharge = 200, PreviousCharge=200, Description = "GST Notice Service", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 }
              );
 
 
         }
+
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+
+        public DbSet<LocalUser> LocalUsers { get; set; }
 
         public DbSet<Status> Status { get; set; }
         public DbSet<GSTClient> GSTClients { get; set; }
@@ -91,8 +95,6 @@ namespace AtoTaxAPI.Data
 
         public DbSet<GSTBillAndFeeCollection> GSTBillAndFeeCollections { get; set; }
        
-        public DbSet<ServiceChargeUpdateHistory> ServiceChargeUpdateHistory { get; set; }
-
         public DbSet<UserLoggedActivity> UserLoggedActivities { get; set; }
 
 
