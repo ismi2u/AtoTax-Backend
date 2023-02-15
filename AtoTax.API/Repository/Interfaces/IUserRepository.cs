@@ -11,7 +11,7 @@ namespace AtoTax.API.Repository.Interfaces
 
         Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO);
 
-        Task<LocalUser> Register(RegistrationRequestDTO registrationRequestDTO);
+        Task<UserDTO> Register(RegistrationRequestDTO registrationRequestDTO);
 
     }
 }

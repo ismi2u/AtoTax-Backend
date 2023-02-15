@@ -34,9 +34,19 @@ var _loggerconf = new LoggerConfiguration().ReadFrom.Configuration(builder.Confi
 builder.Logging.AddSerilog(_loggerconf);
 //flyiopostgres
 //PostgreSQLInLocalAppInContainer
+//137.66.10.59
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddDbContextPool<AtoTaxDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("flyiopostgres")));
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
+    options =>
+    {
+        options.User.AllowedUserNameCharacters= "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        options.Password.RequireDigit = false;
+        options.Password.RequiredLength = 4;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireLowercase = false;
+    })
                 .AddEntityFrameworkStores<AtoTaxDbContext>()
                 .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>(TokenOptions.DefaultProvider);
 

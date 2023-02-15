@@ -7,7 +7,9 @@ using AtoTax.Domain.Entities;
 using AtoTaxAPI.Data;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -19,15 +21,18 @@ namespace AtoTax.API.Repository.Repos
 
         private readonly AtoTaxDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<EmpJobRole> _logger;
         private readonly IMapper _mapper;
         private string secretkey;
         public UserRepository(AtoTaxDbContext context, ILogger<EmpJobRole> logger, 
-            UserManager<ApplicationUser> userManager, IMapper mapper, IConfiguration configuration)
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager, IMapper mapper, IConfiguration configuration)
         {
             _context = context;
             _logger = logger;
             _userManager = userManager;
+            _roleManager = roleManager;
             _mapper = mapper;
             secretkey = configuration.GetValue<string>("ApiSettings:Secret");
         }
@@ -89,21 +94,52 @@ namespace AtoTax.API.Repository.Repos
 
         }
 
-        public Task<LocalUser> Register(RegistrationRequestDTO registrationRequestDTO)
+        public async Task<UserDTO> Register(RegistrationRequestDTO registrationRequestDTO)
         {
           // var localuser =  _mapper.Map<LocalUser>(registrationRequestDTO);
 
-            LocalUser localuser = new();
-            localuser.Name = registrationRequestDTO.Name;
-            localuser.UserName = registrationRequestDTO.UserName;
-            localuser.Password = registrationRequestDTO.Password;
-            localuser.Role = registrationRequestDTO.Role;
-            
-            _context.LocalUsers.Add(localuser);
-            _context.SaveChanges();
-            localuser.Password = "";
+            ApplicationUser appUser = new();
+            appUser.Name = registrationRequestDTO.Name;
+            appUser.Email = registrationRequestDTO.Email;
+            appUser.NormalizedEmail = registrationRequestDTO.Email.ToUpper();
+            appUser.UserName = registrationRequestDTO.UserName;
 
-            return Task.FromResult(localuser);
+
+            try
+            {
+                var result = await _userManager.CreateAsync(appUser, registrationRequestDTO.Password);
+
+                if (!result.Succeeded)
+                {
+                    var exceptionText = result.Errors.Aggregate("User Creation Failed - Identity Exception. Errors were: \n\r\n\r", (current, error) => current + (" - " + error + "\n\r"));
+                    throw new Exception(exceptionText);
+                }
+
+
+                bool isroleExists = await _roleManager.RoleExistsAsync("admin");
+                if (!isroleExists)
+                {
+                   await  _context.Roles.AddAsync(new IdentityRole("admin"));
+                    _context.SaveChanges(); //error points here
+
+                }
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(appUser, "admin");
+                    var usertoReturn = _context.ApplicationUsers.FirstOrDefault(u=> u.UserName== registrationRequestDTO.UserName);
+
+
+                    return _mapper.Map<UserDTO>(usertoReturn);
+                   
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
+           return new UserDTO();
         }
     }
 }
