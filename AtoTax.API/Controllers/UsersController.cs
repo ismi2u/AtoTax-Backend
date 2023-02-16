@@ -57,7 +57,7 @@ namespace AtoTax.API.Controllers
         [HttpPost("register")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[Authorize(Roles = "admin, ADMIN")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO model)
         {
             bool ifUserUniqueName = _userRepository.IsUniqueUser(model.UserName);

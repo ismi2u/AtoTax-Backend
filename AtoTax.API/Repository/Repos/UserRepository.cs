@@ -65,7 +65,7 @@ namespace AtoTax.API.Repository.Repos
             }
             //assign roles here
 
-            var roles = _userManager.GetRolesAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
 
 
             //token generator here
