@@ -48,9 +48,11 @@ namespace AtoTax.API.Repository.Repos
 
         public async Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO)
         {
-           var user = _context.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDTO.UserName.ToLower() && u.Password == loginRequestDTO.Password );
 
-
+            //check user is valid?
+            var user = _context.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDTO.UserName.ToLower());
+            
+            //check if user's password is valid?
             bool isValid = await _userManager.CheckPasswordAsync(user, loginRequestDTO.Password);
             if (user == null || isValid == false)
             {
@@ -119,13 +121,34 @@ namespace AtoTax.API.Repository.Repos
                 bool isroleExists = await _roleManager.RoleExistsAsync("admin");
                 if (!isroleExists)
                 {
-                   await  _context.Roles.AddAsync(new IdentityRole("admin"));
-                    _context.SaveChanges(); //error points here
+                    //var role = await  _context.Roles.AddAsync(new IdentityRole("admin"));
+                    //  _context.SaveChanges(); //error points here
+
+
+                    IdentityRole identityRole = new();
+                    identityRole.Name = "admin";
+             
+
+                    IdentityResult rolAddresult = await _roleManager.CreateAsync(identityRole);
+
+                    if (!rolAddresult.Succeeded)
+                    {
+                        var roleAddException= rolAddresult.Errors.Aggregate("Admin role assignment failed", (current, error) => current + (" - " + error + "\n\r"));
+                        throw new Exception(roleAddException);
+                    }
 
                 }
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(appUser, "admin");
+                    IdentityRole role = await _roleManager.FindByNameAsync("admin");
+                    IdentityResult addRoleResult = await _userManager.AddToRoleAsync(appUser, role.Name);
+
+                    if (!addRoleResult.Succeeded)
+                    {
+                        var exceptionRole = addRoleResult.Errors.Aggregate("Admin role assignment failed", (current, error) => current + (" - " + error + "\n\r"));
+                        throw new Exception(exceptionRole);
+                    }
+
                     var usertoReturn = _context.ApplicationUsers.FirstOrDefault(u=> u.UserName== registrationRequestDTO.UserName);
 
 

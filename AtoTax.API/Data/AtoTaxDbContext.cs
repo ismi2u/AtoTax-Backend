@@ -67,8 +67,7 @@ namespace AtoTaxAPI.Data
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
-        public DbSet<LocalUser> LocalUsers { get; set; }
-
+      
         public DbSet<Status> Status { get; set; }
         public DbSet<GSTClient> GSTClients { get; set; }
         public DbSet<PaymentType> PaymentTypes { get; set; }

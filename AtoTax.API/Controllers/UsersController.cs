@@ -15,6 +15,7 @@ using AtoTax.API.GenericRepository;
 using AtoTax.Domain.DTOs.AuthDTOs;
 using Azure;
 using NuGet.Protocol.Plugins;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AtoTax.API.Controllers
 {
@@ -56,6 +57,7 @@ namespace AtoTax.API.Controllers
         [HttpPost("register")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO model)
         {
             bool ifUserUniqueName = _userRepository.IsUniqueUser(model.UserName);
@@ -77,6 +79,7 @@ namespace AtoTax.API.Controllers
             }
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
+            _response.Result = user;
             return Ok(_response);
         }
 

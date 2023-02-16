@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AtoTax.API.Migrations
 {
     /// <inheritdoc />
-    public partial class buildtest : Migration
+    public partial class authtest : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,8 +35,6 @@ namespace AtoTax.API.Migrations
                     Id = table.Column<string>(type: "text", nullable: false),
                     EmployeeId = table.Column<int>(type: "integer", nullable: true),
                     Name = table.Column<string>(type: "text", nullable: true),
-                    Password = table.Column<string>(type: "text", nullable: true),
-                    Role = table.Column<string>(type: "text", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -74,22 +72,6 @@ namespace AtoTax.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CollectionAndBalances", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "LocalUsers",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    UserName = table.Column<string>(type: "text", nullable: false),
-                    Password = table.Column<string>(type: "text", nullable: false),
-                    Role = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LocalUsers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -718,17 +700,17 @@ namespace AtoTax.API.Migrations
             migrationBuilder.InsertData(
                 table: "GSTClients",
                 columns: new[] { "Id", "ContactEmailId", "ContactName", "CreatedDate", "EWAYBillPassword", "EWAYBillUserName", "GSTAnnualTurnOver", "GSTEmailId", "GSTEmailPassword", "GSTIN", "GSTRecoveryEmailId", "GSTRecoveryEmailPassword", "GSTRegDate", "GSTRelievedDate", "GSTSurrenderedDate", "GSTUserName", "GSTUserPassword", "LastModifiedDate", "MobileNumber", "PhoneNumber", "ProprietorName", "RackFileNo", "StatusId", "TallyDataFilePath" },
-                values: new object[] { new Guid("ebf7cf6d-26fa-40a7-90ab-b86402a7e594"), "test@test.com", "Raja Mohamed", new DateTime(2023, 2, 15, 5, 0, 29, 138, DateTimeKind.Utc).AddTicks(8029), "EWAYBillPassword", "EWAYBillUserName", 10000.0, "test1@test.com", "testerpass", "123456789", "recover@test.com", "GSTRecoveryEmailPassword", new DateTime(2023, 2, 15, 5, 0, 29, 138, DateTimeKind.Utc).AddTicks(8019), null, null, "gstusername", "GSTUserPassword", new DateTime(2023, 2, 15, 5, 0, 29, 138, DateTimeKind.Utc).AddTicks(8038), "829733325", "829733325", "Rexona Co", "RackFileNo", 1, "F:\\\\userfolder\\txt1.txt" });
+                values: new object[] { new Guid("ebf7cf6d-26fa-40a7-90ab-b86402a7e594"), "test@test.com", "Raja Mohamed", new DateTime(2023, 2, 16, 4, 9, 13, 492, DateTimeKind.Utc).AddTicks(1969), "EWAYBillPassword", "EWAYBillUserName", 10000.0, "test1@test.com", "testerpass", "123456789", "recover@test.com", "GSTRecoveryEmailPassword", new DateTime(2023, 2, 16, 4, 9, 13, 492, DateTimeKind.Utc).AddTicks(1960), null, null, "gstusername", "GSTUserPassword", new DateTime(2023, 2, 16, 4, 9, 13, 492, DateTimeKind.Utc).AddTicks(1974), "829733325", "829733325", "Rexona Co", "RackFileNo", 1, "F:\\\\userfolder\\txt1.txt" });
 
             migrationBuilder.InsertData(
                 table: "ServiceCategories",
                 columns: new[] { "Id", "CreatedDate", "Description", "FixedCharge", "LastModifiedDate", "PreviousCharge", "ServiceName", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 2, 15, 5, 0, 29, 138, DateTimeKind.Utc).AddTicks(8069), "GST Monthly Submission", 1000.0, new DateTime(2023, 2, 15, 5, 0, 29, 138, DateTimeKind.Utc).AddTicks(8070), 1000.0, "GSTMonthlySubmission", 1 },
-                    { 2, new DateTime(2023, 2, 15, 5, 0, 29, 138, DateTimeKind.Utc).AddTicks(8073), "GST Amendment", 2000.0, new DateTime(2023, 2, 15, 5, 0, 29, 138, DateTimeKind.Utc).AddTicks(8074), 2000.0, "GSTAmendment", 1 },
-                    { 3, new DateTime(2023, 2, 15, 5, 0, 29, 138, DateTimeKind.Utc).AddTicks(8076), "GST Annual Return Filing", 500.0, new DateTime(2023, 2, 15, 5, 0, 29, 138, DateTimeKind.Utc).AddTicks(8077), 500.0, "GSTAnnualReturnFiling", 1 },
-                    { 4, new DateTime(2023, 2, 15, 5, 0, 29, 138, DateTimeKind.Utc).AddTicks(8079), "GST Notice Service", 200.0, new DateTime(2023, 2, 15, 5, 0, 29, 138, DateTimeKind.Utc).AddTicks(8080), 200.0, "GSTNoticeService", 1 }
+                    { 1, new DateTime(2023, 2, 16, 4, 9, 13, 492, DateTimeKind.Utc).AddTicks(2001), "GST Monthly Submission", 1000.0, new DateTime(2023, 2, 16, 4, 9, 13, 492, DateTimeKind.Utc).AddTicks(2001), 1000.0, "GSTMonthlySubmission", 1 },
+                    { 2, new DateTime(2023, 2, 16, 4, 9, 13, 492, DateTimeKind.Utc).AddTicks(2004), "GST Amendment", 2000.0, new DateTime(2023, 2, 16, 4, 9, 13, 492, DateTimeKind.Utc).AddTicks(2005), 2000.0, "GSTAmendment", 1 },
+                    { 3, new DateTime(2023, 2, 16, 4, 9, 13, 492, DateTimeKind.Utc).AddTicks(2007), "GST Annual Return Filing", 500.0, new DateTime(2023, 2, 16, 4, 9, 13, 492, DateTimeKind.Utc).AddTicks(2008), 500.0, "GSTAnnualReturnFiling", 1 },
+                    { 4, new DateTime(2023, 2, 16, 4, 9, 13, 492, DateTimeKind.Utc).AddTicks(2010), "GST Notice Service", 200.0, new DateTime(2023, 2, 16, 4, 9, 13, 492, DateTimeKind.Utc).AddTicks(2010), 200.0, "GSTNoticeService", 1 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -942,9 +924,6 @@ namespace AtoTax.API.Migrations
 
             migrationBuilder.DropTable(
                 name: "GSTPaidDetails");
-
-            migrationBuilder.DropTable(
-                name: "LocalUsers");
 
             migrationBuilder.DropTable(
                 name: "MultimediaTypes");
