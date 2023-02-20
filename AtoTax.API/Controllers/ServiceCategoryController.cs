@@ -60,6 +60,27 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetActiveServiceCategoriesForDD()
+        {
+            try
+            {
+                IEnumerable<ServiceCategory> ServiceCategorysList = await _unitOfWork.ServiceCategories.GetAllAsync(a => a.StatusId == (int)EStatus.active, 0, 0);
+
+                _response.Result = _mapper.Map<IEnumerable<ActiveServiceCategoryForDD>>(ServiceCategorysList);
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+            return _response;
+        }
+
         // GET: api/ServiceCategorys/5
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]

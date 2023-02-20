@@ -65,4 +65,10 @@ namespace AtoTax.Domain.DTOs
         public int StatusId { get; set; }
 
     }
+
+    public class ActiveEmployeeForDD
+    {
+        public Guid Id { get; set; }
+        public string EmployeeFullName { get; set; }
+    }
 }

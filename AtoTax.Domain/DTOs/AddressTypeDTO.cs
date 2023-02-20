@@ -35,4 +35,12 @@ namespace AtoTax.Domain.DTOs
         [Required]
         public int StatusId { get; set; }
     }
+
+    public class ActiveAddressTypeForDD
+    {
+        public int Id { get; set; }
+        public string AddressTypeName { get; set; }
+    }
+
+   
 }

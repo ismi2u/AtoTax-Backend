@@ -29,7 +29,7 @@ namespace AtoTax.Domain.DTOs
     public class GSTClientAddressExtensionCreateDTO
     {
         [Required]
-        public int GSTClientId { get; set; }
+        public Guid GSTClientId { get; set; }
         [Required]
         public int AddressTypeId { get; set; }
         [Required]
@@ -51,7 +51,7 @@ namespace AtoTax.Domain.DTOs
         [Required]
         public int Id { get; set; }
         [Required]
-        public int GSTClientId { get; set; }
+        public Guid GSTClientId { get; set; }
         [Required]
         public int AddressTypeId { get; set; }
         [Required]
@@ -67,4 +67,12 @@ namespace AtoTax.Domain.DTOs
         [Required]
         public int StatusId { get; set; }
     }
+
+
+    public class ActiveGSTClientAddressForDD
+    {
+        public int Id { get; set; }
+        public string AddressType { get; set; }
+    }
 }
+

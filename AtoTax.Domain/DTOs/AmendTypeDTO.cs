@@ -36,4 +36,10 @@ namespace AtoTax.Domain.DTOs
         [Required]
         public int StatusId { get; set; }
     }
+
+    public class ActiveAmendTypeForDD
+    {
+        public int Id { get; set; }
+        public string AmendTypeName { get; set; }
+    }
 }

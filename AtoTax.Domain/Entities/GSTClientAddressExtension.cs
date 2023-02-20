@@ -10,7 +10,7 @@ namespace AtoTax.Domain.Entities
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Required]
-        public int GSTClientId { get; set; }
+        public Guid GSTClientId { get; set; }
         [Required]
         [ForeignKey("AddressType")]
         public int AddressTypeId { get; set; }

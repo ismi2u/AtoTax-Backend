@@ -15,7 +15,7 @@ namespace AtoTax.Domain.DTOs
         public StatusDTO Status { get; set; }
     }
 
-    public class ActiveGSTFilingTypesForDD
+    public class ActiveGSTFilingTypeForDD
     {
         public int Id { get; set; }
         public string? FilingType { get; set; }

@@ -21,4 +21,6 @@ namespace AtoTax.Domain.Entities
 
 
     }
+
+   
 }

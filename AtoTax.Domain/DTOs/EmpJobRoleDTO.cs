@@ -40,4 +40,10 @@ namespace AtoTax.Domain.DTOs
         [Required]
         public int StatusId { get; set; }
     }
+
+    public class ActiveEmpJobRoleForDD
+    {
+        public int Id { get; set; }
+        public string JobRole { get; set; }
+    }
 }

@@ -16,7 +16,7 @@ namespace AtoTax.Domain.DTOs
 
     }
 
-    public class ActiveMultimediaTypesForDD
+    public class ActiveMultimediaTypeForDD
     {
         public int Id { get; set; }
         public string? MediaAndDesc { get; set; }

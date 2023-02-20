@@ -32,5 +32,18 @@ namespace AtoTax.Domain.Entities
         public int StatusId { get; set; }
         public virtual Status Status { get; set; }
 
+
+        public string? GetFullName()
+        {
+            var NameParts = new List<string>();
+
+            NameParts.Add(FirstName ?? "");
+            NameParts.Add(LastName ?? "");
+
+            //return String.Join(":", FirstName, LastName);
+
+            return String.Join(" ", NameParts.Where(s => !String.IsNullOrEmpty(s)));
+
+        }
     }
 }

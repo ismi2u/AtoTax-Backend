@@ -19,7 +19,8 @@ namespace AtoTax.API.Mapping
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
             CreateMap<GSTClientUpdateDTO, GSTClient>()
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
-
+            CreateMap<GSTClient, ActiveGSTClientsForDD>()
+                .ForMember(dest => dest.GSTClientAndGSTIN, opt => opt.MapFrom(src => src.GetGSTClient())); ;
 
             //Status
             CreateMap<Status, StatusDTO>().ReverseMap();
@@ -34,16 +35,18 @@ namespace AtoTax.API.Mapping
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow)); ;
             CreateMap<AddressTypeUpdateDTO, AddressType>()
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+            CreateMap<AddressType, ActiveAddressTypeForDD>();
 
 
-
-            //Media Type
+            //Multimedia Type
             CreateMap<MultimediaType, MultimediaTypeDTO>().ReverseMap();
             CreateMap<MultimediaTypeCreateDTO, MultimediaType>()
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow)); ;
             CreateMap<MultimediaTypeUpdateDTO, MultimediaType>()
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+            CreateMap<MultimediaType, ActiveMultimediaTypeForDD>()
+              .ForMember(dest => dest.MediaAndDesc, opt => opt.MapFrom(src => src.GetMultimedia()));
 
             //Payment Type
             CreateMap<PaymentType, PaymentTypeDTO>().ReverseMap();
@@ -52,7 +55,7 @@ namespace AtoTax.API.Mapping
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow)); ;
             CreateMap<PaymentTypeUpdateDTO, PaymentType>()
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
-
+            CreateMap<PaymentType, ActivePaymentTypeForDD>();
 
             //EmpJobRoles
             CreateMap<EmpJobRole, EmpJobRoleDTO>().ReverseMap();
@@ -61,6 +64,7 @@ namespace AtoTax.API.Mapping
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow)); ;
             CreateMap<EmpJobRoleUpdateDTO, EmpJobRole>()
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+            CreateMap<EmpJobRole, ActiveEmpJobRoleForDD>();
 
 
             //Amend Type
@@ -70,6 +74,7 @@ namespace AtoTax.API.Mapping
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow)); ;
             CreateMap<AmendTypeUpdateDTO, AmendType>()
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+            CreateMap<AmendType, ActiveAmendTypeForDD>();
 
 
             //Amendments
@@ -90,7 +95,7 @@ namespace AtoTax.API.Mapping
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
             CreateMap<GSTFilingTypeUpdateDTO, GSTFilingType>()
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
-
+            CreateMap<GSTFilingType, ActiveGSTFilingTypeForDD>();
 
 
             //ServiceCategory
@@ -100,6 +105,8 @@ namespace AtoTax.API.Mapping
              .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
             CreateMap<ServiceCategoryUpdateDTO, ServiceCategory>()
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+            CreateMap<ServiceCategory, ActiveServiceCategoryForDD>()
+               .ForMember(dest => dest.ServiceNameAndDesc, opt => opt.MapFrom(src => src.GetServiceCategory()));
 
 
             //ClientFeeMaps
@@ -119,6 +126,9 @@ namespace AtoTax.API.Mapping
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
             CreateMap<EmployeeUpdateDTO, Employee>()
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+            CreateMap<Employee, ActiveEmployeeForDD>();
+
+
 
 
             //GSTClientAddressExtension
@@ -128,7 +138,8 @@ namespace AtoTax.API.Mapping
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
             CreateMap<GSTClientAddressExtensionUpdateDTO, GSTClientAddressExtension>()
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
-
+            CreateMap<GSTClientAddressExtension, ActiveGSTClientAddressForDD>()
+               .ForMember(dest => dest.AddressType, opt => opt.MapFrom(src => src.AddressType.AddressTypeName));
 
 
             //GSTFilingType

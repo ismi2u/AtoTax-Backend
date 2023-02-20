@@ -42,6 +42,16 @@ namespace AtoTax.Domain.Entities
         public virtual Status Status{ get; set; }
 
 
+        public string? GetGSTClient()
+        {
+            var NameParts = new List<string>();
+
+            NameParts.Add(ProprietorName ?? "");
+            NameParts.Add(GSTIN ?? "");
+
+            return String.Join(" ", NameParts.Where(s => !String.IsNullOrEmpty(s)));
+
+        }
 
     }
 }

@@ -18,5 +18,10 @@ namespace AtoTax.Domain.DTOs
 
     }
 
-   
+    public enum EStatus
+    {
+        active = 1,
+        inactive
+
+    }
 }

@@ -35,7 +35,7 @@ namespace AtoTax.API.Controllers
 
         // GET: api/GSTClients
         [HttpGet]
-        [ResponseCache(Duration =30)]
+        [ResponseCache(Duration = 30)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> GetGSTClients([FromQuery] int pageSize = 0, int pageNumber = 1)
@@ -47,10 +47,10 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<GSTClient> GSTClientsList = await _unitOfWork.GSTClients.GetAllAsync(null, pageSize:pageSize, pageNumber:pageNumber, arrIncludes);
+                IEnumerable<GSTClient> GSTClientsList = await _unitOfWork.GSTClients.GetAllAsync(null, pageSize: pageSize, pageNumber: pageNumber, arrIncludes);
 
 
-                PaginationDTO pagination = new() { PageNumber= pageNumber, PageSize = pageSize };
+                PaginationDTO pagination = new() { PageNumber = pageNumber, PageSize = pageSize };
                 //send pagination details to response header
                 Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
                 _response.Result = _mapper.Map<IEnumerable<GSTClientDTO>>(GSTClientsList);
@@ -64,7 +64,32 @@ namespace AtoTax.API.Controllers
             }
             return _response;
         }
+        [HttpGet]
+        [ResponseCache(Duration = 30)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetActiveGSTClientsForDD([FromQuery] int pageSize = 0, int pageNumber = 1)
+        {
+            try
+            {
+                IEnumerable<GSTClient> GSTClientsList = await _unitOfWork.GSTClients.GetAllAsync(a => a.StatusId == (int)EStatus.active, 0, 0);
 
+
+                //PaginationDTO pagination = new() { PageNumber = pageNumber, PageSize = pageSize };
+                ////send pagination details to response header
+                //Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
+
+                _response.Result = _mapper.Map<IEnumerable<ActiveGSTClientsForDD>>(GSTClientsList);
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+            return _response;
+        }
         // GET: api/GSTClients/5
         [HttpGet("{id}")]
         [ResponseCache(CacheProfileName = "Default30")]

@@ -59,6 +59,27 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetActiveAmendTypesForDD()
+        {
+            try
+            {
+                IEnumerable<AmendType> AmendTypesList = await _unitOfWork.AmendTypes.GetAllAsync(a => a.StatusId == (int)EStatus.active, 0, 0);
+
+                _response.Result = _mapper.Map<IEnumerable<ActiveAmendTypeForDD>>(AmendTypesList);
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+            return _response;
+        }
+
         // GET: api/AmendTypes/5
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]

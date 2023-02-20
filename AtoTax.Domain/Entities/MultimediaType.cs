@@ -18,5 +18,16 @@ namespace AtoTax.Domain.Entities
         public int StatusId { get; set; }
         public virtual Status Status { get; set; }
 
+
+        public string? GetMultimedia()
+        {
+            var NameParts = new List<string>();
+
+            NameParts.Add(Media ?? "");
+            NameParts.Add(Description ?? "");
+
+            return String.Join(":", NameParts.Where(s => !String.IsNullOrEmpty(s)));
+
+        }
     }
 }

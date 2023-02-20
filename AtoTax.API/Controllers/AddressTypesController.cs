@@ -12,6 +12,7 @@ using AutoMapper;
 using System.Net;
 using AtoTax.API.Repository.Interfaces;
 using AtoTax.API.GenericRepository;
+using System.ComponentModel;
 
 namespace AtoTax.API.Controllers
 {
@@ -55,6 +56,28 @@ namespace AtoTax.API.Controllers
             {
                 _response.IsSuccess= false;
                 _response.ErrorMessages= new List<string>() { ex.ToString()};
+            }
+            return _response;
+        }
+
+        // GET: api/GetActiveAddressTypesForDD
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetActiveAddressTypesForDD([FromQuery] int pageSize = 0, int pageNumber = 1)
+        {
+            try
+            {
+                IEnumerable<AddressType> AddressTypesList = await _unitOfWork.AddressTypes.GetAllAsync(a=> a.StatusId== (int)EStatus.active, pageSize: pageSize, pageNumber: pageNumber);
+
+                _response.Result = _mapper.Map<IEnumerable<ActiveAddressTypeForDD>>(AddressTypesList);
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
             return _response;
         }

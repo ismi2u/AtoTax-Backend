@@ -38,7 +38,7 @@ namespace AtoTax.Domain.DTOs
     }
 
 
-    public class ActiveServiceCategoriesForDD
+    public class ActiveServiceCategoryForDD
     {
         public int Id { get; set; }
         public string? ServiceNameAndDesc { get; set; }

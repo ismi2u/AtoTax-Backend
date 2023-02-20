@@ -19,7 +19,7 @@ namespace AtoTax.Domain.DTOs
 
     }
 
-    public class ActivePaymentTypesForDD
+    public class ActivePaymentTypeForDD
     {
         public int Id { get; set; }
         public string? PaymentType { get; set; }
@@ -43,4 +43,6 @@ namespace AtoTax.Domain.DTOs
         public int StatusId { get; set; }
 
     }
+
+   
 }

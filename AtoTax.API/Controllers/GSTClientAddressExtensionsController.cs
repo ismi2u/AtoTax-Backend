@@ -61,6 +61,35 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetActiveGSTClientAddressForGSTClientForDD(Guid id)
+        {
+            // Get all the Addresses for the GST Client by passing in parameter GST Client ID
+
+            List<string> includelist = new List<string>();
+            includelist.Add("Status");
+            includelist.Add("GSTClient");
+            includelist.Add("AddressType");
+            string[] arrIncludes = includelist.ToArray();
+
+            try
+            {
+                IEnumerable<GSTClientAddressExtension> GSTClientAddressExtensionList = await _unitOfWork.GSTClientAddressExtensions.GetAllAsync(a => a.StatusId == (int)EStatus.active && a.GSTClientId == id, 0, 0, arrIncludes);
+
+                _response.Result = _mapper.Map<IEnumerable<ActiveGSTClientAddressForDD>>(GSTClientAddressExtensionList);
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+            return _response;
+        }
+
         // GET: api/GSTClientAddressExtension/5
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
