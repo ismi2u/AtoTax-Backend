@@ -176,6 +176,7 @@ namespace AtoTax.API.Mapping
             //ServiceChargeUpdateHistory
             CreateMap<ServiceChargeUpdateHistory, ServiceChargeUpdateHistoryDTO>().ReverseMap();
             CreateMap<ServiceChargeUpdateHistoryCreateDTO, ServiceChargeUpdateHistory>().ReverseMap();
+            CreateMap<ClientFeeMapUpdateDTO, ServiceChargeUpdateHistory>();
 
 
 

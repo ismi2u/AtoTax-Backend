@@ -28,9 +28,9 @@ namespace AtoTax.API.Controllers
         public ServiceChargeUpdateHistoryController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
         {
             _mapper = mapper;
-            this._response= new();
+            this._response = new();
             _context = context;
-            _unitOfWork= unitOfWork;    
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/ServiceChargeUpdateHistory
@@ -39,11 +39,10 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> GetServiceChargeUpdateHistory()
         {
-
             List<string> includelist = new List<string>();
-            includelist.Add("Status");
+            includelist.Add("GSTClient");
+            includelist.Add("ServiceCategory");
             string[] arrIncludes = includelist.ToArray();
-
             try
             {
                 IEnumerable<ServiceChargeUpdateHistory> ServiceChargeUpdateHistoryList = await _unitOfWork.ServiceChargeUpdateHistories.GetAllAsync(null, 0, 0, arrIncludes);
@@ -54,8 +53,8 @@ namespace AtoTax.API.Controllers
             }
             catch (Exception ex)
             {
-                _response.IsSuccess= false;
-                _response.ErrorMessages= new List<string>() { ex.ToString()};
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
             return _response;
         }
@@ -69,7 +68,8 @@ namespace AtoTax.API.Controllers
         {
 
             List<string> includelist = new List<string>();
-            includelist.Add("Status");
+            includelist.Add("GSTClient");
+            includelist.Add("ServiceCategory");
             string[] arrIncludes = includelist.ToArray();
             try
             {
@@ -86,7 +86,7 @@ namespace AtoTax.API.Controllers
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
             return _response;
-           
+
         }
 
         // PUT: api/ServiceChargeUpdateHistory/5
@@ -96,7 +96,7 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> UpdateServiceChargeUpdateHistory(Guid id, ServiceChargeUpdateHistoryUpdateDTO ServiceChargeUpdateHistoryUpdateDTO)
         {
-            
+
             try
             {
                 if (id == Guid.Empty || !(id == ServiceChargeUpdateHistoryUpdateDTO.Id))
@@ -129,7 +129,7 @@ namespace AtoTax.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.Result = ModelState;
                     return _response;
-                 }
+                }
 
                 await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
@@ -160,7 +160,7 @@ namespace AtoTax.API.Controllers
                 //    return _response;
                 //}
                 var ServiceChargeUpdateHistory = _mapper.Map<ServiceChargeUpdateHistory>(ServiceChargeUpdateHistoryCreateDTO);
-                ServiceChargeUpdateHistory.AmendedDate= DateTime.UtcNow;
+                ServiceChargeUpdateHistory.AmendedDate = DateTime.UtcNow;
                 await _unitOfWork.ServiceChargeUpdateHistories.CreateAsync(ServiceChargeUpdateHistory);
 
                 await _unitOfWork.CompleteAsync();
