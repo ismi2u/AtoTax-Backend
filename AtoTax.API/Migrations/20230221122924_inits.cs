@@ -79,7 +79,7 @@ namespace AtoTax.API.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    GSTClientId = table.Column<int>(type: "integer", nullable: false),
+                    GSTClientId = table.Column<Guid>(type: "uuid", nullable: false),
                     AmendedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ServiceCategoryId = table.Column<int>(type: "integer", nullable: false),
                     PreviousRate = table.Column<double>(type: "double precision", nullable: false),
@@ -724,24 +724,24 @@ namespace AtoTax.API.Migrations
                 columns: new[] { "Id", "AmendTypeName", "CreatedDate", "LastModifiedDate", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, "Core", new DateTime(2023, 2, 21, 9, 25, 49, 454, DateTimeKind.Utc).AddTicks(7794), new DateTime(2023, 2, 21, 9, 25, 49, 454, DateTimeKind.Utc).AddTicks(7795), 1 },
-                    { 2, "Non-Core", new DateTime(2023, 2, 21, 9, 25, 49, 454, DateTimeKind.Utc).AddTicks(7797), new DateTime(2023, 2, 21, 9, 25, 49, 454, DateTimeKind.Utc).AddTicks(7798), 1 }
+                    { 1, "Core", new DateTime(2023, 2, 21, 12, 29, 24, 297, DateTimeKind.Utc).AddTicks(2090), new DateTime(2023, 2, 21, 12, 29, 24, 297, DateTimeKind.Utc).AddTicks(2090), 1 },
+                    { 2, "Non-Core", new DateTime(2023, 2, 21, 12, 29, 24, 297, DateTimeKind.Utc).AddTicks(2093), new DateTime(2023, 2, 21, 12, 29, 24, 297, DateTimeKind.Utc).AddTicks(2094), 1 }
                 });
 
             migrationBuilder.InsertData(
                 table: "GSTClients",
                 columns: new[] { "Id", "ContactEmailId", "ContactName", "CreatedDate", "EWAYBillPassword", "EWAYBillUserName", "GSTAnnualTurnOver", "GSTEmailId", "GSTEmailPassword", "GSTIN", "GSTRecoveryEmailId", "GSTRecoveryEmailPassword", "GSTRegDate", "GSTRelievedDate", "GSTSurrenderedDate", "GSTUserName", "GSTUserPassword", "LastModifiedDate", "MobileNumber", "PhoneNumber", "ProprietorName", "RackFileNo", "StatusId", "TallyDataFilePath" },
-                values: new object[] { new Guid("ebf7cf6d-26fa-40a7-90ab-b86402a7e594"), "test@test.com", "Raja Mohamed", new DateTime(2023, 2, 21, 9, 25, 49, 454, DateTimeKind.Utc).AddTicks(7701), "EWAYBillPassword", "EWAYBillUserName", 10000.0, "test1@test.com", "testerpass", "123456789", "recover@test.com", "GSTRecoveryEmailPassword", new DateTime(2023, 2, 21, 9, 25, 49, 454, DateTimeKind.Utc).AddTicks(7691), null, null, "gstusername", "GSTUserPassword", new DateTime(2023, 2, 21, 9, 25, 49, 454, DateTimeKind.Utc).AddTicks(7704), "829733325", "829733325", "Rexona Co", "RackFileNo", 1, "F:\\\\userfolder\\txt1.txt" });
+                values: new object[] { new Guid("ebf7cf6d-26fa-40a7-90ab-b86402a7e594"), "test@test.com", "Raja Mohamed", new DateTime(2023, 2, 21, 12, 29, 24, 297, DateTimeKind.Utc).AddTicks(1989), "EWAYBillPassword", "EWAYBillUserName", 10000.0, "test1@test.com", "testerpass", "123456789", "recover@test.com", "GSTRecoveryEmailPassword", new DateTime(2023, 2, 21, 12, 29, 24, 297, DateTimeKind.Utc).AddTicks(1978), null, null, "gstusername", "GSTUserPassword", new DateTime(2023, 2, 21, 12, 29, 24, 297, DateTimeKind.Utc).AddTicks(1994), "829733325", "829733325", "Rexona Co", "RackFileNo", 1, "F:\\\\userfolder\\txt1.txt" });
 
             migrationBuilder.InsertData(
                 table: "ServiceCategories",
                 columns: new[] { "Id", "CreatedDate", "Description", "FixedCharge", "LastModifiedDate", "PreviousCharge", "ServiceName", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 2, 21, 9, 25, 49, 454, DateTimeKind.Utc).AddTicks(7744), "GST Monthly Submission", 1000.0, new DateTime(2023, 2, 21, 9, 25, 49, 454, DateTimeKind.Utc).AddTicks(7745), 1000.0, "GSTMonthlySubmission", 1 },
-                    { 2, new DateTime(2023, 2, 21, 9, 25, 49, 454, DateTimeKind.Utc).AddTicks(7749), "GST Amendment", 2000.0, new DateTime(2023, 2, 21, 9, 25, 49, 454, DateTimeKind.Utc).AddTicks(7750), 2000.0, "GSTAmendment", 1 },
-                    { 3, new DateTime(2023, 2, 21, 9, 25, 49, 454, DateTimeKind.Utc).AddTicks(7753), "GST Annual Return Filing", 500.0, new DateTime(2023, 2, 21, 9, 25, 49, 454, DateTimeKind.Utc).AddTicks(7754), 500.0, "GSTAnnualReturnFiling", 1 },
-                    { 4, new DateTime(2023, 2, 21, 9, 25, 49, 454, DateTimeKind.Utc).AddTicks(7756), "GST Notice Service", 200.0, new DateTime(2023, 2, 21, 9, 25, 49, 454, DateTimeKind.Utc).AddTicks(7757), 200.0, "GSTNoticeService", 1 }
+                    { 1, new DateTime(2023, 2, 21, 12, 29, 24, 297, DateTimeKind.Utc).AddTicks(2052), "GST Monthly Submission", 1000.0, new DateTime(2023, 2, 21, 12, 29, 24, 297, DateTimeKind.Utc).AddTicks(2053), 1000.0, "GSTMonthlySubmission", 1 },
+                    { 2, new DateTime(2023, 2, 21, 12, 29, 24, 297, DateTimeKind.Utc).AddTicks(2054), "GST Amendment", 2000.0, new DateTime(2023, 2, 21, 12, 29, 24, 297, DateTimeKind.Utc).AddTicks(2055), 2000.0, "GSTAmendment", 1 },
+                    { 3, new DateTime(2023, 2, 21, 12, 29, 24, 297, DateTimeKind.Utc).AddTicks(2057), "GST Annual Return Filing", 500.0, new DateTime(2023, 2, 21, 12, 29, 24, 297, DateTimeKind.Utc).AddTicks(2057), 500.0, "GSTAnnualReturnFiling", 1 },
+                    { 4, new DateTime(2023, 2, 21, 12, 29, 24, 297, DateTimeKind.Utc).AddTicks(2061), "GST Notice Service", 200.0, new DateTime(2023, 2, 21, 12, 29, 24, 297, DateTimeKind.Utc).AddTicks(2061), 200.0, "GSTNoticeService", 1 }
                 });
 
             migrationBuilder.CreateIndex(
