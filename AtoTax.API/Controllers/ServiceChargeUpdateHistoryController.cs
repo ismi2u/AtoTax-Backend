@@ -160,7 +160,7 @@ namespace AtoTax.API.Controllers
                 //    return _response;
                 //}
                 var ServiceChargeUpdateHistory = _mapper.Map<ServiceChargeUpdateHistory>(ServiceChargeUpdateHistoryCreateDTO);
-                //ServiceChargeUpdateHistory.CreatedDate= DateTime.UtcNow;
+                ServiceChargeUpdateHistory.AmendedDate= DateTime.UtcNow;
                 await _unitOfWork.ServiceChargeUpdateHistories.CreateAsync(ServiceChargeUpdateHistory);
 
                 await _unitOfWork.CompleteAsync();
