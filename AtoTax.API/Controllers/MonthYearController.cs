@@ -12,19 +12,20 @@ using AutoMapper;
 using System.Net;
 using AtoTax.API.Repository.Interfaces;
 using AtoTax.API.GenericRepository;
+using System.ComponentModel;
 
 namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    public class AmendmentController : ControllerBase
+    public class MonthYearController : ControllerBase
     {
         protected APIResponse _response;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
 
-        public AmendmentController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
+        public MonthYearController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
         {
             _mapper = mapper;
             this._response= new();
@@ -32,24 +33,22 @@ namespace AtoTax.API.Controllers
             _unitOfWork= unitOfWork;
         }
 
-        // GET: api/Amendments
+        // GET: api/AddressTypes
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetAmendments()
+        public async Task<ActionResult<APIResponse>> GetAddressTypes([FromQuery] int pageSize = 0, int pageNumber = 1)
         {
 
             List<string> includelist = new List<string>();
             includelist.Add("Status");
-            includelist.Add("GSTClient");
-            includelist.Add("AmendType");
             string[] arrIncludes = includelist.ToArray();
 
             try
             {
-                IEnumerable<Amendment> AmendmentsList = await _unitOfWork.Amendments.GetAllAsync(null, 0, 0, arrIncludes);
+                IEnumerable<AddressType> AddressTypesList = await _unitOfWork.AddressTypes.GetAllAsync(null, pageSize:pageSize, pageNumber:pageNumber, arrIncludes);
 
-                _response.Result = _mapper.Map<IEnumerable<AmendmentDTO>>(AmendmentsList);
+                _response.Result = _mapper.Map<IEnumerable<AddressTypeDTO>>(AddressTypesList);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
@@ -61,26 +60,45 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
-        // GET: api/Amendments/5
+        // GET: api/GetActiveAddressTypesForDD
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetActiveAddressTypesForDD([FromQuery] int pageSize = 0, int pageNumber = 1)
+        {
+            try
+            {
+                IEnumerable<AddressType> AddressTypesList = await _unitOfWork.AddressTypes.GetAllAsync(a=> a.StatusId== (int)EStatus.active, pageSize: pageSize, pageNumber: pageNumber);
+
+                _response.Result = _mapper.Map<IEnumerable<ActiveAddressTypeForDD>>(AddressTypesList);
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+            return _response;
+        }
+
+        // GET: api/AddressTypes/5
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetAmendment(Guid id)
+        public async Task<ActionResult<APIResponse>> GetAddressType(int id)
         {
-
 
             List<string> includelist = new List<string>();
             includelist.Add("Status");
-            includelist.Add("GSTClient");
-            includelist.Add("AmendType");
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                Amendment Amendment = await _unitOfWork.Amendments.GetAsync(u => u.Id == id, false, arrIncludes);
+                AddressType AddressType = await _unitOfWork.AddressTypes.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
-                _response.Result = _mapper.Map<AmendmentDTO>(Amendment);
+                _response.Result = _mapper.Map<AddressTypeDTO>(AddressType);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
@@ -93,85 +111,50 @@ namespace AtoTax.API.Controllers
            
         }
 
-       
-
-        // POST: api/Amendments
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> CreateAmendment(AmendmentCreateDTO AmendmentCreateDTO)
-        {
-            try
-            {
-
-                if (await _unitOfWork.Amendments.GetAsync(u => u.AmendTypeId == AmendmentCreateDTO.AmendTypeId
-                && u.GSTClientId == AmendmentCreateDTO.GSTClientId) != null)
-                {
-                    _response.IsSuccess = false;
-                    _response.ErrorMessages = new List<string>() { "Record already exists for Amendment Type and GST Client" };
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    return _response;
-                }
-               
-                var Amendment = _mapper.Map<Amendment>(AmendmentCreateDTO);
-                Amendment.CreatedDate= DateTime.UtcNow;
-                await _unitOfWork.Amendments.CreateAsync(Amendment);
-
-                await _unitOfWork.CompleteAsync();
-                _response.Result = _mapper.Map<AmendmentDTO>(Amendment);
-                _response.StatusCode = HttpStatusCode.Created;
-
-                return CreatedAtAction("GetAmendment", new { id = Amendment.Id }, _response);
-            }
-            catch (Exception ex)
-            {
-                _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
-            }
-            return _response;
-        }
-
-        // PUT: api/Amendments
+        // PUT: api/AddressTypes/5
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> UpdateAmendment(Guid id, AmendmentUpdateDTO AmendmentUpdateDTO)
+        public async Task<ActionResult<APIResponse>> UpdateAddressType(int id, AddressTypeUpdateDTO AddressTypeUpdateDTO)
         {
             try
             {
-                if (id == Guid.Empty || !(id == AmendmentUpdateDTO.Id))
+                if (id == 0 || !(id == AddressTypeUpdateDTO.Id))
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
 
 
-                var oldAmendment = await _unitOfWork.Amendments.GetAsync(u => u.Id == id, tracked: false);
+                var oldAddressType = await _unitOfWork.AddressTypes.GetAsync(u => u.Id == id, tracked: false);
 
-                if (oldAmendment == null)
+                if (oldAddressType == null)
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;
                     return _response;
                 }
 
-                var Amendment = _mapper.Map<Amendment>(AmendmentUpdateDTO);
+                var AddressType = _mapper.Map<AddressType>(AddressTypeUpdateDTO);
+
+                //// dont update the GSTIN number which is the Identity of the GST Client
+                AddressType.AddressTypeName = oldAddressType.AddressTypeName;
 
                 //// dont update the below field as they are not part of updateDTO  and hence will become null
-                Amendment.CreatedDate = oldAmendment.CreatedDate;
+                AddressType.CreatedDate = oldAddressType.CreatedDate;
 
-                await _unitOfWork.Amendments.UpdateAsync(Amendment);
+                await _unitOfWork.AddressTypes.UpdateAsync(AddressType);
 
                 if (!ModelState.IsValid)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.Result = ModelState;
                     return _response;
-                }
+                 }
 
                 await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
-                _response.Result = Amendment;
+                _response.Result = AddressType;
                 return Ok(_response);
             }
             catch (Exception ex)
@@ -182,28 +165,61 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
-        // DELETE: api/Amendments/5
+        // POST: api/AddressTypes
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> CreateAddressType(AddressTypeCreateDTO AddressTypeCreateDTO)
+        {
+            try
+            {
+
+                if (await _unitOfWork.AddressTypes.GetAsync(u => u.AddressTypeName == AddressTypeCreateDTO.AddressTypeName) != null)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return _response;
+                }
+               
+                var AddressType = _mapper.Map<AddressType>(AddressTypeCreateDTO);
+                AddressType.CreatedDate= DateTime.UtcNow;
+                await _unitOfWork.AddressTypes.CreateAsync(AddressType);
+
+                await _unitOfWork.CompleteAsync();
+                _response.Result = _mapper.Map<AddressTypeDTO>(AddressType);
+                _response.StatusCode = HttpStatusCode.Created;
+
+                return CreatedAtAction("GetAddressType", new { id = AddressType.Id }, _response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+            return _response;
+        }
+
+        // DELETE: api/AddressTypes/5
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<APIResponse>> DeleteAmendment(Guid id)
+        public async Task<ActionResult<APIResponse>> DeleteAddressType(int id)
         {
             try
             {
-                if (id == Guid.Empty)
+                if (id == 0)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var Amendment = await _unitOfWork.Amendments.GetAsync(u => u.Id == id);
-                if (Amendment == null)
+                var AddressType = await _unitOfWork.AddressTypes.GetAsync(u => u.Id == id);
+                if (AddressType == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                await _unitOfWork.Amendments.RemoveAsync(Amendment);
+                await _unitOfWork.AddressTypes.RemoveAsync(AddressType);
 
                 await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;

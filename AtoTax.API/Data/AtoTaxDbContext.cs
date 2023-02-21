@@ -63,6 +63,12 @@ namespace AtoTaxAPI.Data
              );
 
 
+            builder.Entity<AmendType>().HasData(
+           new AmendType { Id = 1, AmendTypeName = "Core", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+           new AmendType { Id = 2, AmendTypeName = "Non-Core",  CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 }
+           );
+
+
         }
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }

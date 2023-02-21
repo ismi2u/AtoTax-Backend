@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AtoTax.API.Migrations
 {
     [DbContext(typeof(AtoTaxDbContext))]
-    [Migration("20230220141706_inits")]
+    [Migration("20230221060048_inits")]
     partial class inits
     {
         /// <inheritdoc />
@@ -153,6 +153,24 @@ namespace AtoTax.API.Migrations
                     b.HasIndex("StatusId");
 
                     b.ToTable("AmendTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AmendTypeName = "Core",
+                            CreatedDate = new DateTime(2023, 2, 21, 6, 0, 48, 589, DateTimeKind.Utc).AddTicks(6069),
+                            LastModifiedDate = new DateTime(2023, 2, 21, 6, 0, 48, 589, DateTimeKind.Utc).AddTicks(6070),
+                            StatusId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AmendTypeName = "Non-Core",
+                            CreatedDate = new DateTime(2023, 2, 21, 6, 0, 48, 589, DateTimeKind.Utc).AddTicks(6106),
+                            LastModifiedDate = new DateTime(2023, 2, 21, 6, 0, 48, 589, DateTimeKind.Utc).AddTicks(6107),
+                            StatusId = 1
+                        });
                 });
 
             modelBuilder.Entity("AtoTax.Domain.Entities.Amendment", b =>
@@ -554,7 +572,7 @@ namespace AtoTax.API.Migrations
                             Id = new Guid("ebf7cf6d-26fa-40a7-90ab-b86402a7e594"),
                             ContactEmailId = "test@test.com",
                             ContactName = "Raja Mohamed",
-                            CreatedDate = new DateTime(2023, 2, 20, 14, 17, 5, 734, DateTimeKind.Utc).AddTicks(5816),
+                            CreatedDate = new DateTime(2023, 2, 21, 6, 0, 48, 589, DateTimeKind.Utc).AddTicks(6011),
                             EWAYBillPassword = "EWAYBillPassword",
                             EWAYBillUserName = "EWAYBillUserName",
                             GSTAnnualTurnOver = 10000.0,
@@ -563,10 +581,10 @@ namespace AtoTax.API.Migrations
                             GSTIN = "123456789",
                             GSTRecoveryEmailId = "recover@test.com",
                             GSTRecoveryEmailPassword = "GSTRecoveryEmailPassword",
-                            GSTRegDate = new DateTime(2023, 2, 20, 14, 17, 5, 734, DateTimeKind.Utc).AddTicks(5808),
+                            GSTRegDate = new DateTime(2023, 2, 21, 6, 0, 48, 589, DateTimeKind.Utc).AddTicks(6001),
                             GSTUserName = "gstusername",
                             GSTUserPassword = "GSTUserPassword",
-                            LastModifiedDate = new DateTime(2023, 2, 20, 14, 17, 5, 734, DateTimeKind.Utc).AddTicks(5820),
+                            LastModifiedDate = new DateTime(2023, 2, 21, 6, 0, 48, 589, DateTimeKind.Utc).AddTicks(6014),
                             MobileNumber = "829733325",
                             PhoneNumber = "829733325",
                             ProprietorName = "Rexona Co",
@@ -800,10 +818,10 @@ namespace AtoTax.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2023, 2, 20, 14, 17, 5, 734, DateTimeKind.Utc).AddTicks(5846),
+                            CreatedDate = new DateTime(2023, 2, 21, 6, 0, 48, 589, DateTimeKind.Utc).AddTicks(6037),
                             Description = "GST Monthly Submission",
                             FixedCharge = 1000.0,
-                            LastModifiedDate = new DateTime(2023, 2, 20, 14, 17, 5, 734, DateTimeKind.Utc).AddTicks(5847),
+                            LastModifiedDate = new DateTime(2023, 2, 21, 6, 0, 48, 589, DateTimeKind.Utc).AddTicks(6038),
                             PreviousCharge = 1000.0,
                             ServiceName = "GSTMonthlySubmission",
                             StatusId = 1
@@ -811,10 +829,10 @@ namespace AtoTax.API.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2023, 2, 20, 14, 17, 5, 734, DateTimeKind.Utc).AddTicks(5849),
+                            CreatedDate = new DateTime(2023, 2, 21, 6, 0, 48, 589, DateTimeKind.Utc).AddTicks(6041),
                             Description = "GST Amendment",
                             FixedCharge = 2000.0,
-                            LastModifiedDate = new DateTime(2023, 2, 20, 14, 17, 5, 734, DateTimeKind.Utc).AddTicks(5850),
+                            LastModifiedDate = new DateTime(2023, 2, 21, 6, 0, 48, 589, DateTimeKind.Utc).AddTicks(6042),
                             PreviousCharge = 2000.0,
                             ServiceName = "GSTAmendment",
                             StatusId = 1
@@ -822,10 +840,10 @@ namespace AtoTax.API.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2023, 2, 20, 14, 17, 5, 734, DateTimeKind.Utc).AddTicks(5851),
+                            CreatedDate = new DateTime(2023, 2, 21, 6, 0, 48, 589, DateTimeKind.Utc).AddTicks(6043),
                             Description = "GST Annual Return Filing",
                             FixedCharge = 500.0,
-                            LastModifiedDate = new DateTime(2023, 2, 20, 14, 17, 5, 734, DateTimeKind.Utc).AddTicks(5852),
+                            LastModifiedDate = new DateTime(2023, 2, 21, 6, 0, 48, 589, DateTimeKind.Utc).AddTicks(6044),
                             PreviousCharge = 500.0,
                             ServiceName = "GSTAnnualReturnFiling",
                             StatusId = 1
@@ -833,10 +851,10 @@ namespace AtoTax.API.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedDate = new DateTime(2023, 2, 20, 14, 17, 5, 734, DateTimeKind.Utc).AddTicks(5853),
+                            CreatedDate = new DateTime(2023, 2, 21, 6, 0, 48, 589, DateTimeKind.Utc).AddTicks(6046),
                             Description = "GST Notice Service",
                             FixedCharge = 200.0,
-                            LastModifiedDate = new DateTime(2023, 2, 20, 14, 17, 5, 734, DateTimeKind.Utc).AddTicks(5854),
+                            LastModifiedDate = new DateTime(2023, 2, 21, 6, 0, 48, 589, DateTimeKind.Utc).AddTicks(6046),
                             PreviousCharge = 200.0,
                             ServiceName = "GSTNoticeService",
                             StatusId = 1

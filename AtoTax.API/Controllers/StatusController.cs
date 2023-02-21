@@ -35,6 +35,7 @@ namespace AtoTax.API.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ResponseCache(Duration = 3600)]
         public async Task<ActionResult<APIResponse>> GetStatus()
         {
             try

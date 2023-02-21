@@ -5,7 +5,7 @@ namespace AtoTax.API.Repository.Interfaces
 {
     public interface IAmendmentRepository : IRepository<Amendment>
     {
+        Task<Amendment> UpdateAsync(Amendment entity);
 
-       
     }
 }

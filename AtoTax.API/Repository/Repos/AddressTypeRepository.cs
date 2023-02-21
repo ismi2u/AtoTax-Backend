@@ -3,32 +3,52 @@ using AtoTax.API.Repository.Interfaces;
 using AtoTax.Domain.Entities;
 using AtoTaxAPI.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace AtoTax.API.Repository.Repos
 {
-    public class AddressTypeRepository : Repository<AddressType>, IAddressTypeRepository
+    public class MonthYearRepository : IMonthYearRepository
     {
         private readonly AtoTaxDbContext _context;
-        private readonly new ILogger<AddressType> _logger;
+        private readonly new ILogger<MonthYear> _logger;
         private AtoTaxDbContext context;
 
      
-        public AddressTypeRepository(AtoTaxDbContext context, ILogger<AddressType> logger) : base(context, logger)
+        public MonthYearRepository(AtoTaxDbContext context, ILogger<MonthYear> logger) 
         {
 
             _context = context;
             _logger = logger;
         }
 
-
-        public async Task<AddressType> UpdateAsync(AddressType entity)
+        public Task CreateAsync(MonthYear entity)
         {
-            entity.LastModifiedDate = DateTime.UtcNow;
+            throw new NotImplementedException();
+        }
 
-            _context.Update(entity);
-            await _context.SaveChangesAsync();
+        public Task<List<MonthYear>> GetAllAsync(Expression<Func<MonthYear, bool>> filter = null, params string[] allIncludeStrings)
+        {
+            throw new NotImplementedException();
+        }
 
-            return entity;
+        public Task<MonthYear> GetAsync(Expression<Func<MonthYear, bool>> filter = null, bool tracked = true, params string[] allIncludeStrings)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveAsync(MonthYear entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SaveAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<MonthYear> UpdateAsync(MonthYear entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }
