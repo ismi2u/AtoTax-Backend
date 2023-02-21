@@ -20,8 +20,9 @@ namespace AtoTax.Domain.Entities
         public virtual AmendType AmendType { get; set; }
 
         public string ARN { get; set; }
-        [Required]
-        public DateTime SumittedDate { get; set; }
+        
+        public DateTime? SumittedDate { get; set; }
+
         public DateTime? ApprovedDate { get; set; }
 
         public DateTime? CreatedDate { get; set; }

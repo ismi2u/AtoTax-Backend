@@ -50,7 +50,7 @@ namespace AtoTax.Domain.DTOs
         [Required]
         public Guid Id { get; set; }
         [Required]
-        public int GSTClientId { get; set; }
+        public Guid GSTClientId { get; set; }
         [Required]
         public int AmendTypeId { get; set; }
         public string ARN { get; set; }
