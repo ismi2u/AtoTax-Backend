@@ -88,7 +88,7 @@ namespace AtoTax.API.Controllers
             return _response;
 
         }
-
+        /*
         // PUT: api/ServiceChargeUpdateHistory/5
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -211,6 +211,7 @@ namespace AtoTax.API.Controllers
             }
             return _response;
         }
+        */
 
     }
 }

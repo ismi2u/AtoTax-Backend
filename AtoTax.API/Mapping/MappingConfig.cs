@@ -24,8 +24,9 @@ namespace AtoTax.API.Mapping
 
             //Status
             CreateMap<Status, StatusDTO>().ReverseMap();
-            CreateMap<StatusCreateDTO, Status>().ReverseMap();
 
+            //ApprovalStatusTypes
+            CreateMap<ApprovalStatusType, ApprovalStatusTypeDTO>().ReverseMap();
 
 
             //Address Type

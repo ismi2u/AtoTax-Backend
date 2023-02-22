@@ -40,7 +40,7 @@ namespace AtoTax.API.Controllers
         {
 
             List<string> includelist = new List<string>();
-            includelist.Add("Status");
+            includelist.Add("ApprovalStatusType");
             includelist.Add("GSTClient");
             includelist.Add("AmendType");
             string[] arrIncludes = includelist.ToArray();

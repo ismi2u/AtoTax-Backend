@@ -15,6 +15,19 @@ namespace AtoTax.API.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "ApprovalStatusTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    StatusType = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ApprovalStatusTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
@@ -324,28 +337,6 @@ namespace AtoTax.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MonthsAndYears",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Month = table.Column<string>(type: "text", nullable: false),
-                    Year = table.Column<string>(type: "text", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    StatusId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MonthsAndYears", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_MonthsAndYears_Status_StatusId",
-                        column: x => x.StatusId,
-                        principalTable: "Status",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "MultimediaTypes",
                 columns: table => new
                 {
@@ -460,7 +451,7 @@ namespace AtoTax.API.Migrations
                     ApprovedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    StatusId = table.Column<int>(type: "integer", nullable: false)
+                    ApprovalStatusTypeId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -472,15 +463,15 @@ namespace AtoTax.API.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Amendments_GSTClients_GSTClientId",
-                        column: x => x.GSTClientId,
-                        principalTable: "GSTClients",
+                        name: "FK_Amendments_ApprovalStatusTypes_ApprovalStatusTypeId",
+                        column: x => x.ApprovalStatusTypeId,
+                        principalTable: "ApprovalStatusTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Amendments_Status_StatusId",
-                        column: x => x.StatusId,
-                        principalTable: "Status",
+                        name: "FK_Amendments_GSTClients_GSTClientId",
+                        column: x => x.GSTClientId,
+                        principalTable: "GSTClients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -729,6 +720,16 @@ namespace AtoTax.API.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "ApprovalStatusTypes",
+                columns: new[] { "Id", "StatusType" },
+                values: new object[,]
+                {
+                    { 1, "Pending" },
+                    { 2, "Approved" },
+                    { 3, "Rejected" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Status",
                 columns: new[] { "Id", "StatusType" },
                 values: new object[,]
@@ -742,24 +743,60 @@ namespace AtoTax.API.Migrations
                 columns: new[] { "Id", "AmendTypeName", "CreatedDate", "LastModifiedDate", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, "Core", new DateTime(2023, 2, 21, 15, 57, 8, 584, DateTimeKind.Utc).AddTicks(6677), new DateTime(2023, 2, 21, 15, 57, 8, 584, DateTimeKind.Utc).AddTicks(6678), 1 },
-                    { 2, "Non-Core", new DateTime(2023, 2, 21, 15, 57, 8, 584, DateTimeKind.Utc).AddTicks(6680), new DateTime(2023, 2, 21, 15, 57, 8, 584, DateTimeKind.Utc).AddTicks(6680), 1 }
+                    { 1, "Core", new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8109), new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8110), 1 },
+                    { 2, "Non-Core", new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8112), new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8112), 1 }
                 });
 
             migrationBuilder.InsertData(
                 table: "GSTClients",
                 columns: new[] { "Id", "ContactEmailId", "ContactName", "CreatedDate", "EWAYBillPassword", "EWAYBillUserName", "GSTAnnualTurnOver", "GSTEmailId", "GSTEmailPassword", "GSTIN", "GSTRecoveryEmailId", "GSTRecoveryEmailPassword", "GSTRegDate", "GSTRelievedDate", "GSTSurrenderedDate", "GSTUserName", "GSTUserPassword", "LastModifiedDate", "MobileNumber", "PhoneNumber", "ProprietorName", "RackFileNo", "StatusId", "TallyDataFilePath" },
-                values: new object[] { new Guid("ebf7cf6d-26fa-40a7-90ab-b86402a7e594"), "test@test.com", "Raja Mohamed", new DateTime(2023, 2, 21, 15, 57, 8, 584, DateTimeKind.Utc).AddTicks(6618), "EWAYBillPassword", "EWAYBillUserName", 10000.0, "test1@test.com", "testerpass", "123456789", "recover@test.com", "GSTRecoveryEmailPassword", new DateTime(2023, 2, 21, 15, 57, 8, 584, DateTimeKind.Utc).AddTicks(6609), null, null, "gstusername", "GSTUserPassword", new DateTime(2023, 2, 21, 15, 57, 8, 584, DateTimeKind.Utc).AddTicks(6622), "829733325", "829733325", "Rexona Co", "RackFileNo", 1, "F:\\\\userfolder\\txt1.txt" });
+                values: new object[] { new Guid("ebf7cf6d-26fa-40a7-90ab-b86402a7e594"), "test@test.com", "Raja Mohamed", new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8053), "EWAYBillPassword", "EWAYBillUserName", 10000.0, "test1@test.com", "testerpass", "123456789", "recover@test.com", "GSTRecoveryEmailPassword", new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8046), null, null, "gstusername", "GSTUserPassword", new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8056), "829733325", "829733325", "Rexona Co", "RackFileNo", 1, "F:\\\\userfolder\\txt1.txt" });
+
+            migrationBuilder.InsertData(
+                table: "GSTFilingTypes",
+                columns: new[] { "Id", "CreatedDate", "FilingType", "LastModifiedDate", "StatusId" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8160), "GSTR-1", new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8160), 1 },
+                    { 2, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8162), "GSTR-3B", new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8163), 1 },
+                    { 3, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8164), "GSTR-4", new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8165), 1 },
+                    { 4, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8166), "GSTR-5", new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8166), 1 },
+                    { 5, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8167), "GSTR-5A", new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8168), 1 },
+                    { 6, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8169), "GSTR-6", new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8170), 1 },
+                    { 7, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8171), "GSTR-7", new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8171), 1 },
+                    { 8, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8172), "GSTR-8", new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8173), 1 },
+                    { 9, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8174), "GSTR-9", new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8174), 1 },
+                    { 10, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8176), "GSTR-9C", new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8176), 1 },
+                    { 11, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8177), "GSTR-10", new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8178), 1 },
+                    { 12, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8179), "GSTR-11", new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8180), 1 },
+                    { 13, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8182), "CMP-08", new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8182), 1 },
+                    { 14, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8183), "NILGSTR1", new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8184), 1 },
+                    { 15, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8185), "NIL3B", new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8185), 1 },
+                    { 16, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8186), "ITC-04", new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8187), 1 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "PaymentTypes",
+                columns: new[] { "Id", "CreatedDate", "LastModifiedDate", "PaymentMethod", "StatusId" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8128), new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8130), "Cash", 1 },
+                    { 2, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8131), new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8132), "Bank Transfer", 1 },
+                    { 3, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8133), new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8133), "UPIPay", 1 },
+                    { 4, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8135), new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8135), "GooglePay", 1 },
+                    { 5, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8136), new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8137), "Bank Cheque", 1 },
+                    { 6, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8138), new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8138), "PayTM", 1 }
+                });
 
             migrationBuilder.InsertData(
                 table: "ServiceCategories",
                 columns: new[] { "Id", "CreatedDate", "Description", "FixedCharge", "LastModifiedDate", "PreviousCharge", "ServiceName", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 2, 21, 15, 57, 8, 584, DateTimeKind.Utc).AddTicks(6646), "GST Monthly Submission", 1000.0, new DateTime(2023, 2, 21, 15, 57, 8, 584, DateTimeKind.Utc).AddTicks(6647), 1000.0, "GSTMonthlySubmission", 1 },
-                    { 2, new DateTime(2023, 2, 21, 15, 57, 8, 584, DateTimeKind.Utc).AddTicks(6649), "GST Amendment", 2000.0, new DateTime(2023, 2, 21, 15, 57, 8, 584, DateTimeKind.Utc).AddTicks(6650), 2000.0, "GSTAmendment", 1 },
-                    { 3, new DateTime(2023, 2, 21, 15, 57, 8, 584, DateTimeKind.Utc).AddTicks(6651), "GST Annual Return Filing", 500.0, new DateTime(2023, 2, 21, 15, 57, 8, 584, DateTimeKind.Utc).AddTicks(6652), 500.0, "GSTAnnualReturnFiling", 1 },
-                    { 4, new DateTime(2023, 2, 21, 15, 57, 8, 584, DateTimeKind.Utc).AddTicks(6653), "GST Notice Service", 200.0, new DateTime(2023, 2, 21, 15, 57, 8, 584, DateTimeKind.Utc).AddTicks(6654), 200.0, "GSTNoticeService", 1 }
+                    { 1, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8078), "GST Monthly Submission", 1000.0, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8078), 1000.0, "GSTMonthlySubmission", 1 },
+                    { 2, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8080), "GST Amendment", 2000.0, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8081), 2000.0, "GSTAmendment", 1 },
+                    { 3, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8082), "GST Annual Return Filing", 500.0, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8083), 500.0, "GSTAnnualReturnFiling", 1 },
+                    { 4, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8085), "GST Notice Service", 200.0, new DateTime(2023, 2, 22, 18, 54, 27, 435, DateTimeKind.Utc).AddTicks(8085), 200.0, "GSTNoticeService", 1 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -773,14 +810,14 @@ namespace AtoTax.API.Migrations
                 column: "AmendTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Amendments_ApprovalStatusTypeId",
+                table: "Amendments",
+                column: "ApprovalStatusTypeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Amendments_GSTClientId",
                 table: "Amendments",
                 column: "GSTClientId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Amendments_StatusId",
-                table: "Amendments",
-                column: "StatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AmendTypes_StatusId",
@@ -920,11 +957,6 @@ namespace AtoTax.API.Migrations
                 column: "ServiceCategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MonthsAndYears_StatusId",
-                table: "MonthsAndYears",
-                column: "StatusId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_MultimediaTypes_StatusId",
                 table: "MultimediaTypes",
                 column: "StatusId");
@@ -995,9 +1027,6 @@ namespace AtoTax.API.Migrations
                 name: "GSTPaidDetails");
 
             migrationBuilder.DropTable(
-                name: "MonthsAndYears");
-
-            migrationBuilder.DropTable(
                 name: "MultimediaTypes");
 
             migrationBuilder.DropTable(
@@ -1008,6 +1037,9 @@ namespace AtoTax.API.Migrations
 
             migrationBuilder.DropTable(
                 name: "AmendTypes");
+
+            migrationBuilder.DropTable(
+                name: "ApprovalStatusTypes");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

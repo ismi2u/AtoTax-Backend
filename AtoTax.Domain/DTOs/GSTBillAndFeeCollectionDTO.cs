@@ -10,7 +10,7 @@ namespace AtoTax.Domain.DTOs
         public Guid GSTClientID { get; set; }
         public GSTClientDTO GSTClient { get; set; }
         public string DueMonth { get; set; }
-        public int Year { get; set; }
+        public int DueYear { get; set; }
         public int GSTFilingTypeId { get; set; }
         public GSTFilingTypeDTO GSTFilingType { get; set; }
         public int ReceivedBy { get; set; }
@@ -39,7 +39,7 @@ namespace AtoTax.Domain.DTOs
         [Required]
         public string DueMonth { get; set; }
         [Required]
-        public int Year { get; set; }
+        public int DueYear { get; set; }
         [Required]
         public int GSTFilingTypeId { get; set; }
         public int ReceivedBy { get; set; }
@@ -68,7 +68,7 @@ namespace AtoTax.Domain.DTOs
         [Required]
         public string DueMonth { get; set; }
         [Required]
-        public int Year { get; set; }
+        public int DueYear { get; set; }
         [Required]
         public int GSTFilingTypeId { get; set; }
         public int ReceivedBy { get; set; }

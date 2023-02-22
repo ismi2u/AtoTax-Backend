@@ -175,6 +175,54 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
+
+        // POST: api/GSTBillAndFeeCollection
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> AutoPopulateGSTBillAndFeeCollectionTable(string month, int year)
+        {
+            try
+            {
+                var listGstClients = await _unitOfWork.GSTClients.GetAllAsync(u=> u.StatusId==(int)EStatus.active);
+
+                GSTBillAndFeeCollectionCreateDTO gstBillAndFeeCollectionCreateDTO = new GSTBillAndFeeCollectionCreateDTO();
+
+
+                foreach (var gstclient in listGstClients)
+                {
+                    var gstBillAndFeeItem = await _unitOfWork.GSTBillAndFeeCollections.GetAllAsync(u => u.GSTClientId == gstclient.Id && u.DueMonth == month && u.DueYear == year);
+                    if (gstBillAndFeeItem != null)
+                    {
+                        continue;
+                    }
+                    else
+                    { 
+                        gstBillAndFeeCollectionCreateDTO.GSTClientID = gstclient.Id;
+                        gstBillAndFeeCollectionCreateDTO.DueMonth = month;
+                        gstBillAndFeeCollectionCreateDTO.DueYear = year;
+
+                    }
+                 }
+
+                var GSTBillAndFeeCollection = _mapper.Map<GSTBillAndFeeCollection>(gstBillAndFeeCollectionCreateDTO);
+                //GSTBillAndFeeCollection.CreatedDate= DateTime.UtcNow;
+                await _unitOfWork.GSTBillAndFeeCollections.CreateAsync(GSTBillAndFeeCollection);
+
+                await _unitOfWork.CompleteAsync();
+                _response.Result = _mapper.Map<GSTBillAndFeeCollectionDTO>(GSTBillAndFeeCollection);
+                _response.StatusCode = HttpStatusCode.Created;
+
+                return CreatedAtAction("GetGSTBillAndFeeCollection", new { id = GSTBillAndFeeCollection.Id }, _response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+            return _response;
+        }
+
         // DELETE: api/GSTBillAndFeeCollection/5
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

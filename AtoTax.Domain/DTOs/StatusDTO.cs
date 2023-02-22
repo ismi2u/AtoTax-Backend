@@ -24,4 +24,6 @@ namespace AtoTax.Domain.DTOs
         inactive
 
     }
+   
+
 }

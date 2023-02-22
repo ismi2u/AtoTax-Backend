@@ -55,6 +55,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IGSTClientRepository, GSTClientRepository>();
 builder.Services.AddScoped<IStatusRepository, StatusRepository>();
+builder.Services.AddScoped<IApprovalStatusTypeRepository, ApprovalStatusTypeRepository>();
 builder.Services.AddScoped<IMultimediaTypeRepository, MultimediaTypeRepository>();
 builder.Services.AddScoped<IAddressTypeRepository, AddressTypeRepository>();
 builder.Services.AddScoped<IServiceCategoryRepository, ServiceCategoryRepository>();

@@ -56,6 +56,8 @@ namespace AtoTax.API.Controllers
 
         }
 
+        
+        /*
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -80,6 +82,7 @@ namespace AtoTax.API.Controllers
 
         }
 
+        
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -115,5 +118,6 @@ namespace AtoTax.API.Controllers
             return _response;
 
         }
+        */
     }
 }
