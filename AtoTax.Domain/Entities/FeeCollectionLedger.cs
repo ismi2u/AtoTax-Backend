@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AtoTax.Domain.Entities
 {
-    public class FeeCollectionLedger
+    public class AccountsLedger
     {
 
         [Key]

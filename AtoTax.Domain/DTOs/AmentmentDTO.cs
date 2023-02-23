@@ -19,8 +19,8 @@ namespace AtoTax.Domain.DTOs
         public DateTime? CreatedDate { get; set; }
         public DateTime? LastModifiedDate { get; set; }
 
-        public int? StatusId { get; set; }
-        public StatusDTO Status { get; set; }
+        public int? ApprovalStatusTypeId { get; set; }
+        public ApprovalStatusTypeDTO ApprovalStatusType { get; set; }
 
 
     }
@@ -36,7 +36,7 @@ namespace AtoTax.Domain.DTOs
         public DateTime? ApprovedDate { get; set; }
 
         [Required]
-        public int StatusId { get; set; }
+        public int ApprovalStatusTypeId { get; set; }
      
 
 
@@ -59,7 +59,7 @@ namespace AtoTax.Domain.DTOs
         public DateTime? ApprovedDate { get; set; }
 
         [Required]
-        public int StatusId { get; set; }
+        public int ApprovalStatusTypeId { get; set; }
 
     }
 

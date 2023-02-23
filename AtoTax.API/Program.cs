@@ -61,7 +61,7 @@ builder.Services.AddScoped<IAddressTypeRepository, AddressTypeRepository>();
 builder.Services.AddScoped<IServiceCategoryRepository, ServiceCategoryRepository>();
 
 builder.Services.AddScoped<ICollectionAndBalanceRepository, CollectionAndBalanceRepository>();
-builder.Services.AddScoped<IFeeCollectionLedgerRepository, FeeCollectionLedgerRepository>();
+builder.Services.AddScoped<IAccountsLedgerRepository, AccountsLedgerRepository>();
 builder.Services.AddScoped<IServiceChargeUpdateHistoryRepository, ServiceChargeUpdateHistoryRepository>();
 builder.Services.AddScoped<IUserLoggedActivityRepository, UserLoggedActivityRepository>();
 builder.Services.AddScoped<IPaymentTypeRepository, PaymentTypeRepository>();

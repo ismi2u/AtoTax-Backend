@@ -36,7 +36,7 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ResponseCache(Duration = 3600)]
-        public async Task<ActionResult<APIResponse>> GetApprovalStatusTypes()
+        public async Task<ActionResult<APIResponse>> GetApprovalStatusTypesForDD()
         {
             try
             {

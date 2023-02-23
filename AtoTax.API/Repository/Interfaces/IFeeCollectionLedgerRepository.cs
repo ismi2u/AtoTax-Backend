@@ -3,9 +3,9 @@ using AtoTax.Domain.Entities;
 
 namespace AtoTax.API.Repository.Interfaces
 {
-    public interface IFeeCollectionLedgerRepository : IRepository<FeeCollectionLedger>
+    public interface IAccountsLedgerRepository : IRepository<AccountsLedger>
     {
 
-        Task<FeeCollectionLedger> UpdateAsync(FeeCollectionLedger entity);
+        Task<AccountsLedger> UpdateAsync(AccountsLedger entity);
     }
 }

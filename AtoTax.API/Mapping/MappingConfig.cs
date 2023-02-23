@@ -165,9 +165,9 @@ namespace AtoTax.API.Mapping
             CreateMap<CollectionAndBalance, CollectionAndBalanceDTO>().ReverseMap();
             CreateMap<CollectionAndBalanceCreateDTO, CollectionAndBalance>().ReverseMap();
 
-            //FeeCollectionLedger
-            CreateMap<FeeCollectionLedger, FeeCollectionLedgerDTO>().ReverseMap();
-            CreateMap<FeeCollectionLedgerCreateDTO, FeeCollectionLedger>().ReverseMap();
+            //AccountsLedger
+            CreateMap<AccountsLedger, AccountsLedgerDTO>().ReverseMap();
+            CreateMap<AccountsLedgerCreateDTO, AccountsLedger>().ReverseMap();
 
             //GSTBillAndFeeCollection
             CreateMap<GSTBillAndFeeCollection, GSTBillAndFeeCollectionDTO>().ReverseMap();

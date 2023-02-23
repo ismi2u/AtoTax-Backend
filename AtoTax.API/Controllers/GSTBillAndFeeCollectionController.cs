@@ -176,52 +176,63 @@ namespace AtoTax.API.Controllers
         }
 
 
-        // POST: api/GSTBillAndFeeCollection
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> AutoPopulateGSTBillAndFeeCollectionTable(string month, int year)
-        {
-            try
-            {
-                var listGstClients = await _unitOfWork.GSTClients.GetAllAsync(u=> u.StatusId==(int)EStatus.active);
+        //// POST: api/GSTBillAndFeeCollection
+        //[HttpPost]
+        //[ProducesResponseType(StatusCodes.Status201Created)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //public async Task<ActionResult<APIResponse>> AutoPopulateGSTBillAndFeeCollectionTable(string month, int year)
+        //{
+        //    try
+        //    {
+        //        var listGstClients = await _unitOfWork.GSTClients.GetAllAsync(u=> u.StatusId==(int)EStatus.active);
 
-                GSTBillAndFeeCollectionCreateDTO gstBillAndFeeCollectionCreateDTO = new GSTBillAndFeeCollectionCreateDTO();
+        //        GSTBillAndFeeCollectionCreateDTO gstBillAndFeeCollectionCreateDTO = new GSTBillAndFeeCollectionCreateDTO();
+        //        CollectionAndBalance collectionAndBalance = new CollectionAndBalance();
+
+        //        foreach (var gstclient in listGstClients)
+        //        {
+        //            var gstBillAndFeeItem = await _unitOfWork.GSTBillAndFeeCollections.GetAllAsync(u => u.GSTClientId == gstclient.Id && u.DueMonth == month && u.DueYear == year);
+        //            if (gstBillAndFeeItem != null)
+        //            {
+        //                continue;
+        //            }
+        //            else
+        //            { 
+        //                gstBillAndFeeCollectionCreateDTO.GSTClientID = gstclient.Id;
+        //                gstBillAndFeeCollectionCreateDTO.DueMonth = month;
+        //                gstBillAndFeeCollectionCreateDTO.DueYear = year;
 
 
-                foreach (var gstclient in listGstClients)
-                {
-                    var gstBillAndFeeItem = await _unitOfWork.GSTBillAndFeeCollections.GetAllAsync(u => u.GSTClientId == gstclient.Id && u.DueMonth == month && u.DueYear == year);
-                    if (gstBillAndFeeItem != null)
-                    {
-                        continue;
-                    }
-                    else
-                    { 
-                        gstBillAndFeeCollectionCreateDTO.GSTClientID = gstclient.Id;
-                        gstBillAndFeeCollectionCreateDTO.DueMonth = month;
-                        gstBillAndFeeCollectionCreateDTO.DueYear = year;
+        //                //collection and Balance Table record
+        //                collectionAndBalance.GSTClientId = gstclient.Id;
+        //                collectionAndBalance.DueMonth = month;
+        //                collectionAndBalance.DueYear = year;
 
-                    }
-                 }
+        //                var clientFeeMap = await _unitOfWork.ClientFeeMaps.GetAllAsync(c => c.ServiceCategoryId == 1 && c.GSTClientId == gstclient.Id);
+        //                collectionAndBalance.FeesAmount = clientFeeMap.FirstOrDefault().DefaultCharge;
 
-                var GSTBillAndFeeCollection = _mapper.Map<GSTBillAndFeeCollection>(gstBillAndFeeCollectionCreateDTO);
-                //GSTBillAndFeeCollection.CreatedDate= DateTime.UtcNow;
-                await _unitOfWork.GSTBillAndFeeCollections.CreateAsync(GSTBillAndFeeCollection);
 
-                await _unitOfWork.CompleteAsync();
-                _response.Result = _mapper.Map<GSTBillAndFeeCollectionDTO>(GSTBillAndFeeCollection);
-                _response.StatusCode = HttpStatusCode.Created;
+        //            }
+        //         }
+                 
 
-                return CreatedAtAction("GetGSTBillAndFeeCollection", new { id = GSTBillAndFeeCollection.Id }, _response);
-            }
-            catch (Exception ex)
-            {
-                _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
-            }
-            return _response;
-        }
+        //        var GSTBillAndFeeCollection = _mapper.Map<GSTBillAndFeeCollection>(gstBillAndFeeCollectionCreateDTO);
+        //        //GSTBillAndFeeCollection.CreatedDate= DateTime.UtcNow;
+        //        await _unitOfWork.GSTBillAndFeeCollections.CreateAsync(GSTBillAndFeeCollection);
+
+        //        await _unitOfWork.CompleteAsync();
+        //        _response.Result = _mapper.Map<GSTBillAndFeeCollectionDTO>(GSTBillAndFeeCollection);
+        //        _response.StatusCode = HttpStatusCode.Created;
+
+        //        return CreatedAtAction("GetGSTBillAndFeeCollection", new { id = GSTBillAndFeeCollection.Id }, _response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _response.IsSuccess = false;
+        //        _response.ErrorMessages = new List<string>() { ex.ToString() };
+        //    }
+        //    return _response;
+        //}
 
         // DELETE: api/GSTBillAndFeeCollection/5
         [ProducesResponseType(StatusCodes.Status200OK)]

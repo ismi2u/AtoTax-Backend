@@ -17,14 +17,14 @@ namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    public class FeeCollectionLedgersController : ControllerBase
+    public class AccountsLedgersController : ControllerBase
     {
         protected APIResponse _response;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
 
-        public FeeCollectionLedgersController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
+        public AccountsLedgersController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
         {
             _mapper = mapper;
             this._response= new();
@@ -32,11 +32,11 @@ namespace AtoTax.API.Controllers
             _unitOfWork= unitOfWork;
         }
 
-        // GET: api/FeeCollectionLedger
+        // GET: api/AccountsLedger
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetFeeCollectionLedger()
+        public async Task<ActionResult<APIResponse>> GetAccountsLedger()
         {
 
             List<string> includelist = new List<string>();
@@ -47,9 +47,9 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                IEnumerable<FeeCollectionLedger> FeeCollectionLedgerList = await _unitOfWork.FeeCollectionLedgers.GetAllAsync(null, 0, 0, arrIncludes);
+                IEnumerable<AccountsLedger> AccountsLedgerList = await _unitOfWork.AccountsLedgers.GetAllAsync(null, 0, 0, arrIncludes);
 
-                _response.Result = _mapper.Map<IEnumerable<FeeCollectionLedgerDTO>>(FeeCollectionLedgerList);
+                _response.Result = _mapper.Map<IEnumerable<AccountsLedgerDTO>>(AccountsLedgerList);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
@@ -61,12 +61,12 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
-        // GET: api/FeeCollectionLedger/5
+        // GET: api/AccountsLedger/5
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetFeeCollectionLedger(Guid id)
+        public async Task<ActionResult<APIResponse>> GetAccountsLedger(Guid id)
         {
 
             List<string> includelist = new List<string>();
@@ -76,10 +76,10 @@ namespace AtoTax.API.Controllers
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                FeeCollectionLedger FeeCollectionLedger = await _unitOfWork.FeeCollectionLedgers.GetAsync(u => u.Id == id, false, arrIncludes);
+                AccountsLedger AccountsLedger = await _unitOfWork.AccountsLedgers.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
-                _response.Result = _mapper.Map<FeeCollectionLedgerDTO>(FeeCollectionLedger);
+                _response.Result = _mapper.Map<AccountsLedgerDTO>(AccountsLedger);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
@@ -92,39 +92,39 @@ namespace AtoTax.API.Controllers
            
         }
 
-        // PUT: api/FeeCollectionLedger/5
+        // PUT: api/AccountsLedger/5
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> UpdateFeeCollectionLedger(Guid id, FeeCollectionLedgerUpdateDTO FeeCollectionLedgerUpdateDTO)
+        public async Task<ActionResult<APIResponse>> UpdateAccountsLedger(Guid id, AccountsLedgerUpdateDTO AccountsLedgerUpdateDTO)
         {
             try
             {
-                if (id == Guid.Empty || !(id == FeeCollectionLedgerUpdateDTO.Id))
+                if (id == Guid.Empty || !(id == AccountsLedgerUpdateDTO.Id))
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
 
 
-                var oldFeeCollectionLedger = await _unitOfWork.FeeCollectionLedgers.GetAsync(u => u.Id == id, tracked: false);
+                var oldAccountsLedger = await _unitOfWork.AccountsLedgers.GetAsync(u => u.Id == id, tracked: false);
 
-                if (oldFeeCollectionLedger == null)
+                if (oldAccountsLedger == null)
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;
                     return _response;
                 }
 
-                var FeeCollectionLedger = _mapper.Map<FeeCollectionLedger>(FeeCollectionLedgerUpdateDTO);
+                var AccountsLedger = _mapper.Map<AccountsLedger>(AccountsLedgerUpdateDTO);
 
                 //// dont update the JobRole number which is the Identity of the GST Client
-                FeeCollectionLedger.GSTClientId = oldFeeCollectionLedger.GSTClientId;
+                AccountsLedger.GSTClientId = oldAccountsLedger.GSTClientId;
 
                 //// dont update the below field as they are not part of updateDTO  and hence will become null
-                ///FeeCollectionLedger.CreatedDate = oldFeeCollectionLedger.CreatedDate;
+                ///AccountsLedger.CreatedDate = oldAccountsLedger.CreatedDate;
 
-                await _unitOfWork.FeeCollectionLedgers.UpdateAsync(FeeCollectionLedger);
+                await _unitOfWork.AccountsLedgers.UpdateAsync(AccountsLedger);
 
                 if (!ModelState.IsValid)
                 {
@@ -135,7 +135,7 @@ namespace AtoTax.API.Controllers
 
                 await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
-                _response.Result = FeeCollectionLedger;
+                _response.Result = AccountsLedger;
                 return Ok(_response);
             }
             catch (Exception ex)
@@ -146,31 +146,31 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
-        // POST: api/FeeCollectionLedger
+        // POST: api/AccountsLedger
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> CreateFeeCollectionLedger(FeeCollectionLedgerCreateDTO FeeCollectionLedgerCreateDTO)
+        public async Task<ActionResult<APIResponse>> CreateAccountsLedger(AccountsLedgerCreateDTO AccountsLedgerCreateDTO)
         {
             try
             {
 
-                //if (await _dbFeeCollectionLedger.GetAsync(u => u.GSTClientId == FeeCollectionLedgerCreateDTO.GSTClientId
-                //&& u.AddressTypeId == FeeCollectionLedgerCreateDTO.AddressTypeId) != null)
+                //if (await _dbAccountsLedger.GetAsync(u => u.GSTClientId == AccountsLedgerCreateDTO.GSTClientId
+                //&& u.AddressTypeId == AccountsLedgerCreateDTO.AddressTypeId) != null)
                 //{
                 //    _response.ErrorMessages = new List<string>() { "Duplicate for address Type for GST Client not allowed"};
                 //    _response.StatusCode = HttpStatusCode.BadRequest;
                 //    return _response;
                 //}
-                var FeeCollectionLedger = _mapper.Map<FeeCollectionLedger>(FeeCollectionLedgerCreateDTO);
-                //FeeCollectionLedger.CreatedDate = DateTime.UtcNow;
-                await _unitOfWork.FeeCollectionLedgers.CreateAsync(FeeCollectionLedger);
+                var AccountsLedger = _mapper.Map<AccountsLedger>(AccountsLedgerCreateDTO);
+                //AccountsLedger.CreatedDate = DateTime.UtcNow;
+                await _unitOfWork.AccountsLedgers.CreateAsync(AccountsLedger);
 
                 await _unitOfWork.CompleteAsync();
-                _response.Result = _mapper.Map<FeeCollectionLedgerDTO>(FeeCollectionLedger);
+                _response.Result = _mapper.Map<AccountsLedgerDTO>(AccountsLedger);
                 _response.StatusCode = HttpStatusCode.Created;
 
-                return CreatedAtAction("GetFeeCollectionLedger", new { id = FeeCollectionLedger.Id }, _response);
+                return CreatedAtAction("GetAccountsLedger", new { id = AccountsLedger.Id }, _response);
             }
             catch (Exception ex)
             {
@@ -180,12 +180,12 @@ namespace AtoTax.API.Controllers
             return _response;
         }
 
-        // DELETE: api/FeeCollectionLedger/5
+        // DELETE: api/AccountsLedger/5
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<APIResponse>> DeleteFeeCollectionLedger(Guid id)
+        public async Task<ActionResult<APIResponse>> DeleteAccountsLedger(Guid id)
         {
             try
             {
@@ -194,14 +194,14 @@ namespace AtoTax.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var FeeCollectionLedger = await _unitOfWork.FeeCollectionLedgers.GetAsync(u => u.Id == id);
-                if (FeeCollectionLedger == null)
+                var AccountsLedger = await _unitOfWork.AccountsLedgers.GetAsync(u => u.Id == id);
+                if (AccountsLedger == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
 
-                await _unitOfWork.FeeCollectionLedgers.RemoveAsync(FeeCollectionLedger);
+                await _unitOfWork.AccountsLedgers.RemoveAsync(AccountsLedger);
 
                 await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;

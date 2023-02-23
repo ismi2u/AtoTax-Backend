@@ -56,10 +56,11 @@ namespace AtoTaxAPI.Data
              );
 
             builder.Entity<ServiceCategory>().HasData(
-             new ServiceCategory { Id = 1, ServiceName = "GSTMonthlySubmission", FixedCharge = 1000, PreviousCharge=1000, Description = "GST Monthly Submission", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-             new ServiceCategory { Id = 2, ServiceName = "GSTAmendment", FixedCharge = 2000, PreviousCharge=2000, Description = "GST Amendment", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-            new ServiceCategory { Id = 3, ServiceName = "GSTAnnualReturnFiling", FixedCharge = 500, PreviousCharge = 500, Description = "GST Annual Return Filing", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-             new ServiceCategory { Id = 4, ServiceName = "GSTNoticeService", FixedCharge = 200, PreviousCharge=200, Description = "GST Notice Service", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 }
+             new ServiceCategory { Id = 1, ServiceName = "GSTMonthlySubmission", FixedCharge = 500, PreviousCharge=500, Description = "GST Monthly Submission", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+             new ServiceCategory { Id = 2, ServiceName = "GSTAmendment", FixedCharge = 500, PreviousCharge=500, Description = "GST Amendment", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+            new ServiceCategory { Id = 3, ServiceName = "GSTAnnualReturnFiling", FixedCharge = 1000, PreviousCharge = 1000, Description = "GST Annual Return Filing", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+             new ServiceCategory { Id = 4, ServiceName = "GSTNoticeService", FixedCharge = 1000, PreviousCharge=1000, Description = "GST Notice Service", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+              new ServiceCategory { Id = 5, ServiceName = "PenaltyBySquad", FixedCharge = 1000, PreviousCharge = 1000, Description = "Penalty while transporting", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 }
              );
 
             builder.Entity<AmendType>().HasData(
@@ -127,7 +128,7 @@ namespace AtoTaxAPI.Data
         public DbSet<Amendment> Amendments { get; set; }
 
         public DbSet<CollectionAndBalance> CollectionAndBalances { get; set; }
-        public DbSet<FeeCollectionLedger> FeeCollectionLedgers { get; set; }
+        public DbSet<AccountsLedger> AccountsLedgers { get; set; }
 
         public DbSet<ServiceChargeUpdateHistory> ServiceChargeUpdateHistories { get; set; }
 

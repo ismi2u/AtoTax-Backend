@@ -14,7 +14,7 @@ namespace AtoTax.API.GenericRepository
         ICollectionAndBalanceRepository CollectionAndBalances { get; }
         IGSTBillAndFeeCollectionRepository GSTBillAndFeeCollections { get; }
         IGSTClientAddressExtensionRepository GSTClientAddressExtensions { get; }
-        IFeeCollectionLedgerRepository FeeCollectionLedgers { get; }
+        IAccountsLedgerRepository AccountsLedgers { get; }
         IGSTClientRepository GSTClients { get; }
 
         IGSTFilingTypeRepository GSTFilingTypes { get; }
