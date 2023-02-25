@@ -126,7 +126,7 @@ namespace AtoTax.API.Repository.Repos
 
 
                     IdentityRole identityRole = new();
-                    identityRole.Name = "admin";
+                    identityRole.Name = "Admin";
              
 
                     IdentityResult rolAddresult = await _roleManager.CreateAsync(identityRole);
@@ -140,7 +140,7 @@ namespace AtoTax.API.Repository.Repos
                 }
                 if (result.Succeeded)
                 {
-                    IdentityRole role = await _roleManager.FindByNameAsync("admin");
+                    IdentityRole role = await _roleManager.FindByNameAsync("Admin");
                     IdentityResult addRoleResult = await _userManager.AddToRoleAsync(appUser, role.Name);
 
                     if (!addRoleResult.Succeeded)

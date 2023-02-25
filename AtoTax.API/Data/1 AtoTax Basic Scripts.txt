@@ -1,31 +1,13 @@
-INSERT INTO public."Status" VALUES (1, 'ACTIVE');
-INSERT INTO public."Status" VALUES (2, 'INACTIVE');
-SELECT pg_catalog.setval('public."StatusTypes_Id_seq"', 2, true);
+INSERT INTO public."AspNetUsers" VALUES ('d57cc679-f137-4eaf-bc55-339687ca8d89', NULL, 'Shahitha Begum', 'shaju', 'SHAJU', 'shaju@gmail.com', 'SHAJU@GMAIL.COM', false, 'AQAAAAEAACcQAAAAECt3xghizZE3rl6HJgnV85qAS0myEyzpMOksTN/oF0AL8ajtdMQZAywbHNVjVl2iGA==', 'BS7UMGFJ3AFJYU3NQHZITORPHIIAAMMC', '2c703b81-378c-4cf9-9e90-eaadccb8ce46', NULL, false, false, NULL, true, 0);
 
-INSERT INTO public."ServiceCategory"("Id", "ServiceName", "Description", "CreatedDate", "LastModifiedDate", "StatusId")
-	VALUES (1, 'GSTMonthlySubmission', 'Periodical Submission - Monthly; , '2023-01-08 08:44:38.753471+00', '2023-01-08 08:44:38.753471+00', 1);
-INSERT INTO public."ServiceCategory"("Id", "ServiceName", "Description", "CreatedDate", "LastModifiedDate", "StatusId")
-	VALUES (2, 'GSTAmendment', 'GST Amendment Services; , '2023-01-08 08:44:38.753471+00', '2023-01-08 08:44:38.753471+00', 1);
-INSERT INTO public."ServiceCategory"("Id", "ServiceName", "Description", "CreatedDate", "LastModifiedDate", "StatusId")
-	VALUES (3, 'GSTAnnualReturnFiling', 'GST Annual Return Filing; , '2023-01-08 08:44:38.753471+00', '2023-01-08 08:44:38.753471+00', 1);	
-INSERT INTO public."ServiceCategory"("Id", "ServiceName", "Description", "CreatedDate", "LastModifiedDate", "StatusId")
-	VALUES (4, 'GSTNoticeService', 'GST Notice Service; , '2023-01-08 08:44:38.753471+00', '2023-01-08 08:44:38.753471+00', 1);	
-	
-SELECT pg_catalog.setval('public."VATRates_Id_seq"', 4, true);
 
----
+================
 
-INSERT INTO public."PaymentTypes"( "Id", "PaymentMethod", "CreatedDate", "LastModifiedDate", "StatusId")
-	VALUES (1, 'Cash', '2023-01-08 08:44:38.753471+00', '2023-01-08 08:44:38.753471+00', 1);
-INSERT INTO public."PaymentTypes"( "Id", "PaymentMethod", "CreatedDate", "LastModifiedDate", "StatusId")
-	VALUES (2, 'Google Pay', '2023-01-08 08:44:38.753471+00', '2023-01-08 08:44:38.753471+00', 1);
-INSERT INTO public."PaymentTypes"( "Id", "PaymentMethod", "CreatedDate", "LastModifiedDate", "StatusId")
-	VALUES (3, 'UPI', '2023-01-08 08:44:38.753471+00', '2023-01-08 08:44:38.753471+00', 1);
-INSERT INTO public."PaymentTypes"( "Id", "PaymentMethod", "CreatedDate", "LastModifiedDate", "StatusId")
-	VALUES (4, 'PhonePe', '2023-01-08 08:44:38.753471+00', '2023-01-08 08:44:38.753471+00', 1);
-INSERT INTO public."PaymentTypes"( "Id", "PaymentMethod", "CreatedDate", "LastModifiedDate", "StatusId")
-	VALUES (5, 'Bank Transfer', '2023-01-08 08:44:38.753471+00', '2023-01-08 08:44:38.753471+00', 1);
-INSERT INTO public."PaymentTypes"( "Id", "PaymentMethod", "CreatedDate", "LastModifiedDate", "StatusId")
-	VALUES (6, 'Cheque', '2023-01-08 08:44:38.753471+00', '2023-01-08 08:44:38.753471+00', 1);
-INSERT INTO public."PaymentTypes"( "Id", "PaymentMethod", "CreatedDate", "LastModifiedDate", "StatusId")
-	VALUES (7, 'Whatsapp Pay', '2023-01-08 08:44:38.753471+00', '2023-01-08 08:44:38.753471+00', 1);	
+
+INSERT INTO public."AspNetRoles" ("Id", "Name", "NormalizedName", "ConcurrencyStamp") VALUES ('2abf2af3-dc89-4f3f-adaa-6c13635admin', 'admin', 'ADMIN', 'a51632b1-5957-4d1b-8025-75143dff446a');
+INSERT INTO public."AspNetRoles" ("Id", "Name", "NormalizedName", "ConcurrencyStamp") VALUES ('user2af3-dc89-4f3f-adaa-6c136358user', 'User', 'USER', 'auser2b1-5957-4d1b-8025-75143dff446a');
+INSERT INTO public."AspNetRoles" ("Id", "Name", "NormalizedName", "ConcurrencyStamp") VALUES ('2abfbara-dc89-4f3f-adaa-6c136358e9b0', 'Manager', 'MANAGER', 'a516bara-5957-4d1b-8025-75143dff446a');
+
+
+INSERT INTO public."AspNetUserRoles" VALUES ('d57cc679-f137-4eaf-bc55-339687ca8d89', '2abf2af3-dc89-4f3f-adaa-6c13635admin');
+

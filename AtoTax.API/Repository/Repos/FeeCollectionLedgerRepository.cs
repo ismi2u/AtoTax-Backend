@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AtoTax.API.Repository.Repos
 {
-    public class AccountsLedgerRepository : Repository<AccountsLedger>, IAccountsLedgerRepository
+    public class AccountLedgerRepository : Repository<AccountLedger>, IAccountLedgerRepository
     {
         private readonly AtoTaxDbContext _context;
-        private readonly ILogger<AccountsLedger> _logger;
-        public AccountsLedgerRepository(AtoTaxDbContext context, ILogger<AccountsLedger> logger) : base(context, logger)
+        private readonly ILogger<AccountLedger> _logger;
+        public AccountLedgerRepository(AtoTaxDbContext context, ILogger<AccountLedger> logger) : base(context, logger)
         {
 
             _context = context;
@@ -18,7 +18,7 @@ namespace AtoTax.API.Repository.Repos
         }
 
 
-        public async Task<AccountsLedger> UpdateAsync(AccountsLedger entity)
+        public async Task<AccountLedger> UpdateAsync(AccountLedger entity)
         {
            // entity.LastModifiedDate = DateTime.UtcNow;
 

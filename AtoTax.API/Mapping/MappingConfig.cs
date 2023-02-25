@@ -28,6 +28,11 @@ namespace AtoTax.API.Mapping
             //ApprovalStatusTypes
             CreateMap<ApprovalStatusType, ApprovalStatusTypeDTO>().ReverseMap();
 
+            //Account Ledger
+            CreateMap<AccountLedger, AccountLedgerDTO>().ReverseMap();
+            CreateMap<AccountLedgerCreateDTO, AccountLedger>()
+               .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateTime.UtcNow));
+
 
             //Address Type
             CreateMap<AddressType, AddressTypeDTO>().ReverseMap();
@@ -165,9 +170,9 @@ namespace AtoTax.API.Mapping
             CreateMap<CollectionAndBalance, CollectionAndBalanceDTO>().ReverseMap();
             CreateMap<CollectionAndBalanceCreateDTO, CollectionAndBalance>().ReverseMap();
 
-            //AccountsLedger
-            CreateMap<AccountsLedger, AccountsLedgerDTO>().ReverseMap();
-            CreateMap<AccountsLedgerCreateDTO, AccountsLedger>().ReverseMap();
+            //AccountLedger
+            CreateMap<AccountLedger, AccountLedgerDTO>().ReverseMap();
+            CreateMap<AccountLedgerCreateDTO, AccountLedger>().ReverseMap();
 
             //GSTBillAndFeeCollection
             CreateMap<GSTBillAndFeeCollection, GSTBillAndFeeCollectionDTO>().ReverseMap();

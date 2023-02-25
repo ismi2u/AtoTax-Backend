@@ -13,11 +13,14 @@ using System.Net;
 using AtoTax.API.Repository.Interfaces;
 using static AtoTax.Domain.DTOs.ServiceChargeUpdateHistoryCreateDTO;
 using AtoTax.API.GenericRepository;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class ServiceChargeUpdateHistoryController : ControllerBase
     {
         protected APIResponse _response;

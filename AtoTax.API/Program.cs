@@ -18,6 +18,7 @@ using System.Configuration;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,7 +37,8 @@ builder.Logging.AddSerilog(_loggerconf);
 //PostgreSQLInLocalAppInContainer
 //137.66.10.59
 builder.Services.AddAutoMapper(typeof(MappingConfig));
-builder.Services.AddDbContextPool<AtoTaxDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("flyiopostgres")));
+builder.Services.AddDbContextPool<AtoTaxDbContext>(options => options.UseNpgsql(
+                                            builder.Configuration.GetConnectionString("digitalOceanPostgres")));
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
     options =>
     {
@@ -61,7 +63,7 @@ builder.Services.AddScoped<IAddressTypeRepository, AddressTypeRepository>();
 builder.Services.AddScoped<IServiceCategoryRepository, ServiceCategoryRepository>();
 
 builder.Services.AddScoped<ICollectionAndBalanceRepository, CollectionAndBalanceRepository>();
-builder.Services.AddScoped<IAccountsLedgerRepository, AccountsLedgerRepository>();
+builder.Services.AddScoped<IAccountLedgerRepository, AccountLedgerRepository>();
 builder.Services.AddScoped<IServiceChargeUpdateHistoryRepository, ServiceChargeUpdateHistoryRepository>();
 builder.Services.AddScoped<IUserLoggedActivityRepository, UserLoggedActivityRepository>();
 builder.Services.AddScoped<IPaymentTypeRepository, PaymentTypeRepository>();
@@ -171,7 +173,7 @@ IWebHostEnvironment env = app.Environment;
 
 app.UseSwagger();
 app.UseSwaggerUI();
-
+app.UseMetricServer(); //add before app.UseEndPoints
 app.UseCors("AtoTaxCorsPolicy");
 
 app.UseHttpsRedirection();

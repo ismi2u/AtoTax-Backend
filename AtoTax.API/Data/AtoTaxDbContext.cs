@@ -97,11 +97,27 @@ namespace AtoTaxAPI.Data
          
             );
 
+            builder.Entity<MultimediaType>().HasData(
+         new MultimediaType { Id = 1,  Media = "Email", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+         new MultimediaType { Id = 2, Media = "WhatsApp", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+         new MultimediaType { Id = 3, Media = "USB/Pen Drive", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+         new MultimediaType { Id = 4, Media = "Courier", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+         new MultimediaType { Id = 5, Media = "Cloud Drive", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+         new MultimediaType { Id = 6, Media = "Hard Disk", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 }
+         );
+
 
           builder.Entity<ApprovalStatusType>().HasData(
           new ApprovalStatusType { Id = 1, StatusType = "Pending" },
           new ApprovalStatusType { Id = 2, StatusType = "Approved" },
           new ApprovalStatusType { Id = 3, StatusType = "Rejected" }
+          );
+
+            builder.Entity<AddressType>().HasData(
+          new AddressType { Id = 1, AddressTypeName="Office Street Address", AddressTypeDesc="Postal Street address", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+          new AddressType { Id = 2, AddressTypeName = "Residential Address", AddressTypeDesc = "Residential Street address", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+          new AddressType { Id = 3, AddressTypeName = "Godown/Factory Address", AddressTypeDesc = "Godown/Factory Address", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+          new AddressType { Id = 4, AddressTypeName = "PostBox Address", AddressTypeDesc = "Postoffice Box Number", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 }
           );
 
         }
@@ -128,7 +144,7 @@ namespace AtoTaxAPI.Data
         public DbSet<Amendment> Amendments { get; set; }
 
         public DbSet<CollectionAndBalance> CollectionAndBalances { get; set; }
-        public DbSet<AccountsLedger> AccountsLedgers { get; set; }
+        public DbSet<AccountLedger> AccountLedgers { get; set; }
 
         public DbSet<ServiceChargeUpdateHistory> ServiceChargeUpdateHistories { get; set; }
 

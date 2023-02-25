@@ -13,11 +13,14 @@ using System.Net;
 using AtoTax.API.Repository.Interfaces;
 using AtoTax.API.GenericRepository;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class GSTClientsController : ControllerBase
     {
         protected APIResponse _response;
