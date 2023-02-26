@@ -13,5 +13,10 @@ namespace AtoTax.API.Repository.Interfaces
 
         Task<UserDTO> Register(RegistrationRequestDTO registrationRequestDTO);
 
+        Task<APIResponse> ForgotPassword(ForgotPasswordDTO forgotPasswordDTO);
+        Task<APIResponse> ResetPassword(ResetPasswordDTO resetPasswordDTO);
+        Task<APIResponse> ConfirmEmail(ConfirmEmailDTO confirmEmailDTO);
+
+        Task<APIResponse> ChangePassword(ChangePasswordDTO changePasswordDTO);
     }
 }

@@ -16,6 +16,8 @@ using AtoTax.Domain.DTOs.AuthDTOs;
 using Azure;
 using NuGet.Protocol.Plugins;
 using Microsoft.AspNetCore.Authorization;
+using AtoTax.API.Authentication;
+using Microsoft.AspNetCore.Identity;
 
 namespace AtoTax.API.Controllers
 {
@@ -57,9 +59,12 @@ namespace AtoTax.API.Controllers
         [HttpPost("register")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO model)
         {
+
+            //var username = HttpContext.User.Identity.Name;
+
             bool ifUserUniqueName = _userRepository.IsUniqueUser(model.UserName);
             if(!ifUserUniqueName)
             {
@@ -82,6 +87,20 @@ namespace AtoTax.API.Controllers
             _response.Result = user;
             return Ok(_response);
         }
+
+
+
+
+        //#########################################################################################
+        //#########################################################################################
+        //#########################################################################################
+        //#########################################################################################
+
+        //private Task<ApplicationUser> GetCurrentUserAsync()
+        //{
+        //    return _userManager.GetUserAsync(HttpContext.User);
+        //}
+
 
 
     }

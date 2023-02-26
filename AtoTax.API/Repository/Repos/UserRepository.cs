@@ -6,13 +6,20 @@ using AtoTax.Domain.DTOs.AuthDTOs;
 using AtoTax.Domain.Entities;
 using AtoTaxAPI.Data;
 using AutoMapper;
+using Azure;
+using EmailService;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using NuGet.Common;
+using Org.BouncyCastle.Ocsp;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace AtoTax.API.Repository.Repos
 {
@@ -21,25 +28,35 @@ namespace AtoTax.API.Repository.Repos
 
         private readonly AtoTaxDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signinManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<EmpJobRole> _logger;
         private readonly IMapper _mapper;
         private string secretkey;
-        public UserRepository(AtoTaxDbContext context, ILogger<EmpJobRole> logger, 
+        protected APIResponse _response;
+        private readonly IEmailSender _emailSender;
+        private readonly IConfiguration _config;
+
+
+        public UserRepository(AtoTaxDbContext context, ILogger<EmpJobRole> logger,
             UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager, IMapper mapper, IConfiguration configuration)
+            SignInManager<ApplicationUser> signinManager,
+            RoleManager<IdentityRole> roleManager, IMapper mapper, IConfiguration config)
         {
             _context = context;
             _logger = logger;
             _userManager = userManager;
             _roleManager = roleManager;
+            _signinManager= signinManager;
             _mapper = mapper;
-            secretkey = configuration.GetValue<string>("ApiSettings:Secret");
+            _response = new();
+            secretkey = config.GetValue<string>("ApiSettings:Secret");
+            _config = config;
         }
         public bool IsUniqueUser(string username)
         {
-            var user = _context.ApplicationUsers.FirstOrDefault(x=> x.UserName == username);
-            if(user == null)
+            var user = _context.ApplicationUsers.FirstOrDefault(x => x.UserName == username);
+            if (user == null)
             {
                 return true;
             }
@@ -51,7 +68,7 @@ namespace AtoTax.API.Repository.Repos
 
             //check user is valid?
             var user = _context.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDTO.UserName.ToLower());
-            
+
             //check if user's password is valid?
             bool isValid = await _userManager.CheckPasswordAsync(user, loginRequestDTO.Password);
             if (user == null || isValid == false)
@@ -98,7 +115,7 @@ namespace AtoTax.API.Repository.Repos
 
         public async Task<UserDTO> Register(RegistrationRequestDTO registrationRequestDTO)
         {
-          // var localuser =  _mapper.Map<LocalUser>(registrationRequestDTO);
+            // var localuser =  _mapper.Map<LocalUser>(registrationRequestDTO);
 
             ApplicationUser appUser = new();
             appUser.Name = registrationRequestDTO.Name;
@@ -127,13 +144,13 @@ namespace AtoTax.API.Repository.Repos
 
                     IdentityRole identityRole = new();
                     identityRole.Name = "Admin";
-             
+
 
                     IdentityResult rolAddresult = await _roleManager.CreateAsync(identityRole);
 
                     if (!rolAddresult.Succeeded)
                     {
-                        var roleAddException= rolAddresult.Errors.Aggregate("Admin role assignment failed", (current, error) => current + (" - " + error + "\n\r"));
+                        var roleAddException = rolAddresult.Errors.Aggregate("Admin role assignment failed", (current, error) => current + (" - " + error + "\n\r"));
                         throw new Exception(roleAddException);
                     }
 
@@ -149,11 +166,11 @@ namespace AtoTax.API.Repository.Repos
                         throw new Exception(exceptionRole);
                     }
 
-                    var usertoReturn = _context.ApplicationUsers.FirstOrDefault(u=> u.UserName== registrationRequestDTO.UserName);
+                    var usertoReturn = _context.ApplicationUsers.FirstOrDefault(u => u.UserName == registrationRequestDTO.UserName);
 
 
                     return _mapper.Map<UserDTO>(usertoReturn);
-                   
+
                 }
             }
             catch (Exception)
@@ -161,9 +178,216 @@ namespace AtoTax.API.Repository.Repos
 
                 throw;
             }
-            
-           return new UserDTO();
+
+            return new UserDTO();
         }
+
+        public async Task<APIResponse> ForgotPassword(ForgotPasswordDTO forgotPasswordDTO)
+        {
+
+            var userName = forgotPasswordDTO.username;
+            var email = forgotPasswordDTO.email;
+            string token = null;
+
+            if (userName == null && email == null)
+            {
+
+                _response.Result = forgotPasswordDTO;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Username or Email is required" };
+                _response.StatusCode = HttpStatusCode.BadRequest;
+
+            }
+            else
+            {
+
+                var appuser = userName != null ? await _userManager.FindByNameAsync(userName) : await _userManager.FindByEmailAsync(email);
+
+                bool isUserConfirmed = await _userManager.IsEmailConfirmedAsync(appuser);
+                if (appuser != null && isUserConfirmed)
+                {
+                    token = await _userManager.GeneratePasswordResetTokenAsync(appuser);
+                    token = token.Replace("+", "^^^");
+                }
+
+                // Send Token via email for password reset
+
+                string[] paths = { Directory.GetCurrentDirectory(), "PasswordReset.html" };
+                string FilePath = Path.Combine(paths);
+                _logger.LogInformation("Email template path " + FilePath);
+                StreamReader str = new StreamReader(FilePath);
+                string MailText = str.ReadToEnd();
+                str.Close();
+
+                var domain = _config.GetSection("FrontendDomain").Value;
+                MailText = MailText.Replace("{FrontendDomain}", domain);
+
+                var builder = new MimeKit.BodyBuilder();
+                var receiverEmail = email;
+                string subject = "Password Reset Link";
+                string txtdata = "https://" + domain + "/change-password?token=" + token + "&email=" + email;
+
+                MailText = MailText.Replace("{PasswordResetUrl}", txtdata);
+
+                builder.HtmlBody = MailText;
+
+                EmailDto emailDto = new EmailDto();
+                emailDto.To = receiverEmail;
+                emailDto.Subject = subject;
+                emailDto.Body = builder.HtmlBody;
+
+                await _emailSender.SendEmailAsync(emailDto);
+                _logger.LogInformation("ForgotPassword: " + receiverEmail + "Password Reset Email Sent with token");
+
+                _response.Result = forgotPasswordDTO;
+                _response.IsSuccess = true;
+                _response.ErrorMessages = null;
+                _response.StatusCode = HttpStatusCode.OK;
+
+
+            }
+            return _response;
+        }
+
+     
+        public async Task<APIResponse> ConfirmEmail(ConfirmEmailDTO confirmEmailDTO)
+        {
+            if (confirmEmailDTO.email == null || confirmEmailDTO.token == null)
+            {
+                _response.Result = confirmEmailDTO;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Trouble with confirmation email link, contact Admin"};
+                _response.StatusCode = HttpStatusCode.BadRequest;
+            }
+
+            var user = await _userManager.FindByEmailAsync(confirmEmailDTO.email);
+
+            if (user == null)
+            {
+                _response.Result = confirmEmailDTO;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "User not found!" };
+                _response.StatusCode = HttpStatusCode.BadRequest;
+            }
+
+
+            var result = await _userManager.ConfirmEmailAsync(user, confirmEmailDTO.token);
+
+            if (result.Succeeded)
+            {
+                _response.Result = confirmEmailDTO;
+                _response.IsSuccess = true;
+                _response.ErrorMessages = null;
+                _response.StatusCode = HttpStatusCode.OK;
+            }
+            return _response;
+        }
+
+        public async Task<APIResponse> ResetPassword(ResetPasswordDTO resetPasswordDTO)
+        {
+
+            string email = resetPasswordDTO.Email;
+            string token = resetPasswordDTO.Token;
+            string newPassword = resetPasswordDTO.NewPassword;
+
+            var appuser = await _userManager.FindByEmailAsync(email);
+
+            if (appuser == null)
+            {
+                _response.Result = resetPasswordDTO;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Email is invalid" };
+                _response.StatusCode = HttpStatusCode.BadRequest;
+            }
+
+            if (appuser != null)
+            {
+
+                token = token.Replace("^^^", "+");
+                var result = await _userManager.ResetPasswordAsync(appuser, token, newPassword);
+                if (result.Succeeded)
+                {
+                    var receiverEmail = email;
+                    string subject = "You have successfully reset your Password";
+                    string body = "Your new Password is: " + newPassword;
+
+                    EmailDto emailDto = new EmailDto();
+                    emailDto.To = receiverEmail;
+                    emailDto.Subject = subject;
+                    emailDto.Body = body;
+
+                    await _emailSender.SendEmailAsync(emailDto);
+                    _logger.LogInformation("Password Reset: " + receiverEmail + "Password has been Reset");
+
+                    _response.Result = null;
+                    _response.IsSuccess = true;
+                    _response.ErrorMessages = null;
+                    _response.StatusCode = HttpStatusCode.OK;
+                }
+               
+            }
+            return _response;
+        }
+
+        public async Task<APIResponse> ChangePassword(ChangePasswordDTO changePasswordDTO)
+        {
+            string email = changePasswordDTO.Email;
+            string oldPassword = changePasswordDTO.Oldpassword;
+            string newPassword = changePasswordDTO.NewPassword;
+
+            var appuser = await _userManager.FindByEmailAsync(email);
+
+            if (appuser == null)
+            {
+                _response.Result = changePasswordDTO;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Email ID is invalid" };
+                _response.StatusCode = HttpStatusCode.BadRequest;
+            }
+            //ApplicationUser? user = await _userManager.GetUserAsync(HttpContext.User);
+            //EmpId = int.Parse(HttpContext.User.Claims.First(c => c.Type == "EmployeeId").Value);
+
+            if (appuser != null)
+            {
+                var validCredentials = await _signinManager.UserManager.CheckPasswordAsync(appuser, newPassword);
+
+                if (!validCredentials)
+                {
+                    _response.Result = changePasswordDTO;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages = new List<string> { "Current Password is incorrect" }; ;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+
+                }
+
+                var result = await _userManager.ChangePasswordAsync(appuser, oldPassword, newPassword);
+
+                if (result.Succeeded)
+                {
+                    var receiverEmail = email;
+                    string subject = "You have successfully reset your Password";
+                    string body = "Your new Password is: " + newPassword;
+
+                    EmailDto emailDto = new EmailDto();
+                    emailDto.To = receiverEmail;
+                    emailDto.Subject = subject;
+                    emailDto.Body = body;
+
+                    await _emailSender.SendEmailAsync(emailDto);
+                    _logger.LogInformation("Password Reset: " + receiverEmail + "Password has been Reset");
+
+                    _response.Result = null;
+                    _response.IsSuccess = true;
+                    _response.ErrorMessages = null;
+                    _response.StatusCode = HttpStatusCode.OK;
+                }
+
+            }
+            return _response;
+        }
+
+
+       
     }
 }
 

@@ -20,7 +20,7 @@ namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "User, Admin")]
     public class GSTClientsController : ControllerBase
     {
         protected APIResponse _response;

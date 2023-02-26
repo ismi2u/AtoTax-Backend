@@ -9,7 +9,7 @@ namespace AtoTax.Domain.DTOs
     {
         public Guid Id { get; set; }
         public Guid? GSTClientId { get; set; }
-        public virtual GSTClientDTO GSTClient { get; set; }
+        public virtual GSTClientDTO GSTClient { get; set; } 
 
         public int DataEntryEmployee { get; set; }
         public virtual Employee Employee { get; set; }
