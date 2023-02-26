@@ -44,6 +44,7 @@ namespace AtoTax.API.Controllers
 
             List<string> includelist = new List<string>();
             includelist.Add("Status");
+            includelist.Add("EmpJobRole");
             string[] arrIncludes = includelist.ToArray();
 
             try
@@ -92,6 +93,7 @@ namespace AtoTax.API.Controllers
 
             List<string> includelist = new List<string>();
             includelist.Add("Status");
+            includelist.Add("EmpJobRole");
             string[] arrIncludes = includelist.ToArray();
             try
             {

@@ -19,6 +19,8 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Prometheus;
+using Hangfire;
+using Hangfire.MemoryStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +34,8 @@ var _loggerconf = new LoggerConfiguration().ReadFrom.Configuration(builder.Confi
     //.WriteTo.File("AtoTax-.log", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
+
+builder.Services.AddHangfire(c => c.UseMemoryStorage());
 builder.Logging.AddSerilog(_loggerconf);
 //flyiopostgres
 //PostgreSQLInLocalAppInContainer
@@ -183,6 +187,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.UseHangfireDashboard();
+app.MapHangfireDashboard();
 
 //app.UseStaticFiles(new StaticFileOptions
 //{
