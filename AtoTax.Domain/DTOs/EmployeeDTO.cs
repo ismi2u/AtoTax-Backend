@@ -14,6 +14,7 @@ namespace AtoTax.Domain.DTOs
         public string? Email { get; set; }
         public string? ConcactNo { get; set; }
         public int? EmpJobRoleId { get; set; }
+        public EmpJobRoleDTO EmpJobRole { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? LastModifiedDate { get; set; }
         public int? StatusId { get; set; }
