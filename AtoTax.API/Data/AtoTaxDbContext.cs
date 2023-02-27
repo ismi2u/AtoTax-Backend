@@ -26,35 +26,6 @@ namespace AtoTaxAPI.Data
              new Status { Id = 2, StatusType = "inactive" }
              );
 
-           
-
-            builder.Entity<GSTClient>().HasData(
-             new GSTClient { Id = new Guid( "ebf7cf6d-26fa-40a7-90ab-b86402a7e594"),
-                 ProprietorName = "Rexona Co",
-                 GSTIN = "123456789",
-                 ContactName = "Raja Mohamed",
-                 GSTUserName = "gstusername",
-                 GSTUserPassword = "GSTUserPassword",
-                 GSTRegDate = DateTime.UtcNow,
-                 GSTSurrenderedDate = null,
-                 GSTRelievedDate = null,
-                 GSTAnnualTurnOver = 10000,
-                 MobileNumber = "829733325",
-                 PhoneNumber = "829733325",
-                 ContactEmailId = "test@test.com",
-                 GSTEmailId = "test1@test.com",
-                 GSTEmailPassword = "testerpass",
-                 GSTRecoveryEmailId = "recover@test.com",
-                 GSTRecoveryEmailPassword = "GSTRecoveryEmailPassword",
-                 EWAYBillUserName = "EWAYBillUserName",
-                 EWAYBillPassword = "EWAYBillPassword",
-                 RackFileNo = "RackFileNo",
-                 TallyDataFilePath = @"F:\\userfolder\txt1.txt",
-                 CreatedDate = DateTime.UtcNow,
-                 LastModifiedDate = DateTime.UtcNow,
-                 StatusId = 1 }           
-             );
-
             builder.Entity<ServiceCategory>().HasData(
              new ServiceCategory { Id = 1, ServiceName = "GSTMonthlySubmission", FixedCharge = 500, PreviousCharge=500, Description = "GST Monthly Submission", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
              new ServiceCategory { Id = 2, ServiceName = "GSTAmendment", FixedCharge = 500, PreviousCharge=500, Description = "GST Amendment", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
@@ -98,12 +69,13 @@ namespace AtoTaxAPI.Data
             );
 
             builder.Entity<MultimediaType>().HasData(
-         new MultimediaType { Id = 1,  Media = "Email", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-         new MultimediaType { Id = 2, Media = "WhatsApp", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-         new MultimediaType { Id = 3, Media = "USB/Pen Drive", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-         new MultimediaType { Id = 4, Media = "Courier", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-         new MultimediaType { Id = 5, Media = "Cloud Drive", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-         new MultimediaType { Id = 6, Media = "Hard Disk", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 }
+                new MultimediaType { Id = 1, Media = "HardCopy", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+         new MultimediaType { Id = 2,  Media = "Email", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+         new MultimediaType { Id = 3, Media = "WhatsApp", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+         new MultimediaType { Id = 4, Media = "USB/Pen Drive", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+         new MultimediaType { Id = 5, Media = "Courier", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+         new MultimediaType { Id = 6, Media = "Cloud Drive", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+         new MultimediaType { Id = 7, Media = "Hard Disk", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 }
          );
 
 

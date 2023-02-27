@@ -12,7 +12,6 @@ namespace AtoTax.Domain.Entities
         public string? DueMonth { get; set; }
         public int? DueYear { get; set; }
         public double? FeesAmount { get; set; }
-        public double? PreviousBalance { get; set; }
         public double AmountPaid { get; set; }
         public double CurrentBalance { get; set; }
         public DateTime? AmtReceivedDate { get; set; }
@@ -29,7 +28,6 @@ namespace AtoTax.Domain.Entities
         public int? DueYear { get; set; }
         [Required]
         public double? FeesAmount { get; set; }
-        public double? PreviousBalance { get; set; }
         public double AmountPaid { get; set; }
         public double CurrentBalance { get; set; }
         public DateTime? AmtReceivedDate { get; set; }
@@ -48,7 +46,6 @@ namespace AtoTax.Domain.Entities
         public int? DueYear { get; set; }
         [Required]
         public double? FeesAmount { get; set; }
-        public double? PreviousBalance { get; set; }
         public double AmountPaid { get; set; }
         public double CurrentBalance { get; set; }
         public DateTime? AmtReceivedDate { get; set; }

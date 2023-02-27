@@ -466,7 +466,6 @@ namespace AtoTax.API.Migrations
                     DueMonth = table.Column<string>(type: "text", nullable: true),
                     DueYear = table.Column<int>(type: "integer", nullable: true),
                     FeesAmount = table.Column<double>(type: "double precision", nullable: true),
-                    PreviousBalance = table.Column<double>(type: "double precision", nullable: true),
                     AmountPaid = table.Column<double>(type: "double precision", nullable: false),
                     CurrentBalance = table.Column<double>(type: "double precision", nullable: false),
                     AmountReceivedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
@@ -761,10 +760,10 @@ namespace AtoTax.API.Migrations
                 columns: new[] { "Id", "AddressTypeDesc", "AddressTypeName", "CreatedDate", "LastModifiedDate", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, "Postal Street address", "Office Street Address", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7168), new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7169), 1 },
-                    { 2, "Residential Street address", "Residential Address", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7170), new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7170), 1 },
-                    { 3, "Godown/Factory Address", "Godown/Factory Address", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7172), new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7172), 1 },
-                    { 4, "Postoffice Box Number", "PostBox Address", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7173), new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7174), 1 }
+                    { 1, "Postal Street address", "Office Street Address", new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(3457), new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(3458), 1 },
+                    { 2, "Residential Street address", "Residential Address", new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(3460), new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(3461), 1 },
+                    { 3, "Godown/Factory Address", "Godown/Factory Address", new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(3466), new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(3468), 1 },
+                    { 4, "Postoffice Box Number", "PostBox Address", new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(3475), new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(3476), 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -772,36 +771,31 @@ namespace AtoTax.API.Migrations
                 columns: new[] { "Id", "AmendTypeName", "CreatedDate", "LastModifiedDate", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, "Core", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(6998), new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(6999), 1 },
-                    { 2, "Non-Core", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7000), new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7001), 1 }
+                    { 1, "Core", new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2258), new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2265), 1 },
+                    { 2, "Non-Core", new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2274), new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2274), 1 }
                 });
-
-            migrationBuilder.InsertData(
-                table: "GSTClients",
-                columns: new[] { "Id", "ContactEmailId", "ContactName", "CreatedDate", "EWAYBillPassword", "EWAYBillUserName", "GSTAnnualTurnOver", "GSTEmailId", "GSTEmailPassword", "GSTIN", "GSTRecoveryEmailId", "GSTRecoveryEmailPassword", "GSTRegDate", "GSTRelievedDate", "GSTSurrenderedDate", "GSTUserName", "GSTUserPassword", "LastModifiedDate", "MobileNumber", "PhoneNumber", "ProprietorName", "RackFileNo", "StatusId", "TallyDataFilePath" },
-                values: new object[] { new Guid("ebf7cf6d-26fa-40a7-90ab-b86402a7e594"), "test@test.com", "Raja Mohamed", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(6950), "EWAYBillPassword", "EWAYBillUserName", 10000.0, "test1@test.com", "testerpass", "123456789", "recover@test.com", "GSTRecoveryEmailPassword", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(6942), null, null, "gstusername", "GSTUserPassword", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(6952), "829733325", "829733325", "Rexona Co", "RackFileNo", 1, "F:\\\\userfolder\\txt1.txt" });
 
             migrationBuilder.InsertData(
                 table: "GSTFilingTypes",
                 columns: new[] { "Id", "CreatedDate", "FilingType", "LastModifiedDate", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7053), "GSTR-1", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7054), 1 },
-                    { 2, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7055), "GSTR-3B", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7056), 1 },
-                    { 3, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7087), "GSTR-4", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7088), 1 },
-                    { 4, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7089), "GSTR-5", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7089), 1 },
-                    { 5, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7090), "GSTR-5A", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7091), 1 },
-                    { 6, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7092), "GSTR-6", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7092), 1 },
-                    { 7, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7093), "GSTR-7", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7094), 1 },
-                    { 8, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7095), "GSTR-8", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7095), 1 },
-                    { 9, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7096), "GSTR-9", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7097), 1 },
-                    { 10, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7098), "GSTR-9C", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7098), 1 },
-                    { 11, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7099), "GSTR-10", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7100), 1 },
-                    { 12, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7101), "GSTR-11", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7101), 1 },
-                    { 13, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7102), "CMP-08", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7103), 1 },
-                    { 14, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7104), "NILGSTR1", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7104), 1 },
-                    { 15, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7105), "NIL3B", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7106), 1 },
-                    { 16, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7107), "ITC-04", new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7107), 1 }
+                    { 1, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2599), "GSTR-1", new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2601), 1 },
+                    { 2, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2607), "GSTR-3B", new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2609), 1 },
+                    { 3, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2611), "GSTR-4", new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2620), 1 },
+                    { 4, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2627), "GSTR-5", new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2627), 1 },
+                    { 5, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2634), "GSTR-5A", new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2635), 1 },
+                    { 6, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2642), "GSTR-6", new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2644), 1 },
+                    { 7, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2653), "GSTR-7", new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2654), 1 },
+                    { 8, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2658), "GSTR-8", new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2668), 1 },
+                    { 9, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2669), "GSTR-9", new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2673), 1 },
+                    { 10, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2682), "GSTR-9C", new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2682), 1 },
+                    { 11, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2690), "GSTR-10", new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2692), 1 },
+                    { 12, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2694), "GSTR-11", new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2701), 1 },
+                    { 13, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2702), "CMP-08", new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2703), 1 },
+                    { 14, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2709), "NILGSTR1", new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2710), 1 },
+                    { 15, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2718), "NIL3B", new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2719), 1 },
+                    { 16, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2720), "ITC-04", new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2730), 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -809,12 +803,13 @@ namespace AtoTax.API.Migrations
                 columns: new[] { "Id", "CreatedDate", "Description", "LastModifiedDate", "Media", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7126), null, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7127), "Email", 1 },
-                    { 2, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7128), null, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7129), "WhatsApp", 1 },
-                    { 3, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7130), null, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7131), "USB/Pen Drive", 1 },
-                    { 4, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7132), null, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7132), "Courier", 1 },
-                    { 5, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7133), null, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7134), "Cloud Drive", 1 },
-                    { 6, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7135), null, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7135), "Hard Disk", 1 }
+                    { 1, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(3135), null, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(3149), "HardCopy", 1 },
+                    { 2, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(3167), null, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(3168), "Email", 1 },
+                    { 3, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(3169), null, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(3176), "WhatsApp", 1 },
+                    { 4, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(3178), null, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(3179), "USB/Pen Drive", 1 },
+                    { 5, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(3187), null, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(3188), "Courier", 1 },
+                    { 6, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(3191), null, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(3196), "Cloud Drive", 1 },
+                    { 7, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(3197), null, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(3200), "Hard Disk", 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -822,12 +817,12 @@ namespace AtoTax.API.Migrations
                 columns: new[] { "Id", "CreatedDate", "LastModifiedDate", "PaymentMethod", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7029), new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7030), "Cash", 1 },
-                    { 2, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7031), new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7032), "Bank Transfer", 1 },
-                    { 3, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7033), new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7033), "UPIPay", 1 },
-                    { 4, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7036), new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7036), "GooglePay", 1 },
-                    { 5, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7037), new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7038), "Bank Cheque", 1 },
-                    { 6, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7039), new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(7039), "PayTM", 1 }
+                    { 1, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2389), new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2394), "Cash", 1 },
+                    { 2, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2402), new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2403), "Bank Transfer", 1 },
+                    { 3, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2411), new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2412), "UPIPay", 1 },
+                    { 4, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2419), new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2419), "GooglePay", 1 },
+                    { 5, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2421), new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2428), "Bank Cheque", 1 },
+                    { 6, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2429), new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2430), "PayTM", 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -835,11 +830,11 @@ namespace AtoTax.API.Migrations
                 columns: new[] { "Id", "CreatedDate", "Description", "FixedCharge", "LastModifiedDate", "PreviousCharge", "ServiceName", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(6969), "GST Monthly Submission", 500.0, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(6970), 500.0, "GSTMonthlySubmission", 1 },
-                    { 2, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(6973), "GST Amendment", 500.0, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(6973), 500.0, "GSTAmendment", 1 },
-                    { 3, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(6975), "GST Annual Return Filing", 1000.0, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(6975), 1000.0, "GSTAnnualReturnFiling", 1 },
-                    { 4, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(6977), "GST Notice Service", 1000.0, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(6977), 1000.0, "GSTNoticeService", 1 },
-                    { 5, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(6978), "Penalty while transporting", 1000.0, new DateTime(2023, 2, 25, 14, 51, 6, 889, DateTimeKind.Utc).AddTicks(6979), 1000.0, "PenaltyBySquad", 1 }
+                    { 1, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2048), "GST Monthly Submission", 500.0, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2069), 500.0, "GSTMonthlySubmission", 1 },
+                    { 2, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2075), "GST Amendment", 500.0, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2075), 500.0, "GSTAmendment", 1 },
+                    { 3, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2087), "GST Annual Return Filing", 1000.0, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2087), 1000.0, "GSTAnnualReturnFiling", 1 },
+                    { 4, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2094), "GST Notice Service", 1000.0, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2094), 1000.0, "GSTNoticeService", 1 },
+                    { 5, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2099), "Penalty while transporting", 1000.0, new DateTime(2023, 2, 26, 18, 59, 58, 780, DateTimeKind.Utc).AddTicks(2103), 1000.0, "PenaltyBySquad", 1 }
                 });
 
             migrationBuilder.CreateIndex(

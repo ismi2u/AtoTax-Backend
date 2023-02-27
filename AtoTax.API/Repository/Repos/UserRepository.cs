@@ -47,7 +47,7 @@ namespace AtoTax.API.Repository.Repos
             _logger = logger;
             _userManager = userManager;
             _roleManager = roleManager;
-            _signinManager= signinManager;
+            _signinManager = signinManager;
             _mapper = mapper;
             _response = new();
             secretkey = config.GetValue<string>("ApiSettings:Secret");
@@ -188,75 +188,72 @@ namespace AtoTax.API.Repository.Repos
             var userName = forgotPasswordDTO.username;
             var email = forgotPasswordDTO.email;
             string token = null;
-
             if (userName == null && email == null)
             {
-
                 _response.Result = forgotPasswordDTO;
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string> { "Username or Email is required" };
                 _response.StatusCode = HttpStatusCode.BadRequest;
 
+                return _response;
+               
             }
-            else
+
+
+            var appuser = userName != null ? await _userManager.FindByNameAsync(userName) : await _userManager.FindByEmailAsync(email);
+
+            bool isUserConfirmed = await _userManager.IsEmailConfirmedAsync(appuser);
+            if (appuser != null && isUserConfirmed)
             {
-
-                var appuser = userName != null ? await _userManager.FindByNameAsync(userName) : await _userManager.FindByEmailAsync(email);
-
-                bool isUserConfirmed = await _userManager.IsEmailConfirmedAsync(appuser);
-                if (appuser != null && isUserConfirmed)
-                {
-                    token = await _userManager.GeneratePasswordResetTokenAsync(appuser);
-                    token = token.Replace("+", "^^^");
-                }
-
-                // Send Token via email for password reset
-
-                string[] paths = { Directory.GetCurrentDirectory(), "PasswordReset.html" };
-                string FilePath = Path.Combine(paths);
-                _logger.LogInformation("Email template path " + FilePath);
-                StreamReader str = new StreamReader(FilePath);
-                string MailText = str.ReadToEnd();
-                str.Close();
-
-                var domain = _config.GetSection("FrontendDomain").Value;
-                MailText = MailText.Replace("{FrontendDomain}", domain);
-
-                var builder = new MimeKit.BodyBuilder();
-                var receiverEmail = email;
-                string subject = "Password Reset Link";
-                string txtdata = "https://" + domain + "/change-password?token=" + token + "&email=" + email;
-
-                MailText = MailText.Replace("{PasswordResetUrl}", txtdata);
-
-                builder.HtmlBody = MailText;
-
-                EmailDto emailDto = new EmailDto();
-                emailDto.To = receiverEmail;
-                emailDto.Subject = subject;
-                emailDto.Body = builder.HtmlBody;
-
-                await _emailSender.SendEmailAsync(emailDto);
-                _logger.LogInformation("ForgotPassword: " + receiverEmail + "Password Reset Email Sent with token");
-
-                _response.Result = forgotPasswordDTO;
-                _response.IsSuccess = true;
-                _response.ErrorMessages = null;
-                _response.StatusCode = HttpStatusCode.OK;
-
-
+                token = await _userManager.GeneratePasswordResetTokenAsync(appuser);
+                token = token.Replace("+", "^^^");
             }
+
+            // Send Token via email for password reset
+
+            string[] paths = { Directory.GetCurrentDirectory(), "PasswordReset.html" };
+            string FilePath = Path.Combine(paths);
+            _logger.LogInformation("Email template path " + FilePath);
+            StreamReader str = new StreamReader(FilePath);
+            string MailText = str.ReadToEnd();
+            str.Close();
+
+            var domain = _config.GetSection("FrontendDomain").Value;
+            MailText = MailText.Replace("{FrontendDomain}", domain);
+
+            var builder = new MimeKit.BodyBuilder();
+            var receiverEmail = email;
+            string subject = "Password Reset Link";
+            string txtdata = "https://" + domain + "/change-password?token=" + token + "&email=" + email;
+
+            MailText = MailText.Replace("{PasswordResetUrl}", txtdata);
+
+            builder.HtmlBody = MailText;
+
+            EmailDto emailDto = new EmailDto();
+            emailDto.To = receiverEmail;
+            emailDto.Subject = subject;
+            emailDto.Body = builder.HtmlBody;
+
+            await _emailSender.SendEmailAsync(emailDto);
+            _logger.LogInformation("ForgotPassword: " + receiverEmail + "Password Reset Email Sent with token");
+
+            _response.Result = forgotPasswordDTO;
+            _response.IsSuccess = true;
+            _response.ErrorMessages = null;
+            _response.StatusCode = HttpStatusCode.OK;
+
             return _response;
         }
 
-     
+
         public async Task<APIResponse> ConfirmEmail(ConfirmEmailDTO confirmEmailDTO)
         {
             if (confirmEmailDTO.email == null || confirmEmailDTO.token == null)
             {
                 _response.Result = confirmEmailDTO;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string> { "Trouble with confirmation email link, contact Admin"};
+                _response.ErrorMessages = new List<string> { "Trouble with confirmation email link, contact Admin" };
                 _response.StatusCode = HttpStatusCode.BadRequest;
             }
 
@@ -324,7 +321,7 @@ namespace AtoTax.API.Repository.Repos
                     _response.ErrorMessages = null;
                     _response.StatusCode = HttpStatusCode.OK;
                 }
-               
+
             }
             return _response;
         }
@@ -387,7 +384,7 @@ namespace AtoTax.API.Repository.Repos
         }
 
 
-       
+
     }
 }
 

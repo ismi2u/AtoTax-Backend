@@ -75,7 +75,7 @@ namespace AtoTax.API.Repository.Repos
             if(query != null)
             {
                 await dbSet.AddAsync(entity);
-                await _context.SaveChangesAsync();
+               // await _context.SaveChangesAsync();
 
             }
 
@@ -92,7 +92,7 @@ namespace AtoTax.API.Repository.Repos
 
         public async Task SaveAsync()
         {
-            await _context.SaveChangesAsync();
+           // await _context.SaveChangesAsync();
         }
         public Task<MonthYear> UpdateAsync(MonthYear entity)
         {

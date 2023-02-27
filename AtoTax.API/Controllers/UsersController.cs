@@ -18,6 +18,7 @@ using NuGet.Protocol.Plugins;
 using Microsoft.AspNetCore.Authorization;
 using AtoTax.API.Authentication;
 using Microsoft.AspNetCore.Identity;
+using AtoTax.API.Repository.Repos;
 
 namespace AtoTax.API.Controllers
 {
@@ -27,11 +28,11 @@ namespace AtoTax.API.Controllers
     {
         protected APIResponse _response;
         private readonly IUserRepository _userRepository;
-  
+
 
         public UsersController(IUserRepository userRepository)
         {
-            _userRepository= userRepository;
+            _userRepository = userRepository;
             this._response = new();
 
         }
@@ -41,12 +42,12 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO model)
         {
-           LoginResponseDTO loginResponse = await _userRepository.Login(model);
+            LoginResponseDTO loginResponse = await _userRepository.Login(model);
 
-            if(loginResponse.User == null || string.IsNullOrEmpty(loginResponse.Token))
+            if (loginResponse.User == null || string.IsNullOrEmpty(loginResponse.Token))
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess= false;
+                _response.IsSuccess = false;
                 _response.ErrorMessages.Add("UserName or Password is incorrect");
                 return BadRequest(_response);
             }
@@ -66,7 +67,7 @@ namespace AtoTax.API.Controllers
             //var username = HttpContext.User.Identity.Name;
 
             bool ifUserUniqueName = _userRepository.IsUniqueUser(model.UserName);
-            if(!ifUserUniqueName)
+            if (!ifUserUniqueName)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
@@ -75,7 +76,7 @@ namespace AtoTax.API.Controllers
             }
             var user = await _userRepository.Register(model);
 
-            if(user == null)
+            if (user == null)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
@@ -89,6 +90,38 @@ namespace AtoTax.API.Controllers
         }
 
 
+        [HttpPost("forgotPassword")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO model)
+        {
+            return Ok(await _userRepository.ForgotPassword(model));
+        }
+
+        [HttpPost("resetPassword")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO model)
+        {
+            return Ok(await _userRepository.ResetPassword(model));
+        }
+
+
+        [HttpPost("changePassword")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO model)
+        {
+            return Ok(await _userRepository.ChangePassword(model));
+        }
+
+        [HttpPost("confirmEmail")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailDTO model)
+        {
+            return Ok(await _userRepository.ConfirmEmail(model));
+        }
 
 
         //#########################################################################################
