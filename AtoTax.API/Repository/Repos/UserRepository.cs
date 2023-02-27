@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using NuGet.Common;
 using Org.BouncyCastle.Ocsp;
 using System.Data;
@@ -97,7 +98,7 @@ namespace AtoTax.API.Repository.Repos
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Name, user.Name.ToString()),
-                    new Claim(ClaimTypes.Role, string.Join(",",roles))
+                    new Claim(ClaimTypes.Role, string.Join(", ",roles))
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -125,7 +126,9 @@ namespace AtoTax.API.Repository.Repos
             appUser.Email = registrationRequestDTO.Email;
             appUser.NormalizedEmail = registrationRequestDTO.Email.ToUpper();
             appUser.UserName = registrationRequestDTO.UserName;
-
+            
+            
+            
 
             try
             {
@@ -136,6 +139,37 @@ namespace AtoTax.API.Repository.Repos
                     var exceptionText = result.Errors.Aggregate("User Creation Failed - Identity Exception. Errors were: \n\r\n\r", (current, error) => current + (" - " + error + "\n\r"));
                     throw new Exception(exceptionText);
                 }
+
+                // Send Mail ID confirmation email
+
+                string[] paths = { Directory.GetCurrentDirectory(), "ConfirmEmail.html" };
+                string FilePath = Path.Combine(paths);
+                _logger.LogInformation("Email template path " + FilePath);
+                StreamReader str = new StreamReader(FilePath);
+                string MailText = str.ReadToEnd();
+                str.Close();
+
+                var domain = _config.GetSection("Domain").Value;
+                MailText = MailText.Replace("{Domain}", domain);
+
+                var builder = new MimeKit.BodyBuilder();
+                var receiverEmail = registrationRequestDTO.Email;
+                string subject = "AtoTax: Confirm your Email Id";
+
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
+                string txtdata = "https://" + domain + "/confirm-email?token=" + token + "&email=" + registrationRequestDTO.Email;
+
+                MailText = MailText.Replace("{Domain}", domain);
+
+                builder.HtmlBody = MailText;
+
+                EmailDto emailDto = new EmailDto();
+                emailDto.To = receiverEmail;
+                emailDto.Subject = subject;
+                emailDto.Body = builder.HtmlBody;
+
+                await _emailSender.SendEmailAsync(emailDto);
+                _logger.LogInformation("Confirm Email: " + receiverEmail + " Mail ID Confirmation Email Sent for the user!");
 
 
                 bool isroleExists = await _roleManager.RoleExistsAsync("Admin");
@@ -199,11 +233,11 @@ namespace AtoTax.API.Repository.Repos
                 _response.StatusCode = HttpStatusCode.BadRequest;
 
                 return _response;
-               
+
             }
 
             ApplicationUser appuser = new();
-            if ( !userName.IsNullOrEmpty() )
+            if (!userName.IsNullOrEmpty())
             {
                 appuser = _userManager.Users.FirstOrDefault(u => u.UserName == userName);
             }
@@ -212,7 +246,7 @@ namespace AtoTax.API.Repository.Repos
                 appuser = await _userManager.FindByEmailAsync(email);
             }
 
-            if(appuser == null)
+            if (appuser == null)
             {
                 _response.Result = forgotPasswordDTO;
                 _response.IsSuccess = false;
@@ -221,13 +255,22 @@ namespace AtoTax.API.Repository.Repos
 
                 return _response;
             }
-            //bool isUserConfirmed = await _userManager.IsEmailConfirmedAsync(appuser);
-           // if (appuser != null && isUserConfirmed)
+            bool isUserConfirmed = await _userManager.IsEmailConfirmedAsync(appuser);
+
+            if (!isUserConfirmed)
+            {
+                _response.Result = forgotPasswordDTO;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Your email ID has not been confirmed yet. Cant reset the password!" };
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                return _response;
+            }
+            if (appuser != null && isUserConfirmed)
                 if (appuser != null)
                 {
-                token = await _userManager.GeneratePasswordResetTokenAsync(appuser);
-                token = token.Replace("+", "^^^");
-            }
+                    token = await _userManager.GeneratePasswordResetTokenAsync(appuser);
+                    token = token.Replace("+", "^^^");
+                }
 
             // Send Token via email for password reset
 
@@ -244,7 +287,7 @@ namespace AtoTax.API.Repository.Repos
             var builder = new MimeKit.BodyBuilder();
             var receiverEmail = appuser.Email;
             string subject = "Password Reset Link";
-            string txtdata = "https://" + domain + "/change-password?token=" + token + "&email=" + appuser.Email;
+            string txtdata = "https://" + domain + "/resetpassword?token=" + token + "&email=" + appuser.Email;
 
             MailText = MailText.Replace("{PasswordResetUrl}", txtdata);
 

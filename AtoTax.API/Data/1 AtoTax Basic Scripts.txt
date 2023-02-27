@@ -25,15 +25,16 @@ INSERT INTO public."ClientFeeMaps"(
 -----------------------------------------
 
 
-INSERT INTO public."AspNetUsers" VALUES ('d57cc679-f137-4eaf-bc55-339687ca8d89', NULL, 'Shahitha Begum', 'shaju', 'SHAJU', 'shaju@gmail.com', 'SHAJU@GMAIL.COM', false, 'AQAAAAEAACcQAAAAECt3xghizZE3rl6HJgnV85qAS0myEyzpMOksTN/oF0AL8ajtdMQZAywbHNVjVl2iGA==', 'BS7UMGFJ3AFJYU3NQHZITORPHIIAAMMC', '2c703b81-378c-4cf9-9e90-eaadccb8ce46', NULL, false, false, NULL, true, 0);
+INSERT INTO public."AspNetUsers" VALUES ('cfa755d2-b7d9-4f03-b24b-adfcfd5ec973', NULL, 'Shahitha Begum', 'shaju', 'SHAJU', 'ismailkhanf@gmail.com', 'ISMAILKHANF@GMAIL.COM', false, 'AQAAAAEAACcQAAAAECt3xghizZE3rl6HJgnV85qAS0myEyzpMOksTN/oF0AL8ajtdMQZAywbHNVjVl2iGA==', 'BS7UMGFJ3AFJYU3NQHZITORPHIIAAMMC', '2c703b81-378c-4cf9-9e90-eaadccb8ce46', NULL, false, false, NULL, true, 0);
 
 
 -------------------------------------------------
 
 
-INSERT INTO public."AspNetRoles" ("Id", "Name", "NormalizedName", "ConcurrencyStamp") VALUES ('2abf2af3-dc89-4f3f-adaa-6c13635admin', 'admin', 'ADMIN', 'a51632b1-5957-4d1b-8025-75143dff446a');
+INSERT INTO public."AspNetRoles" ("Id", "Name", "NormalizedName", "ConcurrencyStamp") VALUES ('adminaf3-dc89-4f3f-adaa-6c13635admin', 'Admin', 'ADMIN', 'a51632b1-5957-4d1b-8025-75143dff446a');
 INSERT INTO public."AspNetRoles" ("Id", "Name", "NormalizedName", "ConcurrencyStamp") VALUES ('user2af3-dc89-4f3f-adaa-6c136358user', 'User', 'USER', 'auser2b1-5957-4d1b-8025-75143dff446a');
-INSERT INTO public."AspNetRoles" ("Id", "Name", "NormalizedName", "ConcurrencyStamp") VALUES ('2abfbara-dc89-4f3f-adaa-6c136358e9b0', 'Manager', 'MANAGER', 'a516bara-5957-4d1b-8025-75143dff446a');
+INSERT INTO public."AspNetRoles" ("Id", "Name", "NormalizedName", "ConcurrencyStamp") VALUES ('managera-dc89-4f3f-adaa-6c136358e9b0', 'Manager', 'MANAGER', 'a516bara-5957-4d1b-8025-75143dff446a');
 
 
-INSERT INTO public."AspNetUserRoles" VALUES ('d57cc679-f137-4eaf-bc55-339687ca8d89', '2abf2af3-dc89-4f3f-adaa-6c13635admin');
+INSERT INTO public."AspNetUserRoles" VALUES ('d57cc679-f137-4eaf-bc55-339687ca8d89', 'adminaf3-dc89-4f3f-adaa-6c13635admin');
+INSERT INTO public."AspNetUserRoles" VALUES ('d57cc679-f137-4eaf-bc55-339687ca8d89', 'user2af3-dc89-4f3f-adaa-6c136358user');

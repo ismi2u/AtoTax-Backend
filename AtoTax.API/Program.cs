@@ -38,6 +38,8 @@ var _loggerconf = new LoggerConfiguration().ReadFrom.Configuration(builder.Confi
 builder.Services.AddHangfire(c => c.UseMemoryStorage());
 builder.Services.AddHangfireServer();
 builder.Logging.AddSerilog(_loggerconf);
+
+
 //flyiopostgres
 //PostgreSQLInLocalAppInContainer
 //137.66.10.59
@@ -96,10 +98,22 @@ builder.Services.AddAuthentication(options =>
 
     opts.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration.GetValue<string>("ApiSettings:Secret"))),
+
+    
+        //ValidateLifetime = true,
+        //ValidateIssuerSigningKey = true,
+
+
+        //ValidIssuer = "https://localhost:5000",
+        //ValidAudience = "https://localhost:5000",
+
+
+
         ValidateIssuer = false,
-        ValidateAudience= false
+        ValidateAudience = false,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration.GetValue<string>("ApiSettings:Secret")))
+        
     };
 });
 
@@ -190,11 +204,8 @@ app.MapControllers();
 
 app.UseHangfireDashboard();
 app.MapHangfireDashboard();
-
-//every hour 0 0 * ? * *
-//every minute 0 * * ? * *
-//every month start of 1st day 0 0 12 1 * ?
 RecurringJob.AddOrUpdate<ICollectionAndBalanceRepository>(x => x.SyncDataAsync(), Cron.Hourly);
+
 //app.UseStaticFiles(new StaticFileOptions
 //{
 //    FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, @"Images")),

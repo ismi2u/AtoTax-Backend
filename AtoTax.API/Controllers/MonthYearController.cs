@@ -21,7 +21,7 @@ namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    [Authorize(Roles = "User, Admin")]
+    [Authorize(Roles="Admin")]
     public class MonthYearController : ControllerBase
     {
         protected APIResponse _response;

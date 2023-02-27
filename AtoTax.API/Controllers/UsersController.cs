@@ -60,7 +60,7 @@ namespace AtoTax.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles="Admin")]
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO model)
         {
 
