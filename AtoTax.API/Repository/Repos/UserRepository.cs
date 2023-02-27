@@ -42,6 +42,7 @@ namespace AtoTax.API.Repository.Repos
         public UserRepository(AtoTaxDbContext context, ILogger<EmpJobRole> logger,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signinManager,
+            IEmailSender emailSender,
             RoleManager<IdentityRole> roleManager, IMapper mapper, IConfiguration config)
         {
             _context = context;
@@ -51,6 +52,7 @@ namespace AtoTax.API.Repository.Repos
             _signinManager = signinManager;
             _mapper = mapper;
             _response = new();
+            _emailSender = emailSender;
             secretkey = config.GetValue<string>("ApiSettings:Secret");
             _config = config;
         }
@@ -136,7 +138,7 @@ namespace AtoTax.API.Repository.Repos
                 }
 
 
-                bool isroleExists = await _roleManager.RoleExistsAsync("admin");
+                bool isroleExists = await _roleManager.RoleExistsAsync("Admin");
                 if (!isroleExists)
                 {
                     //var role = await  _context.Roles.AddAsync(new IdentityRole("admin"));
@@ -219,9 +221,10 @@ namespace AtoTax.API.Repository.Repos
 
                 return _response;
             }
-            bool isUserConfirmed = await _userManager.IsEmailConfirmedAsync(appuser);
-            if (appuser != null && isUserConfirmed)
-            {
+            //bool isUserConfirmed = await _userManager.IsEmailConfirmedAsync(appuser);
+           // if (appuser != null && isUserConfirmed)
+                if (appuser != null)
+                {
                 token = await _userManager.GeneratePasswordResetTokenAsync(appuser);
                 token = token.Replace("+", "^^^");
             }
@@ -239,9 +242,9 @@ namespace AtoTax.API.Repository.Repos
             MailText = MailText.Replace("{Domain}", domain);
 
             var builder = new MimeKit.BodyBuilder();
-            var receiverEmail = email;
+            var receiverEmail = appuser.Email;
             string subject = "Password Reset Link";
-            string txtdata = "https://" + domain + "/change-password?token=" + token + "&email=" + email;
+            string txtdata = "https://" + domain + "/change-password?token=" + token + "&email=" + appuser.Email;
 
             MailText = MailText.Replace("{PasswordResetUrl}", txtdata);
 
