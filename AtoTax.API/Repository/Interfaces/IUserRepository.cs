@@ -18,5 +18,7 @@ namespace AtoTax.API.Repository.Interfaces
         Task<APIResponse> ConfirmEmail(ConfirmEmailDTO confirmEmailDTO);
 
         Task<APIResponse> ChangePassword(ChangePasswordDTO changePasswordDTO);
+        Task<APIResponse> GetUsers();
+
     }
 }

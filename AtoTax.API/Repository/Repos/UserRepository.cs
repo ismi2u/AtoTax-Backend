@@ -11,6 +11,7 @@ using EmailService;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NuGet.Common;
 using Org.BouncyCastle.Ocsp;
@@ -199,9 +200,25 @@ namespace AtoTax.API.Repository.Repos
                
             }
 
+            ApplicationUser appuser = new();
+            if ( !userName.IsNullOrEmpty() )
+            {
+                appuser = _userManager.Users.FirstOrDefault(u => u.UserName == userName);
+            }
+            else
+            {
+                appuser = await _userManager.FindByEmailAsync(email);
+            }
 
-            var appuser = userName != null ? await _userManager.FindByNameAsync(userName) : await _userManager.FindByEmailAsync(email);
+            if(appuser == null)
+            {
+                _response.Result = forgotPasswordDTO;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "User not found" };
+                _response.StatusCode = HttpStatusCode.BadRequest;
 
+                return _response;
+            }
             bool isUserConfirmed = await _userManager.IsEmailConfirmedAsync(appuser);
             if (appuser != null && isUserConfirmed)
             {
@@ -218,8 +235,8 @@ namespace AtoTax.API.Repository.Repos
             string MailText = str.ReadToEnd();
             str.Close();
 
-            var domain = _config.GetSection("FrontendDomain").Value;
-            MailText = MailText.Replace("{FrontendDomain}", domain);
+            var domain = _config.GetSection("Domain").Value;
+            MailText = MailText.Replace("{Domain}", domain);
 
             var builder = new MimeKit.BodyBuilder();
             var receiverEmail = email;
@@ -383,8 +400,16 @@ namespace AtoTax.API.Repository.Repos
             return _response;
         }
 
+        public async Task<APIResponse> GetUsers()
+        {
+            var users = await _userManager.Users.ToListAsync();
+            _response.Result = users;
+            _response.IsSuccess = true;
+            _response.ErrorMessages = null;
+            _response.StatusCode = HttpStatusCode.OK;
 
-
+            return _response;
+        }
     }
 }
 

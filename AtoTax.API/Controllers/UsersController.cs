@@ -22,7 +22,7 @@ using AtoTax.API.Repository.Repos;
 
 namespace AtoTax.API.Controllers
 {
-    [Route("api/UsersAuth")]
+    [Route("api/[controller]/[Action]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -37,7 +37,7 @@ namespace AtoTax.API.Controllers
 
         }
 
-        [HttpPost("login")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO model)
@@ -57,7 +57,7 @@ namespace AtoTax.API.Controllers
             return Ok(_response);
         }
 
-        [HttpPost("register")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Roles = "User, Admin")]
@@ -90,7 +90,7 @@ namespace AtoTax.API.Controllers
         }
 
 
-        [HttpPost("forgotPassword")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO model)
@@ -98,7 +98,7 @@ namespace AtoTax.API.Controllers
             return Ok(await _userRepository.ForgotPassword(model));
         }
 
-        [HttpPost("resetPassword")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO model)
@@ -107,7 +107,7 @@ namespace AtoTax.API.Controllers
         }
 
 
-        [HttpPost("changePassword")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO model)
@@ -115,7 +115,7 @@ namespace AtoTax.API.Controllers
             return Ok(await _userRepository.ChangePassword(model));
         }
 
-        [HttpPost("confirmEmail")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailDTO model)
@@ -134,7 +134,12 @@ namespace AtoTax.API.Controllers
         //    return _userManager.GetUserAsync(HttpContext.User);
         //}
 
-
+        [HttpGet]
+        [ActionName("GetAllUsers")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            return Ok(await _userRepository.GetUsers());
+        }
 
     }
 }
