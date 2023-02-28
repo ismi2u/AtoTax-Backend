@@ -15,7 +15,7 @@ namespace EmailService
         public int Port { get; set; } = 587;
         public bool StartTLS { get; set; } = true;
         public string UserName { get; set; } = "apikey";
-        public string Password { get; set; } = "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";
+        public string Password { get; set; } = "";
    
     }
 }
