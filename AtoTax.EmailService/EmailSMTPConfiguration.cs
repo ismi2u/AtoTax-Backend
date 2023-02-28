@@ -9,13 +9,13 @@ namespace EmailService
     public class EmailSMTPConfiguration
     {
 
-        public string From { get; set; } = "life.test@rediffmail.com";
-        public string DisplayName { get; set; } = "sendgridEmail";
-        public string SmtpServer { get; set; } = "smtp.sendgrid.net";
+        public string From { get; set; } = "carli.oreilly@ethereal.email";
+        public string DisplayName { get; set; } = "ethereal";
+        public string SmtpServer { get; set; } = "smtp.ethereal.email";
         public int Port { get; set; } = 587;
         public bool StartTLS { get; set; } = true;
-        public string UserName { get; set; } = "apikey";
-        public string Password { get; set; } = "";
+        public string UserName { get; set; } = "carli.oreilly@ethereal.email";
+        public string Password { get; set; } = "sDAjaSMcezsBYcqC5R";
    
     }
 }
