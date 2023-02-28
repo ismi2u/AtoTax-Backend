@@ -11,6 +11,7 @@ namespace AtoTax.API.Repository.Interfaces
 
         
         Task<APIResponse> GetUsers();
+        Task<APIResponse> GetRoles();
         Task<UserDTO> Register(RegistrationRequestDTO registrationRequestDTO);
         Task<APIResponse> DeleteUser(DeleteUserDTO deleteUserDTO);
         Task<APIResponse> UpdateUser(UpdateUserDTO updateUserDTO);

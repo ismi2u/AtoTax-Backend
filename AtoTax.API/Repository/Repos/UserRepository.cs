@@ -67,6 +67,38 @@ namespace AtoTax.API.Repository.Repos
             return false;
         }
 
+        public bool IsUniqueEmail(string email)
+        {
+            var user = _context.ApplicationUsers.FirstOrDefault(x => x.Email == email);
+            if (user == null)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<APIResponse> GetUsers()
+        {
+            var users = await _userManager.Users.ToListAsync();
+            _response.Result = users;
+            _response.IsSuccess = true;
+            _response.ErrorMessages = null;
+            _response.StatusCode = HttpStatusCode.OK;
+
+            return _response;
+        }
+
+        public async Task<APIResponse> GetRoles()
+        {
+            var roles = await _roleManager.Roles.ToListAsync();
+            _response.Result = roles;
+            _response.IsSuccess = true;
+            _response.ErrorMessages = null;
+            _response.StatusCode = HttpStatusCode.OK;
+
+            return _response;
+        }
+
         public async Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO)
         {
 
@@ -459,26 +491,27 @@ namespace AtoTax.API.Repository.Repos
             return _response;
         }
 
-        public async Task<APIResponse> GetUsers()
-        {
-            var users = await _userManager.Users.ToListAsync();
-            _response.Result = users;
-            _response.IsSuccess = true;
-            _response.ErrorMessages = null;
-            _response.StatusCode = HttpStatusCode.OK;
-
-            return _response;
-        }
+        
 
         public async Task<APIResponse> DeleteUser(DeleteUserDTO deleteUserDTO)
         {
-           ApplicationUser appuser = _userManager.Users.FirstOrDefault(u => u.UserName == deleteUserDTO.UserName);
 
-            var users = await _userManager.DeleteAsync(appuser);
-            _response.Result = users;
-            _response.IsSuccess = true;
-            _response.ErrorMessages = null;
-            _response.StatusCode = HttpStatusCode.OK;
+            ApplicationUser appuser = await _userManager.FindByIdAsync(deleteUserDTO.UserId);
+            if(appuser != null)
+            {
+                var users = await _userManager.DeleteAsync(appuser);
+                _response.Result = appuser;
+                _response.IsSuccess = true;
+                _response.ErrorMessages = null;
+                _response.StatusCode = HttpStatusCode.OK;
+            }
+            else
+            {
+                _response.Result = appuser;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "User not found!" };
+                _response.StatusCode = HttpStatusCode.BadRequest;
+            }
 
             return _response;
         }
@@ -516,6 +549,7 @@ namespace AtoTax.API.Repository.Repos
             if (!updateUserDTO.UserName.IsNullOrEmpty())
             {
                 appuser = _userManager.Users.FirstOrDefault(u => u.UserName == updateUserDTO.UserName);
+               
             }
             else if (appuser == null)
             {
@@ -528,9 +562,9 @@ namespace AtoTax.API.Repository.Repos
             }
             else
             {
-                var emailUsedByUser = await _userManager.FindByEmailAsync(updateUserDTO.NewEmail);
+                bool ifUserUniqueEmail = IsUniqueEmail(updateUserDTO.NewEmail);
 
-                if (emailUsedByUser != null)
+                if (!ifUserUniqueEmail)
                 {
                     _response.Result = updateUserDTO;
                     _response.IsSuccess = false;

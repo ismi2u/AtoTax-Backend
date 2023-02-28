@@ -40,6 +40,7 @@ namespace AtoTax.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO model)
         {
             LoginResponseDTO loginResponse = await _userRepository.Login(model);
@@ -60,7 +61,7 @@ namespace AtoTax.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [Authorize(Roles="Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO model)
         {
 
@@ -93,6 +94,7 @@ namespace AtoTax.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [AllowAnonymous]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO model)
         {
             return Ok(await _userRepository.ForgotPassword(model));
@@ -101,6 +103,7 @@ namespace AtoTax.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [AllowAnonymous]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO model)
         {
             return Ok(await _userRepository.ResetPassword(model));
@@ -110,6 +113,7 @@ namespace AtoTax.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO model)
         {
             return Ok(await _userRepository.ChangePassword(model));
@@ -118,23 +122,26 @@ namespace AtoTax.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailDTO model)
         {
             return Ok(await _userRepository.ConfirmEmail(model));
         }
 
 
-        [HttpPost]
+        [HttpDelete]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser([FromBody] DeleteUserDTO model)
         {
             return Ok(await _userRepository.DeleteUser(model));
         }
 
-        [HttpPost]
+        [HttpPut]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDTO model)
         {
             return Ok(await _userRepository.UpdateUser(model));
@@ -144,6 +151,7 @@ namespace AtoTax.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AssignRoles([FromBody] AssignRolesDTO model)
         {
             return Ok(await _userRepository.AssignRoles(model));
@@ -160,7 +168,17 @@ namespace AtoTax.API.Controllers
 
         [HttpGet]
         [ActionName("GetAllUsers")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllUsers()
+        {
+            return Ok(await _userRepository.GetUsers());
+        }
+
+
+        [HttpGet]
+        [ActionName("GetAllRoles")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllRoles()
         {
             return Ok(await _userRepository.GetUsers());
         }
