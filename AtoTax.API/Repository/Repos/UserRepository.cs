@@ -226,6 +226,8 @@ namespace AtoTax.API.Repository.Repos
                 string txtdata = "https://" + domain + "/confirm-email?token=" + token + "&email=" + registrationRequestDTO.Email;
 
                 MailText = MailText.Replace("{Domain}", domain);
+                MailText = MailText.Replace("{ConfirmEmailUrl}", txtdata);
+
 
                 builder.HtmlBody = MailText;
 
