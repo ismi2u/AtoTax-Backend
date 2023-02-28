@@ -64,30 +64,30 @@ namespace AtoTax.API.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO model)
         {
-
+            return Ok(await _userRepository.Register(model));
             //var username = HttpContext.User.Identity.Name;
 
-            bool ifUserUniqueName = _userRepository.IsUniqueUser(model.UserName);
-            if (!ifUserUniqueName)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("UserName already exists");
-                return BadRequest(_response);
-            }
-            var user = await _userRepository.Register(model);
+            //bool ifUserUniqueName = _userRepository.IsUniqueUser(model.UserName);
+            //if (!ifUserUniqueName)
+            //{
+            //    _response.StatusCode = HttpStatusCode.BadRequest;
+            //    _response.IsSuccess = false;
+            //    _response.ErrorMessages.Add("UserName already exists");
+            //    return Ok(_response);
+            //}
+            //var user = await _userRepository.Register(model);
 
-            if (user == null)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Error Registering User");
-                return BadRequest(_response);
-            }
-            _response.StatusCode = HttpStatusCode.OK;
-            _response.IsSuccess = true;
-            _response.Result = user;
-            return Ok(_response);
+            //if (user == null)
+            //{
+            //    _response.StatusCode = HttpStatusCode.BadRequest;
+            //    _response.IsSuccess = false;
+            //    _response.ErrorMessages.Add("Error Registering User");
+            //    return BadRequest(_response);
+            //}
+            //_response.StatusCode = HttpStatusCode.OK;
+            //_response.IsSuccess = true;
+            //_response.Result = user;
+            //return Ok(_response);
         }
 
 

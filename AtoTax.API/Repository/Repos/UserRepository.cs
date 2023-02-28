@@ -149,9 +149,22 @@ namespace AtoTax.API.Repository.Repos
 
         }
 
-        public async Task<UserDTO> Register(RegistrationRequestDTO registrationRequestDTO)
+        public async Task<APIResponse> Register(RegistrationRequestDTO registrationRequestDTO)
         {
             // var localuser =  _mapper.Map<LocalUser>(registrationRequestDTO);
+
+            bool ifUserUniqueName = IsUniqueUser(registrationRequestDTO.UserName);
+
+            if (!ifUserUniqueName)
+            {
+                _response.Result = registrationRequestDTO;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("UserName already exists");
+
+                return _response;
+            }
+
             ApplicationUser appuser = new ApplicationUser();
             if (!registrationRequestDTO.UserName.IsNullOrEmpty())
             {
@@ -168,21 +181,29 @@ namespace AtoTax.API.Repository.Repos
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string> { "Username and Email should be unique" };
                 _response.StatusCode = HttpStatusCode.BadRequest;
+
+                return _response;
             }
 
-            appuser.Name = registrationRequestDTO.Name;
-            appuser.Email = registrationRequestDTO.Email;
-            appuser.NormalizedEmail = registrationRequestDTO.Email.ToUpper();
-            appuser.UserName = registrationRequestDTO.UserName;
+            ApplicationUser newAppUser = new ApplicationUser();
+
+            newAppUser.Name = registrationRequestDTO.Name;
+            newAppUser.Email = registrationRequestDTO.Email;
+            newAppUser.NormalizedEmail = registrationRequestDTO.Email.ToUpper();
+            newAppUser.UserName = registrationRequestDTO.UserName;
             
             try
             {
-                var result = await _userManager.CreateAsync(appuser, registrationRequestDTO.Password);
+                var result = await _userManager.CreateAsync(newAppUser, registrationRequestDTO.Password);
 
                 if (!result.Succeeded)
                 {
-                    var exceptionText = result.Errors.Aggregate("User Creation Failed - Identity Exception. Errors were: \n\r\n\r", (current, error) => current + (" - " + error + "\n\r"));
-                    throw new Exception(exceptionText);
+                    _response.Result = registrationRequestDTO;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages = new List<string> { result.Errors.ToString() };
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+
+                    return _response;
                 }
 
                 // Send Mail ID confirmation email
@@ -201,7 +222,7 @@ namespace AtoTax.API.Repository.Repos
                 var receiverEmail = registrationRequestDTO.Email;
                 string subject = "AtoTax: Confirm your Email Id";
 
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(appuser);
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(newAppUser);
                 string txtdata = "https://" + domain + "/confirm-email?token=" + token + "&email=" + registrationRequestDTO.Email;
 
                 MailText = MailText.Replace("{Domain}", domain);
@@ -232,36 +253,58 @@ namespace AtoTax.API.Repository.Repos
 
                     if (!rolAddresult.Succeeded)
                     {
-                        var roleAddException = rolAddresult.Errors.Aggregate("Admin-Role assignment failed", (current, error) => current + (" - " + error + "\n\r"));
-                        throw new Exception(roleAddException);
+                        _response.Result = registrationRequestDTO;
+                        _response.IsSuccess = false;
+                        _response.ErrorMessages = new List<string> { rolAddresult.Errors.ToString() };
+                        _response.StatusCode = HttpStatusCode.BadRequest;
+
+                        return _response;
                     }
 
                 }
                 if (result.Succeeded)
                 {
                     IdentityRole role = await _roleManager.FindByNameAsync("Admin");
-                    IdentityResult addRoleResult = await _userManager.AddToRoleAsync(appuser, role.Name);
+                    IdentityResult addRoleResult = await _userManager.AddToRoleAsync(newAppUser, role.Name);
 
                     if (!addRoleResult.Succeeded)
                     {
                         var exceptionRole = addRoleResult.Errors.Aggregate("Admin role assignment failed", (current, error) => current + (" - " + error + "\n\r"));
-                        throw new Exception(exceptionRole);
+
+                        _response.Result = registrationRequestDTO;
+                        _response.IsSuccess = false;
+                        _response.ErrorMessages = new List<string> { exceptionRole };
+                        _response.StatusCode = HttpStatusCode.BadRequest;
+
+                        return _response;
                     }
 
                     var usertoReturn = _context.ApplicationUsers.FirstOrDefault(u => u.UserName == registrationRequestDTO.UserName);
 
 
-                    return _mapper.Map<UserDTO>(usertoReturn);
+                    _response.Result = _mapper.Map<UserDTO>(usertoReturn);
+                    _response.IsSuccess = true;
+                    _response.ErrorMessages = null;
+                    _response.StatusCode = HttpStatusCode.OK;
 
+                    return _response;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                _response.Result = registrationRequestDTO;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+                _response.StatusCode = HttpStatusCode.BadRequest;
             }
 
-            return new UserDTO();
+            _response.Result = registrationRequestDTO;
+            _response.IsSuccess = false;
+            _response.ErrorMessages = new List<string> { "Error Occured while registering user" };
+            _response.StatusCode = HttpStatusCode.BadRequest;
+
+            return _response;
         }
 
         public async Task<APIResponse> ForgotPassword(ForgotPasswordDTO forgotPasswordDTO)
