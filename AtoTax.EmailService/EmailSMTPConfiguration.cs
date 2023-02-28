@@ -9,13 +9,13 @@ namespace EmailService
     public class EmailSMTPConfiguration
     {
 
-        public string From { get; set; } = "RPA@foodunitco.com";
-        public string DisplayName { get; set; } = "RPA";
-        public string SmtpServer { get; set; } = "smtp.office365.com";
+        public string From { get; set; } = "life.test@rediffmail.com";
+        public string DisplayName { get; set; } = "sendgridEmail";
+        public string SmtpServer { get; set; } = "smtp.sendgrid.net";
         public int Port { get; set; } = 587;
         public bool StartTLS { get; set; } = true;
-        public string UserName { get; set; } = "RPA@foodunitco.com";
-        public string Password { get; set; } = "Hoh76831";
+        public string UserName { get; set; } = "apikey";
+        public string Password { get; set; } = "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";
    
     }
 }

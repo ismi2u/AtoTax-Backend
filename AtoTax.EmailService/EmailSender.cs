@@ -26,10 +26,19 @@ namespace EmailService
 
             using var smtp = new SmtpClient();
             {
-                smtp.Connect(senderConfig.SmtpServer, senderConfig.Port, SecureSocketOptions.StartTls);
-                smtp.Authenticate(senderConfig.UserName, senderConfig.Password);
-                await smtp.SendAsync(email);
-                smtp.Disconnect(true);
+
+                try
+                {
+                    smtp.Connect(senderConfig.SmtpServer, senderConfig.Port, SecureSocketOptions.StartTls);
+                    smtp.Authenticate(senderConfig.UserName, senderConfig.Password);
+                    await smtp.SendAsync(email);
+                    smtp.Disconnect(true);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+               
 
             }
         }
