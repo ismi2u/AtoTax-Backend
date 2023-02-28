@@ -124,6 +124,30 @@ namespace AtoTax.API.Controllers
         }
 
 
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> DeleteUser([FromBody] DeleteUserDTO model)
+        {
+            return Ok(await _userRepository.DeleteUser(model));
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDTO model)
+        {
+            return Ok(await _userRepository.UpdateUser(model));
+        }
+
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> AssignRoles([FromBody] AssignRolesDTO model)
+        {
+            return Ok(await _userRepository.AssignRoles(model));
+        }
         //#########################################################################################
         //#########################################################################################
         //#########################################################################################

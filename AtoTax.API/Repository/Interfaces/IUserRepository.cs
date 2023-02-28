@@ -9,16 +9,18 @@ namespace AtoTax.API.Repository.Interfaces
 
         bool IsUniqueUser(string username);
 
-        Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO);
-
+        
+        Task<APIResponse> GetUsers();
         Task<UserDTO> Register(RegistrationRequestDTO registrationRequestDTO);
-
+        Task<APIResponse> DeleteUser(DeleteUserDTO deleteUserDTO);
+        Task<APIResponse> UpdateUser(UpdateUserDTO updateUserDTO);
+        Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO);
         Task<APIResponse> ForgotPassword(ForgotPasswordDTO forgotPasswordDTO);
         Task<APIResponse> ResetPassword(ResetPasswordDTO resetPasswordDTO);
         Task<APIResponse> ConfirmEmail(ConfirmEmailDTO confirmEmailDTO);
 
         Task<APIResponse> ChangePassword(ChangePasswordDTO changePasswordDTO);
-        Task<APIResponse> GetUsers();
 
+        Task<APIResponse> AssignRoles (AssignRolesDTO assignRolesDTO);
     }
 }

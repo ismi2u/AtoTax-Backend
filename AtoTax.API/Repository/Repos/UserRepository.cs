@@ -120,19 +120,32 @@ namespace AtoTax.API.Repository.Repos
         public async Task<UserDTO> Register(RegistrationRequestDTO registrationRequestDTO)
         {
             // var localuser =  _mapper.Map<LocalUser>(registrationRequestDTO);
+            ApplicationUser appuser = new ApplicationUser();
+            if (!registrationRequestDTO.UserName.IsNullOrEmpty())
+            {
+                appuser = _userManager.Users.FirstOrDefault(u => u.UserName == registrationRequestDTO.UserName);
+            }
+            else
+            {
+                appuser = await _userManager.FindByEmailAsync(registrationRequestDTO.Email);
+            }
 
-            ApplicationUser appUser = new();
-            appUser.Name = registrationRequestDTO.Name;
-            appUser.Email = registrationRequestDTO.Email;
-            appUser.NormalizedEmail = registrationRequestDTO.Email.ToUpper();
-            appUser.UserName = registrationRequestDTO.UserName;
-            
-            
-            
+            if (appuser != null)
+            {
+                _response.Result = registrationRequestDTO;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Username and Email should be unique" };
+                _response.StatusCode = HttpStatusCode.BadRequest;
+            }
 
+            appuser.Name = registrationRequestDTO.Name;
+            appuser.Email = registrationRequestDTO.Email;
+            appuser.NormalizedEmail = registrationRequestDTO.Email.ToUpper();
+            appuser.UserName = registrationRequestDTO.UserName;
+            
             try
             {
-                var result = await _userManager.CreateAsync(appUser, registrationRequestDTO.Password);
+                var result = await _userManager.CreateAsync(appuser, registrationRequestDTO.Password);
 
                 if (!result.Succeeded)
                 {
@@ -156,7 +169,7 @@ namespace AtoTax.API.Repository.Repos
                 var receiverEmail = registrationRequestDTO.Email;
                 string subject = "AtoTax: Confirm your Email Id";
 
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(appuser);
                 string txtdata = "https://" + domain + "/confirm-email?token=" + token + "&email=" + registrationRequestDTO.Email;
 
                 MailText = MailText.Replace("{Domain}", domain);
@@ -187,7 +200,7 @@ namespace AtoTax.API.Repository.Repos
 
                     if (!rolAddresult.Succeeded)
                     {
-                        var roleAddException = rolAddresult.Errors.Aggregate("Admin role assignment failed", (current, error) => current + (" - " + error + "\n\r"));
+                        var roleAddException = rolAddresult.Errors.Aggregate("Admin-Role assignment failed", (current, error) => current + (" - " + error + "\n\r"));
                         throw new Exception(roleAddException);
                     }
 
@@ -195,7 +208,7 @@ namespace AtoTax.API.Repository.Repos
                 if (result.Succeeded)
                 {
                     IdentityRole role = await _roleManager.FindByNameAsync("Admin");
-                    IdentityResult addRoleResult = await _userManager.AddToRoleAsync(appUser, role.Name);
+                    IdentityResult addRoleResult = await _userManager.AddToRoleAsync(appuser, role.Name);
 
                     if (!addRoleResult.Succeeded)
                     {
@@ -453,6 +466,134 @@ namespace AtoTax.API.Repository.Repos
             _response.IsSuccess = true;
             _response.ErrorMessages = null;
             _response.StatusCode = HttpStatusCode.OK;
+
+            return _response;
+        }
+
+        public async Task<APIResponse> DeleteUser(DeleteUserDTO deleteUserDTO)
+        {
+           ApplicationUser appuser = _userManager.Users.FirstOrDefault(u => u.UserName == deleteUserDTO.UserName);
+
+            var users = await _userManager.DeleteAsync(appuser);
+            _response.Result = users;
+            _response.IsSuccess = true;
+            _response.ErrorMessages = null;
+            _response.StatusCode = HttpStatusCode.OK;
+
+            return _response;
+        }
+
+        public async Task<APIResponse> UpdateUser(UpdateUserDTO updateUserDTO)
+        {
+
+            if (updateUserDTO.UserName == null || updateUserDTO.Password == null)
+            {
+                _response.Result = updateUserDTO;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Username Password required to update Name/Email" };
+                _response.StatusCode = HttpStatusCode.BadRequest;
+
+                return _response;
+            }
+
+            if (updateUserDTO.UserName == null ||
+                updateUserDTO.OldEmail == null && updateUserDTO.NewEmail == null ||
+                updateUserDTO.OldName == null && updateUserDTO.NewName == null )
+            {
+                _response.Result = updateUserDTO;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Username/Email/Name/Password are required" };
+                _response.StatusCode = HttpStatusCode.BadRequest;
+
+                return _response;
+
+            }
+
+
+            ApplicationUser appuser = new();
+
+
+            if (!updateUserDTO.UserName.IsNullOrEmpty())
+            {
+                appuser = _userManager.Users.FirstOrDefault(u => u.UserName == updateUserDTO.UserName);
+            }
+            else if (appuser == null)
+            {
+                _response.Result = updateUserDTO;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "UserName not found" };
+                _response.StatusCode = HttpStatusCode.BadRequest;
+
+                return _response;
+            }
+            else
+            {
+                var emailUsedByUser = await _userManager.FindByEmailAsync(updateUserDTO.NewEmail);
+
+                if (emailUsedByUser != null)
+                {
+                    _response.Result = updateUserDTO;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages = new List<string> { "Email Id should be Unique" };
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+
+                    return _response;
+                }
+            }
+
+            var validCredentials = await _signinManager.UserManager.CheckPasswordAsync(appuser, updateUserDTO.Password);
+
+            if (validCredentials)
+            {
+                appuser.Email = updateUserDTO.NewEmail;
+                appuser.Name = updateUserDTO.NewName;
+            }
+
+            IdentityResult result = await _userManager.UpdateAsync(appuser);
+
+            _response.Result = result;
+            _response.IsSuccess = true;
+            _response.ErrorMessages = null;
+            _response.StatusCode = HttpStatusCode.OK;
+
+            return _response;
+        }
+
+        public async Task<APIResponse> AssignRoles(AssignRolesDTO assignRolesDTO)
+        {
+            string userId = assignRolesDTO.UserId;
+
+            ApplicationUser user = await _userManager.FindByIdAsync(userId);
+
+            //Remove Exisint Roles.
+            var roles = await _userManager.GetRolesAsync(user);
+            IdentityResult roleRemoval= await _userManager.RemoveFromRolesAsync(user, roles.ToArray());
+
+            if(!roleRemoval.Succeeded) {
+
+                _response.Result = roleRemoval;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Error occured while removing existing Roles" };
+                _response.StatusCode = HttpStatusCode.OK;
+
+            }
+
+          
+            foreach (string RoleId in assignRolesDTO.RoleIds)
+            {
+                IdentityRole role = await _roleManager.FindByIdAsync(RoleId);
+                IdentityResult result = await _userManager.AddToRoleAsync(user, role.Name);
+
+                if (!result.Succeeded)
+                {
+                    _response.ErrorMessages.Add("Role : " + role.Name + " Assignment failed");
+                  
+                }
+                else
+                {
+                    _response.ErrorMessages.Add("Role : "  + role.Name + " Assigned Successfully");
+                }
+            }
 
             return _response;
         }
