@@ -223,6 +223,7 @@ namespace AtoTax.API.Repository.Repos
                 string subject = "AtoTax: Confirm your Email Id";
 
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(newAppUser);
+                token = token.Replace("+", "^^^");
                 string txtdata = "http://" + domain + "/confirm-email?token=" + token + "&email=" + registrationRequestDTO.Email;
 
                 MailText = MailText.Replace("{Domain}", domain);
@@ -402,7 +403,10 @@ namespace AtoTax.API.Repository.Repos
 
         public async Task<APIResponse> ConfirmEmail(ConfirmEmailDTO confirmEmailDTO)
         {
-            if (confirmEmailDTO.email == null || confirmEmailDTO.token == null)
+            var token = confirmEmailDTO.token;
+            token = token.Replace("^^^", "+");
+
+            if (confirmEmailDTO.email == null || token == null)
             {
                 _response.Result = confirmEmailDTO;
                 _response.IsSuccess = false;
@@ -421,7 +425,7 @@ namespace AtoTax.API.Repository.Repos
             }
 
 
-            var result = await _userManager.ConfirmEmailAsync(user, confirmEmailDTO.token);
+            var result = await _userManager.ConfirmEmailAsync(user, token);
 
             if (result.Succeeded)
             {
