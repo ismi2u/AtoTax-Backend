@@ -123,6 +123,8 @@ namespace AtoTax.API.Controllers
                 await _unitOfWork.CompleteAsync();
                 _response.Result = _mapper.Map<AmendmentDTO>(Amendment);
                 _response.StatusCode = HttpStatusCode.Created;
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "Amendment created successfully";
 
                 return CreatedAtAction("GetAmendment", new { id = Amendment.Id }, _response);
             }

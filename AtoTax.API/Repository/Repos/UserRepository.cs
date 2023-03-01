@@ -200,7 +200,7 @@ namespace AtoTax.API.Repository.Repos
                 {
                     _response.Result = registrationRequestDTO;
                     _response.IsSuccess = false;
-                    _response.ErrorMessages = new List<string> { result.Errors.ToString() };
+                    _response.ErrorMessages = new List<string> { result.Errors.Aggregate("User Registration Failed", (current, error) => current + (" - " + error.Description.ToString() + "\n\r")) };
                     _response.StatusCode = HttpStatusCode.BadRequest;
 
                     return _response;
@@ -223,7 +223,7 @@ namespace AtoTax.API.Repository.Repos
                 string subject = "AtoTax: Confirm your Email Id";
 
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(newAppUser);
-                string txtdata = "https://" + domain + "/confirm-email?token=" + token + "&email=" + registrationRequestDTO.Email;
+                string txtdata = "http://" + domain + "/confirm-email?token=" + token + "&email=" + registrationRequestDTO.Email;
 
                 MailText = MailText.Replace("{Domain}", domain);
                 MailText = MailText.Replace("{ConfirmEmailUrl}", txtdata);
@@ -257,7 +257,7 @@ namespace AtoTax.API.Repository.Repos
                     {
                         _response.Result = registrationRequestDTO;
                         _response.IsSuccess = false;
-                        _response.ErrorMessages = new List<string> { rolAddresult.Errors.ToString() };
+                        _response.ErrorMessages = new List<string> { result.Errors.Aggregate("User Registered, but Role assignment failed", (current, error) => current + (" - " + error.Description.ToString() + "\n\r")) };
                         _response.StatusCode = HttpStatusCode.BadRequest;
 
                         return _response;
@@ -271,11 +271,9 @@ namespace AtoTax.API.Repository.Repos
 
                     if (!addRoleResult.Succeeded)
                     {
-                        var exceptionRole = addRoleResult.Errors.Aggregate("Admin role assignment failed", (current, error) => current + (" - " + error + "\n\r"));
-
                         _response.Result = registrationRequestDTO;
                         _response.IsSuccess = false;
-                        _response.ErrorMessages = new List<string> { exceptionRole };
+                        _response.ErrorMessages = new List<string> { result.Errors.Aggregate("Admin role assignment failed", (current, error) => current + (" - " + error.Description.ToString() + "\n\r")) };
                         _response.StatusCode = HttpStatusCode.BadRequest;
 
                         return _response;
@@ -286,6 +284,7 @@ namespace AtoTax.API.Repository.Repos
 
                     _response.Result = _mapper.Map<UserDTO>(usertoReturn);
                     _response.IsSuccess = true;
+                    _response.SuccessMessage = "New user registered";
                     _response.ErrorMessages = null;
                     _response.StatusCode = HttpStatusCode.OK;
 
@@ -351,7 +350,7 @@ namespace AtoTax.API.Repository.Repos
             {
                 _response.Result = forgotPasswordDTO;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string> { "Your email ID has not been confirmed yet. Cant reset the password!" };
+                _response.ErrorMessages = new List<string> { "Your email ID has not been confirmed yet. Can't reset the password!" };
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 return _response;
             }
@@ -377,7 +376,7 @@ namespace AtoTax.API.Repository.Repos
             var builder = new MimeKit.BodyBuilder();
             var receiverEmail = appuser.Email;
             string subject = "Password Reset Link";
-            string txtdata = "https://" + domain + "/resetpassword?token=" + token + "&email=" + appuser.Email;
+            string txtdata = "http://" + domain + "/resetpassword?token=" + token + "&email=" + appuser.Email;
 
             MailText = MailText.Replace("{PasswordResetUrl}", txtdata);
 
@@ -389,10 +388,11 @@ namespace AtoTax.API.Repository.Repos
             emailDto.Body = builder.HtmlBody;
 
             await _emailSender.SendEmailAsync(emailDto);
-            _logger.LogInformation("ForgotPassword: " + receiverEmail + "Password Reset Email Sent with token");
+            _logger.LogInformation("ForgotPassword: " + receiverEmail + "Password reset email has been sent @ " + receiverEmail +" Please check your email to reset password.");
 
             _response.Result = forgotPasswordDTO;
             _response.IsSuccess = true;
+            _response.SuccessMessage = "Password reset email has been sent @ " + receiverEmail + ". Please check your email to reset password.";
             _response.ErrorMessages = null;
             _response.StatusCode = HttpStatusCode.OK;
 
@@ -427,6 +427,7 @@ namespace AtoTax.API.Repository.Repos
             {
                 _response.Result = confirmEmailDTO;
                 _response.IsSuccess = true;
+                _response.SuccessMessage = "Your email has been verified successfully.";
                 _response.ErrorMessages = null;
                 _response.StatusCode = HttpStatusCode.OK;
             }
@@ -471,6 +472,7 @@ namespace AtoTax.API.Repository.Repos
 
                     _response.Result = null;
                     _response.IsSuccess = true;
+                    _response.SuccessMessage = "Your password has been reset successfully.";
                     _response.ErrorMessages = null;
                     _response.StatusCode = HttpStatusCode.OK;
                 }
@@ -499,7 +501,7 @@ namespace AtoTax.API.Repository.Repos
 
             if (appuser != null)
             {
-                var validCredentials = await _signinManager.UserManager.CheckPasswordAsync(appuser, newPassword);
+                var validCredentials = await _signinManager.UserManager.CheckPasswordAsync(appuser, oldPassword);
 
                 if (!validCredentials)
                 {
@@ -524,10 +526,11 @@ namespace AtoTax.API.Repository.Repos
                     emailDto.Body = body;
 
                     await _emailSender.SendEmailAsync(emailDto);
-                    _logger.LogInformation("Password Reset: " + receiverEmail + "Password has been Reset");
+                    _logger.LogInformation("Password Change: " + receiverEmail + "Password has been changed successfully.");
 
                     _response.Result = null;
                     _response.IsSuccess = true;
+                    _response.SuccessMessage = "Password has been changed successfully.";
                     _response.ErrorMessages = null;
                     _response.StatusCode = HttpStatusCode.OK;
                 }
@@ -547,6 +550,7 @@ namespace AtoTax.API.Repository.Repos
                 var users = await _userManager.DeleteAsync(appuser);
                 _response.Result = appuser;
                 _response.IsSuccess = true;
+                _response.SuccessMessage = "User removed successfully";
                 _response.ErrorMessages = null;
                 _response.StatusCode = HttpStatusCode.OK;
             }
@@ -630,8 +634,19 @@ namespace AtoTax.API.Repository.Repos
 
             IdentityResult result = await _userManager.UpdateAsync(appuser);
 
+            if (!result.Succeeded)
+            {
+                _response.Result = result;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { result.Errors.Aggregate("User updation Failed", (current, error) => current + (" - " + error.Description.ToString() + "\n\r")) };
+                _response.StatusCode = HttpStatusCode.BadRequest;
+
+                return _response;
+            }
             _response.Result = result;
-            _response.IsSuccess = true;
+            _response.IsSuccess = true; 
+            _response.SuccessMessage = "User data updated successfully.";
             _response.ErrorMessages = null;
             _response.StatusCode = HttpStatusCode.OK;
 
@@ -651,10 +666,10 @@ namespace AtoTax.API.Repository.Repos
             if(!roleRemoval.Succeeded) {
 
                 _response.Result = roleRemoval;
-                _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string> { "Error occured while removing existing Roles" };
+                _response.IsSuccess = false; 
+                _response.ErrorMessages = new List<string> { roleRemoval.Errors.Aggregate("Error occured while removing existing Roles", (current, error) => current + (" - " + error.Description.ToString() + "\n\r")) };
                 _response.StatusCode = HttpStatusCode.OK;
-
+                return _response;
             }
 
           

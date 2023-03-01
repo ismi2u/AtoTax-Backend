@@ -54,6 +54,7 @@ namespace AtoTax.API.Controllers
             }
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
+            _response.SuccessMessage = "User Logged-in successfully";
             _response.Result = loginResponse;
             return Ok(_response);
         }

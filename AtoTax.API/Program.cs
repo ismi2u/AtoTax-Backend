@@ -49,7 +49,7 @@ builder.Services.AddDbContextPool<AtoTaxDbContext>(options => options.UseNpgsql(
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
     options =>
     {
-        options.User.AllowedUserNameCharacters= "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        options.User.AllowedUserNameCharacters= "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+/ ";
         options.Password.RequireDigit = false;
         options.Password.RequiredLength = 4;
         options.Password.RequireNonAlphanumeric = false;

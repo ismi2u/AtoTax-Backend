@@ -188,8 +188,11 @@ namespace AtoTax.API.Controllers
                 await _unitOfWork.AddressTypes.CreateAsync(AddressType);
 
                 await _unitOfWork.CompleteAsync();
-                _response.Result = _mapper.Map<AddressTypeDTO>(AddressType);
                 _response.StatusCode = HttpStatusCode.Created;
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "New Address type created";
+                _response.Result = _mapper.Map<AddressTypeDTO>(AddressType);
+
 
                 return CreatedAtAction("GetAddressType", new { id = AddressType.Id }, _response);
             }
@@ -226,6 +229,9 @@ namespace AtoTax.API.Controllers
 
                 await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "Address type deleted";
+
                 return Ok(_response);
             }
             catch (Exception ex)

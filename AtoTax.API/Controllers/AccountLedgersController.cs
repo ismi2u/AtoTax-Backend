@@ -111,7 +111,11 @@ namespace AtoTax.API.Controllers
 
                 await _unitOfWork.CompleteAsync();
                 _response.Result = _mapper.Map<AccountLedgerDTO>(AccountLedger);
+
                 _response.StatusCode = HttpStatusCode.Created;
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "Ledger entry success";
+
 
                 return CreatedAtAction("GetAccountLedger", new { id = AccountLedger.Id }, _response);
             }
