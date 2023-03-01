@@ -4,8 +4,7 @@ namespace AtoTax.Domain.DTOs.AuthDTOs
 {
     public class UpdateUserDTO
     {
-        [Required]
-        public string UserId{ get; set; }
+        public string Id{ get; set; }
 
         public string NewUserName { get; set; }
 

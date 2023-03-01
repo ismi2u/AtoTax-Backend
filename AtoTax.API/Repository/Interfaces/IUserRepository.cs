@@ -13,7 +13,7 @@ namespace AtoTax.API.Repository.Interfaces
         Task<APIResponse> GetUsers();
         Task<APIResponse> GetRoles();
         Task<APIResponse> Register(RegistrationRequestDTO registrationRequestDTO);
-        Task<APIResponse> DeleteUser(DeleteUserDTO deleteUserDTO);
+        Task<APIResponse> DeleteUser(string id);
         Task<APIResponse> UpdateUser(UpdateUserDTO updateUserDTO);
         Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO);
         Task<APIResponse> ForgotPassword(ForgotPasswordDTO forgotPasswordDTO);

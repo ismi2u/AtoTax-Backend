@@ -130,21 +130,27 @@ namespace AtoTax.API.Controllers
         }
 
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteUser([FromBody] DeleteUserDTO model)
+        public async Task<IActionResult> DeleteUser(string id)
         {
-            return Ok(await _userRepository.DeleteUser(model));
+
+            return Ok(await _userRepository.DeleteUser(id));
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDTO model)
+        public async Task<IActionResult> UpdateUser(string id, UpdateUserDTO model)
         {
+            if(id != model.Id)
+            {
+                return BadRequest();
+            }
+
             return Ok(await _userRepository.UpdateUser(model));
         }
 

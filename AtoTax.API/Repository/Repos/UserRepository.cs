@@ -545,10 +545,10 @@ namespace AtoTax.API.Repository.Repos
 
         
 
-        public async Task<APIResponse> DeleteUser(DeleteUserDTO deleteUserDTO)
+        public async Task<APIResponse> DeleteUser(string id)
         {
 
-            ApplicationUser appuser = await _userManager.FindByIdAsync(deleteUserDTO.UserId);
+            ApplicationUser appuser = await _userManager.FindByIdAsync(id);
             if(appuser != null)
             {
                 var users = await _userManager.DeleteAsync(appuser);
@@ -572,7 +572,7 @@ namespace AtoTax.API.Repository.Repos
         public async Task<APIResponse> UpdateUser(UpdateUserDTO updateUserDTO)
         {
 
-            if(updateUserDTO.UserId == null)
+            if(updateUserDTO.Id == null)
             {
                 _response.Result = updateUserDTO;
                 _response.IsSuccess = false;
