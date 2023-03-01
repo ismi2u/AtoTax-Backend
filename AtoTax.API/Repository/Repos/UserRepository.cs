@@ -568,18 +568,16 @@ namespace AtoTax.API.Repository.Repos
         public async Task<APIResponse> UpdateUser(UpdateUserDTO updateUserDTO)
         {
 
-            if (updateUserDTO.UserName == null || updateUserDTO.Password == null)
+            if(updateUserDTO.UserId == null)
             {
                 _response.Result = updateUserDTO;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string> { "Username Password required to update Name/Email" };
+                _response.ErrorMessages = new List<string> { "UserId is invalid" };
                 _response.StatusCode = HttpStatusCode.BadRequest;
-
-                return _response;
             }
 
-            if (updateUserDTO.UserName == null ||
-                updateUserDTO.OldEmail == null && updateUserDTO.NewEmail == null ||
+
+            if (updateUserDTO.OldEmail == null && updateUserDTO.NewEmail == null ||
                 updateUserDTO.OldName == null && updateUserDTO.NewName == null )
             {
                 _response.Result = updateUserDTO;
@@ -595,10 +593,9 @@ namespace AtoTax.API.Repository.Repos
             ApplicationUser appuser = new();
 
 
-            if (!updateUserDTO.UserName.IsNullOrEmpty())
+            if (!updateUserDTO.NewUserName.IsNullOrEmpty())
             {
-                appuser = _userManager.Users.FirstOrDefault(u => u.UserName == updateUserDTO.UserName);
-               
+                appuser = _userManager.Users.FirstOrDefault(u => u.UserName == updateUserDTO.NewUserName);
             }
             else if (appuser == null)
             {

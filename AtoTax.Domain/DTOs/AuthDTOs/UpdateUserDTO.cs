@@ -1,8 +1,14 @@
-﻿namespace AtoTax.Domain.DTOs.AuthDTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace AtoTax.Domain.DTOs.AuthDTOs
 {
     public class UpdateUserDTO
     {
-        public string UserName { get; set; }
+        [Required]
+        public string UserId{ get; set; }
+
+        public string NewUserName { get; set; }
+
         public string Password { get; set; }
 
         public string OldName { get; set; }
