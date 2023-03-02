@@ -23,5 +23,7 @@ namespace AtoTax.API.Repository.Interfaces
         Task<APIResponse> ChangePassword(ChangePasswordDTO changePasswordDTO);
 
         Task<APIResponse> AssignRoles (AssignRolesDTO assignRolesDTO);
+
+        Task<APIResponse> GetRolesforUser(string id);
     }
 }

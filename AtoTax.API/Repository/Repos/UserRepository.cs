@@ -692,6 +692,55 @@ namespace AtoTax.API.Repository.Repos
 
             return _response;
         }
+
+        [HttpGet("{id}")]
+        [ActionName("GetRolesforUser")]
+        public async Task<APIResponse> GetRolesforUser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                _response.Result = null;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = "User Id is incorrect.";
+                _response.ErrorMessages = null;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+            }
+
+            var rolenames = await _userManager.GetRolesAsync(user);
+
+
+            List<RoleDTO> listRoleDTOs = new();
+
+            foreach (string role in rolenames)
+            {
+
+                RoleDTO roleDTO = new RoleDTO();
+
+                IdentityRole IdntyRole =  await _roleManager.FindByNameAsync(role);
+                roleDTO.RoleId = IdntyRole.Id;
+                roleDTO.RoleName = IdntyRole.Name;
+
+                listRoleDTOs.Add(roleDTO);
+            }
+
+            //user id 
+
+            UserRoleDTO userRoleDTO = new UserRoleDTO();
+            userRoleDTO.UserId = user.Id;
+            userRoleDTO.ListRoles= listRoleDTOs;
+
+
+            _response.Result = userRoleDTO;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.SuccessMessage = null ;
+            _response.ErrorMessages = null;
+
+            return _response;
+        }
+       
     }
 }
 
