@@ -211,7 +211,7 @@ namespace AtoTax.API.Controllers
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.Result = MultimediaTypeCreateDTO;
-                    _response.IsSuccess = false;
+                    _response.IsSuccess = true;
                     _response.SuccessMessage = null;
                     _response.ErrorMessages = new List<string> { "MultimediaType not found" };
                     return Ok(_response);
@@ -223,7 +223,7 @@ namespace AtoTax.API.Controllers
                 await _unitOfWork.CompleteAsync();
 
                 _response.StatusCode = HttpStatusCode.Created;
-                _response.Result = _mapper.Map<AddressTypeDTO>(MultimediaType);
+                _response.Result = _mapper.Map<MultimediaTypeDTO>(MultimediaType);
                 _response.IsSuccess = false;
                 _response.SuccessMessage = "New MultimediaType created";
                 _response.ErrorMessages = null;

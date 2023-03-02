@@ -224,8 +224,8 @@ namespace AtoTax.API.Controllers
                 await _unitOfWork.CompleteAsync();
 
                 _response.StatusCode = HttpStatusCode.Created;
-                _response.Result = _mapper.Map<AddressTypeDTO>(GSTFilingType);
-                _response.IsSuccess = false;
+                _response.Result = _mapper.Map<GSTFilingTypeDTO>(GSTFilingType);
+                _response.IsSuccess = true;
                 _response.SuccessMessage = "New GSTFilingType created";
                 _response.ErrorMessages = null;
 

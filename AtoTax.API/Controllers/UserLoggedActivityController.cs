@@ -170,7 +170,9 @@ namespace AtoTax.API.Controllers
 
                 await _unitOfWork.CompleteAsync();
                 _response.Result = _mapper.Map<UserLoggedActivityDTO>(UserLoggedActivity);
-                _response.StatusCode = HttpStatusCode.Created;
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "UserLoggedActivity recorded";
+                _response.ErrorMessages = null;
 
                 return CreatedAtAction("GetUserLoggedActivity", new { id = UserLoggedActivity.Id }, _response);
             }

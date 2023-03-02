@@ -237,7 +237,7 @@ namespace AtoTax.API.Controllers
 
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.Result = _mapper.Map<GSTClientAddressExtensionDTO>(GSTClientAddressExtension);
-                _response.IsSuccess = false;
+                _response.IsSuccess = true;
                 _response.SuccessMessage = "New Address type created";
                 _response.ErrorMessages = null;
 

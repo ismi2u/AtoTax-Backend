@@ -167,6 +167,8 @@ namespace AtoTax.API.Controllers
                 await _unitOfWork.CompleteAsync();
                 _response.Result = _mapper.Map<CollectionAndBalanceDTO>(CollectionAndBalance);
                 _response.StatusCode = HttpStatusCode.Created;
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "CollectionAndBalance created successfully";
 
 
                 return CreatedAtAction("GetCollectionAndBalance", new { id = CollectionAndBalance.Id }, _response);

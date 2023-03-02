@@ -224,7 +224,7 @@ namespace AtoTax.API.Controllers
 
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.Result = _mapper.Map<EmpJobRoleDTO>(EmpJobRole);
-                _response.IsSuccess = false;
+                _response.IsSuccess = true;
                 _response.SuccessMessage = "New EmpJobRole created";
                 _response.ErrorMessages = null;
 

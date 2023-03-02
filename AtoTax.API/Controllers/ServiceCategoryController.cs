@@ -219,8 +219,8 @@ namespace AtoTax.API.Controllers
                 await _unitOfWork.ServiceCategories.CreateAsync(ServiceCategory);
 
                 _response.StatusCode = HttpStatusCode.Created;
-                _response.Result = _mapper.Map<AddressTypeDTO>(ServiceCategory);
-                _response.IsSuccess = false;
+                _response.Result = _mapper.Map<ServiceCategoryDTO>(ServiceCategory);
+                _response.IsSuccess = true;
                 _response.SuccessMessage = "New ServiceCategory created";
                 _response.ErrorMessages = null;
 

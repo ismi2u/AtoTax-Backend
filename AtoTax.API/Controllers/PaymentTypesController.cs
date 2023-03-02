@@ -222,8 +222,8 @@ namespace AtoTax.API.Controllers
                 await _unitOfWork.CompleteAsync();
 
                 _response.StatusCode = HttpStatusCode.Created;
-                _response.Result = _mapper.Map<AddressTypeDTO>(PaymentType);
-                _response.IsSuccess = false;
+                _response.Result = _mapper.Map<PaymentTypeDTO>(PaymentType);
+                _response.IsSuccess = true;
                 _response.SuccessMessage = "New PaymentType created";
                 _response.ErrorMessages = null;
 
