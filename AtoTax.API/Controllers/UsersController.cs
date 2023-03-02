@@ -164,7 +164,7 @@ namespace AtoTax.API.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllRoles()
         {
-            return Ok(await _userRepository.GetUsers());
+            return Ok(await _userRepository.GetRoles());
         }
 
     }
