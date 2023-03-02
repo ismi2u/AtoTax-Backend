@@ -52,14 +52,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<PaymentTypeDTO>>(PaymentTypesList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
-                _response.IsSuccess= false;
-                _response.ErrorMessages= new List<string>() { ex.ToString()};
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         [HttpGet]
@@ -73,14 +78,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<ActivePaymentTypeForDD>>(PaymentTypesList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // GET: api/PaymentTypes/5
@@ -101,15 +111,20 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<PaymentTypeDTO>(PaymentType);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.Result = null;
+                _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
+                _response.SuccessMessage = null;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
-           
+            return Ok(_response);
+
         }
 
         // PUT: api/PaymentTypes/5
@@ -119,12 +134,26 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> UpdatePaymentType(int id, PaymentTypeUpdateDTO PaymentTypeUpdateDTO)
         {
+
+            if (!ModelState.IsValid)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.Result = PaymentTypeUpdateDTO;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { "PaymentType modelstate invalid" };
+                return Ok(_response);
+            }
             try
             {
                 if (id == 0 || !(id == PaymentTypeUpdateDTO.Id))
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = PaymentTypeUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "Update PaymentType failed" };
+                    return Ok(_response);
                 }
 
 
@@ -133,7 +162,11 @@ namespace AtoTax.API.Controllers
                 if (oldPaymentType == null)
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;
-                    return _response;
+                    _response.Result = PaymentTypeUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "PaymentType data is Null" };
+                    return Ok(_response);
                 }
 
                 var PaymentType = _mapper.Map<PaymentType>(PaymentTypeUpdateDTO);
@@ -146,24 +179,22 @@ namespace AtoTax.API.Controllers
 
                 await _unitOfWork.PaymentTypes.UpdateAsync(PaymentType);
 
-                if (!ModelState.IsValid)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Result = ModelState;
-                    return _response;
-                 }
-
                 await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = PaymentType;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "PaymentType updated";
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // POST: api/PaymentTypes
@@ -177,26 +208,36 @@ namespace AtoTax.API.Controllers
 
                 if (await _unitOfWork.PaymentTypes.GetAsync(u => u.PaymentMethod == PaymentTypeCreateDTO.PaymentMethod) != null)
                 {
-                    _response.ErrorMessages = new List<string>() { "Payment Type already Exists"};
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return _response;
+                    _response.Result = PaymentTypeCreateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "PaymentType not found" };
+                    return Ok(_response);
                 }
                 var PaymentType = _mapper.Map<PaymentType>(PaymentTypeCreateDTO);
                 PaymentType.CreatedDate= DateTime.UtcNow;
                 await _unitOfWork.PaymentTypes.CreateAsync(PaymentType);
 
                 await _unitOfWork.CompleteAsync();
-                _response.Result = _mapper.Map<PaymentTypeDTO>(PaymentType);
+
                 _response.StatusCode = HttpStatusCode.Created;
+                _response.Result = _mapper.Map<AddressTypeDTO>(PaymentType);
+                _response.IsSuccess = false;
+                _response.SuccessMessage = "New PaymentType created";
+                _response.ErrorMessages = null;
 
                 return CreatedAtAction("GetPaymentType", new { id = PaymentType.Id }, _response);
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // DELETE: api/PaymentTypes/5
@@ -211,27 +252,42 @@ namespace AtoTax.API.Controllers
                 if (id == 0)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "PaymentType Id not found" };
+                    return Ok(_response);
                 }
                 var PaymentType = await _unitOfWork.PaymentTypes.GetAsync(u => u.Id == id);
                 if (PaymentType == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    return NotFound(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "PaymentType not found" };
+                    return Ok(_response);
                 }
 
                 await _unitOfWork.PaymentTypes.RemoveAsync(PaymentType);
 
                 await _unitOfWork.CompleteAsync();
+
                 _response.StatusCode = HttpStatusCode.NoContent;
-                return Ok(_response);
+                _response.Result = PaymentType;
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "PaymentType deleted";
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
     }

@@ -14,6 +14,7 @@ using AtoTax.API.Repository.Interfaces;
 using AtoTax.API.GenericRepository;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
+using Azure;
 
 namespace AtoTax.API.Controllers
 {
@@ -54,14 +55,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<AmendmentDTO>>(AmendmentsList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
-                _response.IsSuccess= false;
-                _response.ErrorMessages= new List<string>() { ex.ToString()};
+                _response.Result = null;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // GET: api/Amendments/5
@@ -85,14 +91,20 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<AmendmentDTO>(Amendment);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
+            
             }
             catch (Exception ex)
             {
+                _response.Result = null;
+                _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
+                _response.SuccessMessage = null;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
            
         }
 
@@ -110,10 +122,11 @@ namespace AtoTax.API.Controllers
                 if (await _unitOfWork.Amendments.GetAsync(u => u.AmendTypeId == AmendmentCreateDTO.AmendTypeId
                 && u.GSTClientId == AmendmentCreateDTO.GSTClientId) != null)
                 {
+                    _response.Result = AmendmentCreateDTO;
+                    _response.StatusCode = HttpStatusCode.NoContent;
                     _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
                     _response.ErrorMessages = new List<string>() { "Record already exists for Amendment Type and GST Client" };
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    return _response;
                 }
                
                 var Amendment = _mapper.Map<Amendment>(AmendmentCreateDTO);
@@ -130,10 +143,13 @@ namespace AtoTax.API.Controllers
             }
             catch (Exception ex)
             {
+                _response.Result = null;
+                _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
+                _response.SuccessMessage = null;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // PUT: api/Amendments
@@ -143,12 +159,27 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> UpdateAmendment(Guid id, AmendmentUpdateDTO AmendmentUpdateDTO)
         {
+
+            if (!ModelState.IsValid)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.Result = AmendmentUpdateDTO;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { "Amendment modelstate invalid" };
+                return Ok(_response);
+            }
+
             try
             {
                 if (id == Guid.Empty || !(id == AmendmentUpdateDTO.Id))
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = AmendmentUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "Amendment modelstate invalid" };
+                    return Ok(_response);
                 }
 
 
@@ -157,7 +188,10 @@ namespace AtoTax.API.Controllers
                 if (oldAmendment == null)
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;
-                    return _response;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "Amendment modelstate invalid" };
+                    return Ok(_response);
                 }
 
                 var Amendment = _mapper.Map<Amendment>(AmendmentUpdateDTO);
@@ -167,24 +201,24 @@ namespace AtoTax.API.Controllers
 
                 await _unitOfWork.Amendments.UpdateAsync(Amendment);
 
-                if (!ModelState.IsValid)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Result = ModelState;
-                    return _response;
-                }
-
                 await _unitOfWork.CompleteAsync();
+                
+                _response.Result = _mapper.Map<AmendmentDTO>(Amendment);
                 _response.StatusCode = HttpStatusCode.NoContent;
-                _response.Result = Amendment;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "Amendment Updated"; ;
+                _response.ErrorMessages = null;
+               
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // DELETE: api/Amendments/5
@@ -199,27 +233,41 @@ namespace AtoTax.API.Controllers
                 if (id == Guid.Empty)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "Amendment Id not found" };
+                    return Ok(_response);
                 }
                 var Amendment = await _unitOfWork.Amendments.GetAsync(u => u.Id == id);
                 if (Amendment == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    return NotFound(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "Amendment not found" };
+                    return Ok(_response);
                 }
 
                 await _unitOfWork.Amendments.RemoveAsync(Amendment);
 
                 await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
-                return Ok(_response);
+                _response.Result = Amendment;
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "Amendment deleted";
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
     }

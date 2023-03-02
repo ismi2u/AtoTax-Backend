@@ -51,7 +51,7 @@ namespace AtoTax.API.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
 
 
         }
@@ -77,7 +77,7 @@ namespace AtoTax.API.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
 
 
         }
@@ -98,7 +98,7 @@ namespace AtoTax.API.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.Result = statusCreateDTO;
                     _response.ErrorMessages = new List<string>() { "StatusType Already exists" };
-                    return _response;
+                    return Ok(_response);
                 }
 
                 statusCreateDTO.StatusType = statusCreateDTO.StatusType.ToLower();
@@ -115,7 +115,7 @@ namespace AtoTax.API.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
 
         }
         */

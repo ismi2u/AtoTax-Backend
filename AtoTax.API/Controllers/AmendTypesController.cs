@@ -19,7 +19,7 @@ namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    [Authorize(Roles="Admin")]
+    [Authorize(Roles = "Admin")]
     public class AmendTypesController : ControllerBase
     {
         protected APIResponse _response;
@@ -30,9 +30,9 @@ namespace AtoTax.API.Controllers
         public AmendTypesController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
         {
             _mapper = mapper;
-            this._response= new();
+            this._response = new();
             _context = context;
-            _unitOfWork= unitOfWork;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -46,17 +46,22 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<ActiveAmendTypeForDD>>(AmendTypesList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
-       // GET: api/AmendTypes
+        // GET: api/AmendTypes
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -73,46 +78,58 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<AmendTypeDTO>>(AmendTypesList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
+
             }
             catch (Exception ex)
             {
-                _response.IsSuccess= false;
-                _response.ErrorMessages= new List<string>() { ex.ToString()};
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
-       
-
-       // GET: api/AmendTypes/5
-       [HttpGet("{id}")]
-       [ProducesResponseType(StatusCodes.Status200OK)]
-       [ProducesResponseType(StatusCodes.Status400BadRequest)]
-       [ProducesResponseType(StatusCodes.Status404NotFound)]
-       public async Task<ActionResult<APIResponse>> GetAmendType(int id)
-       {
-
-           List<string> includelist = new List<string>();
-           includelist.Add("Status");
-           string[] arrIncludes = includelist.ToArray();
-           try
-           {
-               AmendType AmendType = await _unitOfWork.AmendTypes.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
-               _response.Result = _mapper.Map<AmendTypeDTO>(AmendType);
-               _response.StatusCode = HttpStatusCode.OK;
-               return Ok(_response);
-           }
-           catch (Exception ex)
-           {
-               _response.IsSuccess = false;
-               _response.ErrorMessages = new List<string>() { ex.ToString() };
-           }
-           return _response;
+        // GET: api/AmendTypes/5
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetAmendType(int id)
+        {
 
-       }
-     
-       }
+            List<string> includelist = new List<string>();
+            includelist.Add("Status");
+            string[] arrIncludes = includelist.ToArray();
+            try
+            {
+                AmendType AmendType = await _unitOfWork.AmendTypes.GetAsync(u => u.Id == id, false, arrIncludes);
+
+
+                _response.Result = _mapper.Map<AmendTypeDTO>(AmendType);
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
+
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
+            }
+            return Ok(_response);
+
+        }
+
+    }
 }

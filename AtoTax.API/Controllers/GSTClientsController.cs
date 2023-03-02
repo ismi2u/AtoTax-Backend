@@ -58,14 +58,19 @@ namespace AtoTax.API.Controllers
                 Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
                 _response.Result = _mapper.Map<IEnumerable<GSTClientDTO>>(GSTClientsList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
         [HttpGet]
         [ResponseCache(Duration = 30)]
@@ -84,14 +89,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<ActiveGSTClientsForDD>>(GSTClientsList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
         // GET: api/GSTClients/5
         [HttpGet("{id}")]
@@ -113,14 +123,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<GSTClientDTO>(GSTClient);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
 
         }
 
@@ -131,12 +146,26 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> UpdateGSTClient(Guid id, GSTClientUpdateDTO gstClientUpdateDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.Result = gstClientUpdateDTO;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { "GSTClient modelstate invalid" };
+                return Ok(_response);
+            }
+
             try
             {
                 if (id == Guid.Empty || !(id == gstClientUpdateDTO.Id))
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = gstClientUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "Update GSTClient failed" };
+                    return Ok(_response);
                 }
 
 
@@ -145,7 +174,11 @@ namespace AtoTax.API.Controllers
                 if (oldgstclient == null)
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;
-                    return _response;
+                    _response.Result = gstClientUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "GSTClient data is Null" };
+                    return Ok(_response);
                 }
 
                 var gstClient = _mapper.Map<GSTClient>(gstClientUpdateDTO);
@@ -183,24 +216,21 @@ namespace AtoTax.API.Controllers
 
                 await _unitOfWork.CompleteAsync();
 
-
-                if (!ModelState.IsValid)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Result = ModelState;
-                    return _response;
-                }
-
                 _response.StatusCode = HttpStatusCode.NoContent;
-                _response.Result = gstClient;
-                return Ok(_response);
+                _response.Result = gstClientUpdateDTO;
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "GST Client updated";
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // POST: api/GSTClients
@@ -215,13 +245,20 @@ namespace AtoTax.API.Controllers
                 if (await _unitOfWork.GSTClients.GetAsync(u => u.GSTIN == gstClientCreateDTO.GSTIN) != null)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return _response;
+                    _response.Result = gstClientCreateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "GSTIN should be unique" };
+                    return Ok(_response);
                 }
                 if (await _unitOfWork.GSTClients.GetAsync(u => u.ProprietorName == gstClientCreateDTO.ProprietorName) != null)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.Result = gstClientCreateDTO;
-                    return _response;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "GSTClient Propreitor Name already exists" };
+                    return Ok(_response);
                 }
                 var gstClient = _mapper.Map<GSTClient>(gstClientCreateDTO);
                 gstClient.CreatedDate = DateTime.UtcNow;
@@ -243,17 +280,23 @@ namespace AtoTax.API.Controllers
 
                 await _unitOfWork.CompleteAsync();
 
-                _response.Result = _mapper.Map<GSTClientDTO>(gstClient);
                 _response.StatusCode = HttpStatusCode.Created;
+                _response.Result = _mapper.Map<GSTClientDTO>(gstClient);
+                _response.IsSuccess = false;
+                _response.SuccessMessage = "New GST Client created";
+                _response.ErrorMessages = null;
 
                 return CreatedAtAction("GetGSTClient", new { id = gstClient.Id }, _response);
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // DELETE: api/GSTClients/5
@@ -268,13 +311,21 @@ namespace AtoTax.API.Controllers
                 if (id == Guid.Empty)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "GSTClient Id not found" };
+                    return Ok(_response);
                 }
                 var gstClient = await _unitOfWork.GSTClients.GetAsync(u => u.Id == id);
                 if (gstClient == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    return NotFound(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "GSTClient not found" };
+                    return Ok(_response);
                 }
 
                 await _unitOfWork.GSTClients.RemoveAsync(gstClient);
@@ -286,15 +337,22 @@ namespace AtoTax.API.Controllers
                 }
 
                 await _unitOfWork.CompleteAsync();
+
                 _response.StatusCode = HttpStatusCode.NoContent;
-                return Ok(_response);
+                _response.Result = gstClient;
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "GSTClient deleted";
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
     }

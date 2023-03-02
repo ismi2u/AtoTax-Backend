@@ -52,14 +52,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<GSTFilingTypeDTO>>(GSTFilingTypesList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
-                _response.IsSuccess= false;
-                _response.ErrorMessages= new List<string>() { ex.ToString()};
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };   
             }
-            return _response;
+            return Ok(_response);
         }
 
         [HttpGet]
@@ -73,14 +78,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<ActiveGSTFilingTypeForDD>>(GSTFilingTypesList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // GET: api/GSTFilingTypes/5
@@ -101,15 +111,20 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<GSTFilingTypeDTO>(GSTFilingType);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.Result = null;
+                _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
+                _response.SuccessMessage = null;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
-           
+            return Ok(_response);
+
         }
 
         // PUT: api/GSTFilingTypes/5
@@ -119,12 +134,26 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> UpdateGSTFilingType(int id, GSTFilingTypeUpdateDTO GSTFilingTypeUpdateDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.Result = GSTFilingTypeUpdateDTO;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { "GSTFilingType modelstate invalid" };
+                return Ok(_response);
+            }
+
             try
             {
                 if (id == 0 || !(id == GSTFilingTypeUpdateDTO.Id))
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = GSTFilingTypeUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "Update GSTFilingType failed" };
+                    return Ok(_response);
                 }
 
 
@@ -133,7 +162,11 @@ namespace AtoTax.API.Controllers
                 if (oldGSTFilingType == null)
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;
-                    return _response;
+                    _response.Result = GSTFilingTypeUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "GSTFilingType data is Null" };
+                    return Ok(_response);
                 }
 
                 var GSTFilingType = _mapper.Map<GSTFilingType>(GSTFilingTypeUpdateDTO);
@@ -146,24 +179,23 @@ namespace AtoTax.API.Controllers
 
                 await _unitOfWork.GSTFilingTypes.UpdateAsync(GSTFilingType);
 
-                if (!ModelState.IsValid)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Result = ModelState;
-                    return _response;
-                 }
 
                 await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = GSTFilingType;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "GSTFilingType updated";
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // POST: api/GSTFilingTypes
@@ -178,7 +210,11 @@ namespace AtoTax.API.Controllers
                 if (await _unitOfWork.GSTFilingTypes.GetAsync(u => u.FilingType == GSTFilingTypeCreateDTO.FilingType) != null)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return _response;
+                    _response.Result = GSTFilingTypeCreateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "GSTFilingType not found" };
+                    return Ok(_response);
                 }
 
                 var GSTFilingType = _mapper.Map<GSTFilingType>(GSTFilingTypeCreateDTO);
@@ -186,17 +222,24 @@ namespace AtoTax.API.Controllers
                 await _unitOfWork.GSTFilingTypes.CreateAsync(GSTFilingType);
 
                 await _unitOfWork.CompleteAsync();
-                _response.Result = _mapper.Map<GSTFilingTypeDTO>(GSTFilingType);
+
                 _response.StatusCode = HttpStatusCode.Created;
+                _response.Result = _mapper.Map<AddressTypeDTO>(GSTFilingType);
+                _response.IsSuccess = false;
+                _response.SuccessMessage = "New GSTFilingType created";
+                _response.ErrorMessages = null;
 
                 return CreatedAtAction("GetGSTFilingType", new { id = GSTFilingType.Id }, _response);
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // DELETE: api/GSTFilingTypes/5
@@ -211,27 +254,42 @@ namespace AtoTax.API.Controllers
                 if (id == 0)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "GSTFilingType Id not found" };
+                    return Ok(_response);
                 }
                 var GSTFilingType = await _unitOfWork.GSTFilingTypes.GetAsync(u => u.Id == id);
                 if (GSTFilingType == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    return NotFound(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "GSTFilingType not found" };
+                    return Ok(_response);
                 }
 
                 await _unitOfWork.GSTFilingTypes.RemoveAsync(GSTFilingType);
 
                 await _unitOfWork.CompleteAsync();
+
                 _response.StatusCode = HttpStatusCode.NoContent;
-                return Ok(_response);
+                _response.Result = GSTFilingType;
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "GSTFilingType deleted";
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
     }

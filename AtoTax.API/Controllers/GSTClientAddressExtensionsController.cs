@@ -54,14 +54,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<GSTClientAddressExtensionDTO>>(GSTClientAddressExtensionList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
-                _response.IsSuccess= false;
-                _response.ErrorMessages= new List<string>() { ex.ToString()};
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         [HttpGet("{id}")]
@@ -83,14 +88,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<ActiveGSTClientAddressForDD>>(GSTClientAddressExtensionList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // GET: api/GSTClientAddressExtension/5
@@ -113,14 +123,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<GSTClientAddressExtensionDTO>(GSTClientAddressExtension);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
            
         }
 
@@ -131,12 +146,26 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> UpdateGSTClientAddressExtension(int id, GSTClientAddressExtensionUpdateDTO GSTClientAddressExtensionUpdateDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.Result = GSTClientAddressExtensionUpdateDTO;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { "GSTClientAddressExtension modelstate invalid" };
+                return Ok(_response);
+            }
+
             try
             {
                 if (id == 0 || !(id == GSTClientAddressExtensionUpdateDTO.Id))
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = GSTClientAddressExtensionUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "Update GSTClientAddressExtension failed" };
+                    return Ok(_response);
                 }
 
 
@@ -145,7 +174,11 @@ namespace AtoTax.API.Controllers
                 if (oldGSTClientAddressExtension == null)
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;
-                    return _response;
+                    _response.Result = GSTClientAddressExtensionUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "GSTClientAddressExtension data is Null" };
+                    return Ok(_response);
                 }
 
                 var GSTClientAddressExtension = _mapper.Map<GSTClientAddressExtension>(GSTClientAddressExtensionUpdateDTO);
@@ -158,24 +191,23 @@ namespace AtoTax.API.Controllers
 
                 await _unitOfWork.GSTClientAddressExtensions.UpdateAsync(GSTClientAddressExtension);
 
-                if (!ModelState.IsValid)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Result = ModelState;
-                    return _response;
-                 }
-
                 await _unitOfWork.CompleteAsync();
+
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = GSTClientAddressExtension;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "GSTClientAddressExtension updated";
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // POST: api/GSTClientAddressExtension
@@ -190,26 +222,36 @@ namespace AtoTax.API.Controllers
                 if (await _unitOfWork.GSTClientAddressExtensions.GetAsync(u => u.GSTClientId == GSTClientAddressExtensionCreateDTO.GSTClientId
                 && u.AddressTypeId == GSTClientAddressExtensionCreateDTO.AddressTypeId) != null)
                 {
-                    _response.ErrorMessages = new List<string>() { "Duplicate for address Type for GST Client not allowed"};
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return _response;
+                    _response.Result = GSTClientAddressExtensionCreateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "GSTClientAddressExtension not found" };
+                    return Ok(_response);
                 }
                 var GSTClientAddressExtension = _mapper.Map<GSTClientAddressExtension>(GSTClientAddressExtensionCreateDTO);
                 GSTClientAddressExtension.CreatedDate= DateTime.UtcNow;
                 await _unitOfWork.GSTClientAddressExtensions.CreateAsync(GSTClientAddressExtension);
 
                 await _unitOfWork.CompleteAsync();
-                _response.Result = _mapper.Map<GSTClientAddressExtensionDTO>(GSTClientAddressExtension);
+
                 _response.StatusCode = HttpStatusCode.Created;
+                _response.Result = _mapper.Map<GSTClientAddressExtensionDTO>(GSTClientAddressExtension);
+                _response.IsSuccess = false;
+                _response.SuccessMessage = "New Address type created";
+                _response.ErrorMessages = null;
 
                 return CreatedAtAction("GetGSTClientAddressExtension", new { id = GSTClientAddressExtension.Id }, _response);
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // DELETE: api/GSTClientAddressExtension/5
@@ -224,27 +266,42 @@ namespace AtoTax.API.Controllers
                 if (id == 0)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "GSTClientAddressExtension Id not found" };
+                    return Ok(_response);
                 }
                 var GSTClientAddressExtension = await _unitOfWork.GSTClientAddressExtensions.GetAsync(u => u.Id == id);
                 if (GSTClientAddressExtension == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    return NotFound(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "GSTClientAddressExtension not found" };
+                    return Ok(_response);
                 }
 
                 await _unitOfWork.GSTClientAddressExtensions.RemoveAsync(GSTClientAddressExtension);
 
                 await _unitOfWork.CompleteAsync();
+
                 _response.StatusCode = HttpStatusCode.NoContent;
-                return Ok(_response);
+                _response.Result = GSTClientAddressExtension;
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "GSTClientAddressExtension deleted";
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
     }

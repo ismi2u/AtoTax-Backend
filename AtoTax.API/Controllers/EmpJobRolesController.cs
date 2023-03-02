@@ -52,14 +52,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<EmpJobRoleDTO>>(EmpJobRoleList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
-                _response.IsSuccess= false;
-                _response.ErrorMessages= new List<string>() { ex.ToString()};
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         [HttpGet]
@@ -73,14 +78,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<ActiveEmpJobRoleForDD>>(EmpJobRoleList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // GET: api/EmpJobRole/5
@@ -101,14 +111,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<EmpJobRoleDTO>(EmpJobRole);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
            
         }
 
@@ -119,12 +134,26 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> UpdateEmpJobRole(int id, EmpJobRoleUpdateDTO EmpJobRoleUpdateDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.Result = EmpJobRoleUpdateDTO;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { "EmpJobRole modelstate invalid" };
+                return Ok(_response);
+            }
+
             try
             {
                 if (id == 0 || !(id == EmpJobRoleUpdateDTO.Id))
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = EmpJobRoleUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "Update EmpJobRole failed" };
+                    return Ok(_response);
                 }
 
 
@@ -133,7 +162,11 @@ namespace AtoTax.API.Controllers
                 if (oldEmpJobRole == null)
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;
-                    return _response;
+                    _response.Result = EmpJobRoleUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "EmpJobRole data is Null" };
+                    return Ok(_response);
                 }
 
                 var EmpJobRole = _mapper.Map<EmpJobRole>(EmpJobRoleUpdateDTO);
@@ -146,24 +179,23 @@ namespace AtoTax.API.Controllers
 
                 await _unitOfWork.EmpJobRoles.UpdateAsync(EmpJobRole);
 
-                if (!ModelState.IsValid)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Result = ModelState;
-                    return _response;
-                 }
-
                 await _unitOfWork.CompleteAsync();
+
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = EmpJobRole;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "EmpJobRole updated";
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // POST: api/EmpJobRole
@@ -177,26 +209,36 @@ namespace AtoTax.API.Controllers
 
                 if (await _unitOfWork.EmpJobRoles.GetAsync(u => u.JobRole == EmpJobRoleCreateDTO.JobRole) != null)
                 {
-                    _response.ErrorMessages = new List<string>() { "Job Role already Exists"};
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return _response;
+                    _response.Result = EmpJobRoleCreateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "EmpJobRole not found" };
+                    return Ok(_response);
                 }
                 var EmpJobRole = _mapper.Map<EmpJobRole>(EmpJobRoleCreateDTO);
                 EmpJobRole.CreatedDate= DateTime.UtcNow;
                 await _unitOfWork.EmpJobRoles.CreateAsync(EmpJobRole);
 
                 await _unitOfWork.CompleteAsync();
-                _response.Result = _mapper.Map<EmpJobRoleDTO>(EmpJobRole);
+
                 _response.StatusCode = HttpStatusCode.Created;
+                _response.Result = _mapper.Map<EmpJobRoleDTO>(EmpJobRole);
+                _response.IsSuccess = false;
+                _response.SuccessMessage = "New EmpJobRole created";
+                _response.ErrorMessages = null;
 
                 return CreatedAtAction("GetEmpJobRole", new { id = EmpJobRole.Id }, _response);
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // DELETE: api/EmpJobRole/5
@@ -211,27 +253,42 @@ namespace AtoTax.API.Controllers
                 if (id == 0)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "EmpJobRole Id not found" };
+                    return Ok(_response);
                 }
                 var EmpJobRole = await _unitOfWork.EmpJobRoles.GetAsync(u => u.Id == id);
                 if (EmpJobRole == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    return NotFound(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "EmpJobRole not found" };
+                    return Ok(_response);
                 }
 
                 await _unitOfWork.EmpJobRoles.RemoveAsync(EmpJobRole);
 
                 await _unitOfWork.CompleteAsync();
+
                 _response.StatusCode = HttpStatusCode.NoContent;
-                return Ok(_response);
+                _response.Result = EmpJobRole;
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "EmpJobRole deleted";
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
     }

@@ -52,14 +52,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<MultimediaTypeDTO>>(MultimediaTypesList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
-                _response.IsSuccess= false;
-                _response.ErrorMessages= new List<string>() { ex.ToString()};
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
 
@@ -74,14 +79,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<ActiveMultimediaTypeForDD>>(MultimediaTypesList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
         // GET: api/MultimediaTypes/5
         [HttpGet("{id}")]
@@ -101,15 +111,20 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<MultimediaTypeDTO>(MultimediaType);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.Result = null;
+                _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
+                _response.SuccessMessage = null;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
-           
+            return Ok(_response);
+
         }
 
         // PUT: api/MultimediaTypes/5
@@ -119,12 +134,27 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> UpdateMultimediaType(int id, MultimediaTypeUpdateDTO MultimediaTypeUpdateDTO)
         {
+
+            if (!ModelState.IsValid)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.Result = MultimediaTypeUpdateDTO;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { "MultimediaType modelstate invalid" };
+                return Ok(_response);
+            }
+
             try
             {
                 if (id == 0 || !(id == MultimediaTypeUpdateDTO.Id))
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = MultimediaTypeUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "Update MultimediaType failed" };
+                    return Ok(_response);
                 }
 
 
@@ -133,7 +163,11 @@ namespace AtoTax.API.Controllers
                 if (oldMultimediaType == null)
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;
-                    return _response;
+                    _response.Result = MultimediaTypeUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "MultimediaType data is Null" };
+                    return Ok(_response);
                 }
 
                 var MultimediaType = _mapper.Map<MultimediaType>(MultimediaTypeUpdateDTO);
@@ -146,24 +180,22 @@ namespace AtoTax.API.Controllers
 
                 await _unitOfWork.MultimediaTypes.UpdateAsync(MultimediaType);
 
-                if (!ModelState.IsValid)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Result = ModelState;
-                    return _response;
-                 }
-
                 await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = MultimediaType;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "MultimediaType updated";
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // POST: api/MultimediaTypes
@@ -177,26 +209,36 @@ namespace AtoTax.API.Controllers
 
                 if (await _unitOfWork.MultimediaTypes.GetAsync(u => u.Media == MultimediaTypeCreateDTO.Media) != null)
                 {
-                    _response.ErrorMessages = new List<string>() { "MultimediaType already Exists"};
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return _response;
+                    _response.Result = MultimediaTypeCreateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "MultimediaType not found" };
+                    return Ok(_response);
                 }
                 var MultimediaType = _mapper.Map<MultimediaType>(MultimediaTypeCreateDTO);
                 MultimediaType.CreatedDate= DateTime.UtcNow;
                 await _unitOfWork.MultimediaTypes.CreateAsync(MultimediaType);
 
                 await _unitOfWork.CompleteAsync();
-                _response.Result = _mapper.Map<MultimediaTypeDTO>(MultimediaType);
+
                 _response.StatusCode = HttpStatusCode.Created;
+                _response.Result = _mapper.Map<AddressTypeDTO>(MultimediaType);
+                _response.IsSuccess = false;
+                _response.SuccessMessage = "New MultimediaType created";
+                _response.ErrorMessages = null;
 
                 return CreatedAtAction("GetMultimediaType", new { id = MultimediaType.Id }, _response);
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // DELETE: api/MultimediaTypes/5
@@ -211,27 +253,42 @@ namespace AtoTax.API.Controllers
                 if (id == 0)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "MultimediaType Id not found" };
+                    return Ok(_response);
                 }
                 var MultimediaType = await _unitOfWork.MultimediaTypes.GetAsync(u => u.Id == id);
                 if (MultimediaType == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    return NotFound(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "MultimediaType not found" };
+                    return Ok(_response);
                 }
 
                 await _unitOfWork.MultimediaTypes.RemoveAsync(MultimediaType);
 
                 await _unitOfWork.CompleteAsync();
+
                 _response.StatusCode = HttpStatusCode.NoContent;
-                return Ok(_response);
+                _response.Result = MultimediaType;
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "MultimediaType deleted";
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
     }

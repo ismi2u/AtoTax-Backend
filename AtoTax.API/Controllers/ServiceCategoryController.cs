@@ -53,14 +53,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<ServiceCategoryDTO>>(ServiceCategorysList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
-                _response.IsSuccess= false;
-                _response.ErrorMessages= new List<string>() { ex.ToString()};
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         [HttpGet]
@@ -74,14 +79,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<ActiveServiceCategoryForDD>>(ServiceCategorysList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // GET: api/ServiceCategorys/5
@@ -102,15 +112,20 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<ServiceCategoryDTO>(ServiceCategory);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.Result = null;
+                _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
+                _response.SuccessMessage = null;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
-           
+            return Ok(_response);
+
         }
 
         // PUT: api/ServiceCategorys/5
@@ -120,12 +135,26 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> UpdateServiceCategory(int id, ServiceCategoryUpdateDTO ServiceCategoryUpdateDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.Result = ServiceCategoryUpdateDTO;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { "ServiceCategory modelstate invalid" };
+                return Ok(_response);
+            }
+
             try
             {
                 if (id == 0 || !(id == ServiceCategoryUpdateDTO.Id))
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = ServiceCategoryUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "Update ServiceCategory failed" };
+                    return Ok(_response);
                 }
 
 
@@ -134,7 +163,11 @@ namespace AtoTax.API.Controllers
                 if (oldServiceCategory == null)
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;
-                    return _response;
+                    _response.Result = ServiceCategoryUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "ServiceCategory data is Null" };
+                    return Ok(_response);
                 }
 
                 var ServiceCategory = _mapper.Map<ServiceCategory>(ServiceCategoryUpdateDTO);
@@ -145,24 +178,22 @@ namespace AtoTax.API.Controllers
 
                 await _unitOfWork.ServiceCategories.UpdateAsync(ServiceCategory);
 
-                if (!ModelState.IsValid)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Result = ModelState;
-                    return _response;
-                 }
-
                 await _unitOfWork.CompleteAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = ServiceCategory;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "ServiceCategory updated";
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // POST: api/ServiceCategorys
@@ -176,26 +207,34 @@ namespace AtoTax.API.Controllers
 
                 if (await _unitOfWork.ServiceCategories.GetAsync(u => u.ServiceName == ServiceCategoryCreateDTO.ServiceName) != null)
                 {
-                    _response.ErrorMessages = new List<string>() { "ServiceCategory already Exists"};
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return _response;
+                    _response.Result = ServiceCategoryCreateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "ServiceCategory not found" };
+                    return Ok(_response);
                 }
                 var ServiceCategory = _mapper.Map<ServiceCategory>(ServiceCategoryCreateDTO);
                 ServiceCategory.PreviousCharge= ServiceCategoryCreateDTO.FixedCharge;
                 await _unitOfWork.ServiceCategories.CreateAsync(ServiceCategory);
 
-                await _unitOfWork.CompleteAsync();
-                _response.Result = _mapper.Map<ServiceCategoryDTO>(ServiceCategory);
                 _response.StatusCode = HttpStatusCode.Created;
+                _response.Result = _mapper.Map<AddressTypeDTO>(ServiceCategory);
+                _response.IsSuccess = false;
+                _response.SuccessMessage = "New ServiceCategory created";
+                _response.ErrorMessages = null;
 
                 return CreatedAtAction("GetServiceCategory", new { id = ServiceCategory.Id }, _response);
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // DELETE: api/ServiceCategorys/5
@@ -210,27 +249,42 @@ namespace AtoTax.API.Controllers
                 if (id == 0)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "ServiceCategory Id not found" };
+                    return Ok(_response);
                 }
                 var ServiceCategory = await _unitOfWork.ServiceCategories.GetAsync(u => u.Id == id);
                 if (ServiceCategory == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    return NotFound(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "ServiceCategory not found" };
+                    return Ok(_response);
                 }
 
                 await _unitOfWork.ServiceCategories.RemoveAsync(ServiceCategory);
 
                 await _unitOfWork.CompleteAsync();
+
                 _response.StatusCode = HttpStatusCode.NoContent;
-                return Ok(_response);
+                _response.Result = ServiceCategory;
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "ServiceCategory deleted";
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
     }

@@ -4,12 +4,13 @@ using AtoTax.API.Repository.Repos;
 using AtoTax.Domain.Entities;
 using AtoTaxAPI.Data;
 using Microsoft.AspNetCore.Mvc.Formatters;
-
+using System.Linq.Expressions;
 
 namespace AtoTax.API.GenericRepository
 {
     public class UnitOfWork : IUnitOfWork
     {
+        private bool _disposed;
         public IAddressTypeRepository AddressTypes { get; private set; }
         public IAmendmentRepository Amendments { get; private set; }
         public IAmendTypeRepository AmendTypes { get; private set; }
@@ -87,19 +88,19 @@ namespace AtoTax.API.GenericRepository
             _ClientFeeMapLogger = ClientFeeMapLogger;
             _EmpJobRoleLogger = EmpJobRoleLogger;
             _EmployeeLogger = EmployeeLogger;
-            _CollectionAndBalanceLogger= CollectionAndBalanceLogger;
+            _CollectionAndBalanceLogger = CollectionAndBalanceLogger;
             _GSTBillAndFeeCollectionLogger = GSTBillAndFeeCollectionLogger;
-            _GSTClientAddressExtensionLogger= GSTClientAddressExtensionLogger;
-            _AccountLedgerLogger= AccountLedgerLogger;
+            _GSTClientAddressExtensionLogger = GSTClientAddressExtensionLogger;
+            _AccountLedgerLogger = AccountLedgerLogger;
             _GSTClientLogger = GSTClientLogger;
-            _GSTFilingTypeLogger=   GSTFilingTypeLogger;
-            _GSTPaidDetailLogger= GSTPaidDetailLogger;
+            _GSTFilingTypeLogger = GSTFilingTypeLogger;
+            _GSTPaidDetailLogger = GSTPaidDetailLogger;
             _MultimediaTypeLogger = MultimediaTypeLogger;
-            _PaymentTypeLogger= PaymentTypeLogger;
-            _StatusLogger= StatusLogger;
+            _PaymentTypeLogger = PaymentTypeLogger;
+            _StatusLogger = StatusLogger;
             _ServiceCategoryLogger = ServiceCategoryLogger;
-            _UserLoggedActivityLogger= UserLoggedActivityLogger;
-            _ServiceChargeUpdateHistoryLogger= ServiceChargeUpdateHistoryLogger;
+            _UserLoggedActivityLogger = UserLoggedActivityLogger;
+            _ServiceChargeUpdateHistoryLogger = ServiceChargeUpdateHistoryLogger;
 
             AddressTypes = new AddressTypeRepository(_context, _AddressTypeLogger);
             Amendments = new AmendmentRepository(_context, _AmendmentLogger);
@@ -124,12 +125,27 @@ namespace AtoTax.API.GenericRepository
 
         public async Task CompleteAsync()
         {
-           // await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+
+            Dispose();
         }
 
         public void Dispose()
         {
-           _context.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _context.Dispose();
+                }
+            }
+            _disposed = true;
         }
     }
 }

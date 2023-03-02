@@ -60,7 +60,7 @@ namespace AtoTax.API.Controllers
                 _response.IsSuccess= false;
                 _response.ErrorMessages= new List<string>() { ex.ToString()};
             }
-            return _response;
+            return Ok(_response);
         }
 
         // GET: api/UserLoggedActivity/5
@@ -88,7 +88,7 @@ namespace AtoTax.API.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
            
         }
 
@@ -113,7 +113,7 @@ namespace AtoTax.API.Controllers
                 if (oldUserLoggedActivity == null)
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;
-                    return _response;
+                    return Ok(_response);
                 }
 
                 var UserLoggedActivity = _mapper.Map<UserLoggedActivity>(UserLoggedActivityUpdateDTO);
@@ -131,7 +131,7 @@ namespace AtoTax.API.Controllers
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.Result = ModelState;
-                    return _response;
+                    return Ok(_response);
                  }
 
                 await _unitOfWork.CompleteAsync();
@@ -144,7 +144,7 @@ namespace AtoTax.API.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // POST: api/UserLoggedActivity
@@ -162,7 +162,7 @@ namespace AtoTax.API.Controllers
                 //{
                 //    _response.ErrorMessages = new List<string>() { "UserLoggedActivity already Exists"};
                 //    _response.StatusCode = HttpStatusCode.BadRequest;
-                //    return _response;
+                //    return Ok(_response);
                 //}
                 var UserLoggedActivity = _mapper.Map<UserLoggedActivity>(UserLoggedActivityCreateDTO);
                 //UserLoggedActivity.CreatedDate= DateTime.UtcNow;
@@ -179,7 +179,7 @@ namespace AtoTax.API.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // DELETE: api/UserLoggedActivity/5
@@ -214,7 +214,7 @@ namespace AtoTax.API.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
     }

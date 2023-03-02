@@ -53,14 +53,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<EmployeeDTO>>(EmployeeList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
-                _response.IsSuccess= false;
-                _response.ErrorMessages= new List<string>() { ex.ToString()};
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -74,14 +79,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<ActiveEmployeesForDD>>(EmployeeList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
         // GET: api/Employee/5
         [HttpGet("{id}")]
@@ -102,14 +112,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<EmployeeDTO>(Employee);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
            
         }
 
@@ -120,12 +135,26 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> UpdateEmployee(Guid id, EmployeeUpdateDTO EmployeeUpdateDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.Result = EmployeeUpdateDTO;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { "Employee modelstate invalid" };
+                return Ok(_response);
+            }
+
             try
             {
                 if (id == Guid.Empty || !(id == EmployeeUpdateDTO.Id))
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = EmployeeUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "Update Employee failed" };
+                    return Ok(_response);
                 }
 
 
@@ -134,7 +163,11 @@ namespace AtoTax.API.Controllers
                 if (oldEmployee == null)
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;
-                    return _response;
+                    _response.Result = EmployeeUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "Employee data is Null" };
+                    return Ok(_response);
                 }
 
                 var Employee = _mapper.Map<Employee>(EmployeeUpdateDTO);
@@ -148,24 +181,23 @@ namespace AtoTax.API.Controllers
 
                 await _unitOfWork.Employees.UpdateAsync(Employee);
 
-                if (!ModelState.IsValid)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Result = ModelState;
-                    return _response;
-                 }
-
                 await _unitOfWork.CompleteAsync();
+
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = Employee;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "Employee updated";
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // POST: api/Employee
@@ -181,26 +213,36 @@ namespace AtoTax.API.Controllers
                                                 && u.LastName == EmployeeCreateDTO.LastName
                                                 && u.DOB == EmployeeCreateDTO.DOB) != null)
                 {
-                    _response.ErrorMessages = new List<string>() { "Employee already Exists"};
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return _response;
+                    _response.Result = EmployeeCreateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "Employee not found" };
+                    return Ok(_response);
                 }
                 var Employee = _mapper.Map<Employee>(EmployeeCreateDTO);
                 Employee.CreatedDate= DateTime.UtcNow;
                 await _unitOfWork.Employees.CreateAsync(Employee);
 
                 await _unitOfWork.CompleteAsync();
-                _response.Result = _mapper.Map<EmployeeDTO>(Employee);
+
                 _response.StatusCode = HttpStatusCode.Created;
+                _response.Result = _mapper.Map<EmployeeDTO>(Employee);
+                _response.IsSuccess = false;
+                _response.SuccessMessage = "New Employee created";
+                _response.ErrorMessages = null;
 
                 return CreatedAtAction("GetEmployee", new { id = Employee.Id }, _response);
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // DELETE: api/Employee/5
@@ -215,27 +257,42 @@ namespace AtoTax.API.Controllers
                 if (id == Guid.Empty)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "Employee Id not found" };
+                    return Ok(_response);
                 }
                 var Employee = await _unitOfWork.Employees.GetAsync(u => u.Id == id);
                 if (Employee == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    return NotFound(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "Employee not found" };
+                    return Ok(_response);
                 }
 
                 await _unitOfWork.Employees.RemoveAsync(Employee);
 
                 await _unitOfWork.CompleteAsync();
+
                 _response.StatusCode = HttpStatusCode.NoContent;
-                return Ok(_response);
+                _response.Result = Employee;
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "Employee deleted";
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
     }

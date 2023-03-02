@@ -62,7 +62,7 @@ namespace AtoTax.API.Controllers
                 _response.IsSuccess= false;
                 _response.ErrorMessages= new List<string>() { ex.ToString()};
             }
-            return _response;
+            return Ok(_response);
         }
 
         // GET: api/CollectionAndBalances/5
@@ -93,7 +93,7 @@ namespace AtoTax.API.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
            
         }
 
@@ -118,7 +118,7 @@ namespace AtoTax.API.Controllers
                 if (oldCollectionAndBalance == null)
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;
-                    return _response;
+                    return Ok(_response);
                 }
 
                 var CollectionAndBalance = _mapper.Map<CollectionAndBalance>(CollectionAndBalanceUpdateDTO);
@@ -129,7 +129,7 @@ namespace AtoTax.API.Controllers
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.Result = ModelState;
-                    return _response;
+                    return Ok(_response);
                  }
 
                 await _unitOfWork.CompleteAsync();
@@ -142,7 +142,7 @@ namespace AtoTax.API.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // POST: api/CollectionAndBalances
@@ -157,7 +157,7 @@ namespace AtoTax.API.Controllers
                 //if (await _dbCollectionAndBalance.GetAsync(u => u.FilingType == CollectionAndBalanceCreateDTO.FilingType) != null)
                 //{
                 //    _response.StatusCode = HttpStatusCode.BadRequest;
-                //    return _response;
+                //    return Ok(_response);
                 //}
 
                 var CollectionAndBalance = _mapper.Map<CollectionAndBalance>(CollectionAndBalanceCreateDTO);
@@ -176,7 +176,7 @@ namespace AtoTax.API.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // DELETE: api/CollectionAndBalances/5
@@ -211,7 +211,7 @@ namespace AtoTax.API.Controllers
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
     }

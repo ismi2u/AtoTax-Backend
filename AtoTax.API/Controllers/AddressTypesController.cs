@@ -15,6 +15,7 @@ using AtoTax.API.GenericRepository;
 using System.ComponentModel;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
+using Azure;
 
 namespace AtoTax.API.Controllers
 {
@@ -53,14 +54,20 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<AddressTypeDTO>>(AddressTypesList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
+               
             }
             catch (Exception ex)
             {
-                _response.IsSuccess= false;
-                _response.ErrorMessages= new List<string>() { ex.ToString()};
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // GET: api/GetActiveAddressTypesForDD
@@ -75,14 +82,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<ActiveAddressTypeForDD>>(AddressTypesList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // GET: api/AddressTypes/5
@@ -103,14 +115,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<AddressTypeDTO>(AddressType);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.Result = null;
+                _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
+                _response.SuccessMessage = null;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
            
         }
 
@@ -121,12 +138,27 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> UpdateAddressType(int id, AddressTypeUpdateDTO AddressTypeUpdateDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.Result = AddressTypeUpdateDTO;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { "AddressType modelstate invalid" };
+                return Ok(_response);
+            }
+
             try
             {
                 if (id == 0 || !(id == AddressTypeUpdateDTO.Id))
                 {
+                    
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = AddressTypeUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "Update AddressType failed" };
+                    return Ok(_response);
                 }
 
 
@@ -135,7 +167,11 @@ namespace AtoTax.API.Controllers
                 if (oldAddressType == null)
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;
-                    return _response;
+                    _response.Result = AddressTypeUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "AddressType data is Null" };
+                    return Ok(_response);
                 }
 
                 var AddressType = _mapper.Map<AddressType>(AddressTypeUpdateDTO);
@@ -146,26 +182,26 @@ namespace AtoTax.API.Controllers
                 //// dont update the below field as they are not part of updateDTO  and hence will become null
                 AddressType.CreatedDate = oldAddressType.CreatedDate;
 
-                await _unitOfWork.AddressTypes.UpdateAsync(AddressType);
-
-                if (!ModelState.IsValid)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Result = ModelState;
-                    return _response;
-                 }
+               AddressType addressType =  await _unitOfWork.AddressTypes.UpdateAsync(AddressType);
 
                 await _unitOfWork.CompleteAsync();
+
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = AddressType;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "AddressType updated";
+                _response.ErrorMessages = null;
+              
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // POST: api/AddressTypes
@@ -180,7 +216,11 @@ namespace AtoTax.API.Controllers
                 if (await _unitOfWork.AddressTypes.GetAsync(u => u.AddressTypeName == AddressTypeCreateDTO.AddressTypeName) != null)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return _response;
+                    _response.Result = AddressTypeCreateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "AddressType not found" };
+                    return Ok(_response);
                 }
                
                 var AddressType = _mapper.Map<AddressType>(AddressTypeCreateDTO);
@@ -188,20 +228,24 @@ namespace AtoTax.API.Controllers
                 await _unitOfWork.AddressTypes.CreateAsync(AddressType);
 
                 await _unitOfWork.CompleteAsync();
+
                 _response.StatusCode = HttpStatusCode.Created;
-                _response.IsSuccess = true;
-                _response.SuccessMessage = "New Address type created";
                 _response.Result = _mapper.Map<AddressTypeDTO>(AddressType);
-
-
+                _response.IsSuccess = false;
+                _response.SuccessMessage = "New Address type created";
+                _response.ErrorMessages = null;
+ 
                 return CreatedAtAction("GetAddressType", new { id = AddressType.Id }, _response);
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // DELETE: api/AddressTypes/5
@@ -215,31 +259,47 @@ namespace AtoTax.API.Controllers
             {
                 if (id == 0)
                 {
+
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "AddressType Id not found" };
+                    return Ok(_response);
+                   
                 }
                 var AddressType = await _unitOfWork.AddressTypes.GetAsync(u => u.Id == id);
                 if (AddressType == null)
                 {
+
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    return NotFound(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "AddressType not found" };
+                    return Ok(_response);
                 }
 
                 await _unitOfWork.AddressTypes.RemoveAsync(AddressType);
 
                 await _unitOfWork.CompleteAsync();
-                _response.StatusCode = HttpStatusCode.NoContent;
-                _response.IsSuccess = true;
-                _response.SuccessMessage = "Address type deleted";
 
-                return Ok(_response);
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = AddressType;
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "AddressType deleted";
+                _response.ErrorMessages = null;
+
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
     }

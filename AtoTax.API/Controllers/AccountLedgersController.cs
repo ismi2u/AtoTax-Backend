@@ -54,14 +54,15 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<AccountLedgerDTO>>(AccountLedgerList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess= false;
                 _response.ErrorMessages= new List<string>() { ex.ToString()};
             }
-            return _response;
+            return Ok(_response);
         }
 
         // GET: api/AccountLedger/5
@@ -84,15 +85,16 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<AccountLedgerDTO>(AccountLedger);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
-           
+            return Ok(_response);
+
         }
 
 
@@ -111,20 +113,21 @@ namespace AtoTax.API.Controllers
 
                 await _unitOfWork.CompleteAsync();
                 _response.Result = _mapper.Map<AccountLedgerDTO>(AccountLedger);
-
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.IsSuccess = true;
-                _response.SuccessMessage = "Ledger entry success";
-
+                _response.SuccessMessage = "Account Ledger data entered successfully";
+                _response.ErrorMessages =null;
 
                 return CreatedAtAction("GetAccountLedger", new { id = AccountLedger.Id }, _response);
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
+                _response.SuccessMessage = null;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
     }
 }

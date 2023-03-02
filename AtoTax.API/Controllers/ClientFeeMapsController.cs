@@ -53,14 +53,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<ClientFeeMapDTO>>(ClientFeeMapsList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // GET: api/ClientFeeMaps/5
@@ -82,14 +87,20 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<ClientFeeMapDTO>(ClientFeeMap);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
+
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
 
         }
 
@@ -100,13 +111,27 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> UpdateClientFeeMap(Guid id, ClientFeeMapUpdateDTO ClientFeeMapUpdateDTO)
         {
+
+            if (!ModelState.IsValid)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.Result = ClientFeeMapUpdateDTO;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { "ClientFeeMap modelstate invalid" };
+                return Ok(_response);
+            }
+
             try
             {
                 if (id == Guid.Empty || !(id == ClientFeeMapUpdateDTO.Id) || ClientFeeMapUpdateDTO.GSTClientId == Guid.Empty || ClientFeeMapUpdateDTO.ServiceCategoryId == 0)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErrorMessages = new List<string>() { "Data error! Check Update data."};
-                    return BadRequest(_response);
+                    _response.Result = ClientFeeMapUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "Update ClientFeeMap failed" };
+                    return Ok(_response);
                 }
 
 
@@ -115,7 +140,11 @@ namespace AtoTax.API.Controllers
                 if (oldClientFeeMap == null)
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;
-                    return _response;
+                    _response.Result = ClientFeeMapUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "ClientFeeMap data is Null" };
+                    return Ok(_response);
                 }
 
                 var ClientFeeMap = _mapper.Map<ClientFeeMap>(ClientFeeMapUpdateDTO);
@@ -131,96 +160,27 @@ namespace AtoTax.API.Controllers
                 serviceChargeUpdateHistory.NewRate = ClientFeeMapUpdateDTO.DefaultCharge;
 
                 await _unitOfWork.ServiceChargeUpdateHistories.CreateAsync(serviceChargeUpdateHistory);
-                _response.StatusCode = HttpStatusCode.Created;
-
-                if (!ModelState.IsValid)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Result = ModelState;
-                    return _response;
-                }
 
                 await _unitOfWork.CompleteAsync();
+
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = ClientFeeMap;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "ClientFeeMap updated";
+                _response.ErrorMessages = null;
+
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
-        //// POST: api/ClientFeeMaps
-        //[HttpPost]
-        //[ProducesResponseType(StatusCodes.Status201Created)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //public async Task<ActionResult<APIResponse>> CreateClientFeeMap(ClientFeeMapCreateDTO ClientFeeMapCreateDTO)
-        //{
-        //    try
-        //    {
-
-        //        if (await _unitOfWork.ClientFeeMaps.GetAsync(u => u.GSTClientId == ClientFeeMapCreateDTO.GSTClientId) != null)
-        //        {
-        //            _response.ErrorMessages = new List<string>() { "Client Fee Charge already Exists" };
-        //            _response.StatusCode = HttpStatusCode.BadRequest;
-        //            return _response;
-        //        }
-        //        var ClientFeeMap = _mapper.Map<ClientFeeMap>(ClientFeeMapCreateDTO);
-        //        ClientFeeMap.CreatedDate = DateTime.UtcNow;
-        //        await _unitOfWork.ClientFeeMaps.CreateAsync(ClientFeeMap);
-
-
-        //        await _unitOfWork.CompleteAsync();
-        //        _response.Result = _mapper.Map<ClientFeeMapDTO>(ClientFeeMap);
-        //        _response.StatusCode = HttpStatusCode.Created;
-
-        //        return CreatedAtAction("GetClientFeeMap", new { id = ClientFeeMap.Id }, _response);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _response.IsSuccess = false;
-        //        _response.ErrorMessages = new List<string>() { ex.ToString() };
-        //    }
-        //    return _response;
-        //}
-
-        //// DELETE: api/ClientFeeMaps/5
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //[HttpDelete("{id}")]
-        //public async Task<ActionResult<APIResponse>> DeleteClientFeeMap(Guid id)
-        //{
-        //    try
-        //    {
-        //        if (id == Guid.Empty)
-        //        {
-        //            _response.StatusCode = HttpStatusCode.BadRequest;
-        //            return BadRequest(_response);
-        //        }
-        //        var ClientFeeMap = await _unitOfWork.ClientFeeMaps.GetAsync(u => u.Id == id);
-        //        if (ClientFeeMap == null)
-        //        {
-        //            _response.StatusCode = HttpStatusCode.NotFound;
-        //            return NotFound(_response);
-        //        }
-
-        //        await _unitOfWork.ClientFeeMaps.RemoveAsync(ClientFeeMap);
-
-        //        await _unitOfWork.CompleteAsync();
-        //        _response.StatusCode = HttpStatusCode.NoContent;
-        //        return Ok(_response);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _response.IsSuccess = false;
-        //        _response.ErrorMessages = new List<string>() { ex.ToString() };
-        //    }
-        //    return _response;
-        //}
-
+        
     }
 }

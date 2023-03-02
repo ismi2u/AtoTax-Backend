@@ -55,14 +55,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<GSTPaidDetailDTO>>(GSTPaidDetailsList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
-                _response.IsSuccess= false;
-                _response.ErrorMessages= new List<string>() { ex.ToString()};
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // GET: api/GSTPaidDetails/5
@@ -86,14 +91,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<GSTPaidDetailDTO>(GSTPaidDetail);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
            
         }
 
@@ -104,6 +114,16 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> UpdateGSTPaidDetail(Guid id, GSTPaidDetailUpdateDTO GSTPaidDetailUpdateDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.Result = GSTPaidDetailUpdateDTO;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { "GSTPaidDetail modelstate invalid" };
+                return Ok(_response);
+            }
+
             try
             {
                 if (id == Guid.Empty || !(id == GSTPaidDetailUpdateDTO.Id))
@@ -118,7 +138,11 @@ namespace AtoTax.API.Controllers
                 if (oldGSTPaidDetail == null)
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;
-                    return _response;
+                    _response.Result = GSTPaidDetailUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "GSTPaidDetail data is Null" };
+                    return Ok(_response);
                 }
 
                 var GSTPaidDetail = _mapper.Map<GSTPaidDetail>(GSTPaidDetailUpdateDTO);
@@ -129,7 +153,7 @@ namespace AtoTax.API.Controllers
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.Result = ModelState;
-                    return _response;
+                    return Ok(_response);
                  }
 
                 await _unitOfWork.CompleteAsync();
@@ -139,10 +163,13 @@ namespace AtoTax.API.Controllers
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // POST: api/GSTPaidDetails
@@ -157,7 +184,7 @@ namespace AtoTax.API.Controllers
                 //if (await _dbGSTPaidDetail.GetAsync(u => u.FilingType == GSTPaidDetailCreateDTO.FilingType) != null)
                 //{
                 //    _response.StatusCode = HttpStatusCode.BadRequest;
-                //    return _response;
+                //    return Ok(_response);
                 //}
 
                 var GSTPaidDetail = _mapper.Map<GSTPaidDetail>(GSTPaidDetailCreateDTO);
@@ -165,17 +192,24 @@ namespace AtoTax.API.Controllers
                 await _unitOfWork.GSTPaidDetails.CreateAsync(GSTPaidDetail);
 
                 await _unitOfWork.CompleteAsync();
+
                 _response.Result = _mapper.Map<GSTPaidDetailDTO>(GSTPaidDetail);
                 _response.StatusCode = HttpStatusCode.Created;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = "New Address type created";
+                _response.ErrorMessages = null;
 
                 return CreatedAtAction("GetGSTPaidDetail", new { id = GSTPaidDetail.Id }, _response);
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // DELETE: api/GSTPaidDetails/5
@@ -190,27 +224,42 @@ namespace AtoTax.API.Controllers
                 if (id == Guid.Empty)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "GSTPaidDetail Id not found" };
+                    return Ok(_response);
                 }
                 var GSTPaidDetail = await _unitOfWork.GSTPaidDetails.GetAsync(u => u.Id == id);
                 if (GSTPaidDetail == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    return NotFound(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "GSTPaidDetail not found" };
+                    return Ok(_response);
                 }
 
                 await _unitOfWork.GSTPaidDetails.RemoveAsync(GSTPaidDetail);
 
                 await _unitOfWork.CompleteAsync();
+
                 _response.StatusCode = HttpStatusCode.NoContent;
-                return Ok(_response);
+                _response.Result = GSTPaidDetail;
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "GSTPaidDetail deleted";
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
     }

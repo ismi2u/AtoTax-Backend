@@ -52,14 +52,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<IEnumerable<GSTBillAndFeeCollectionDTO>>(GSTBillAndFeeCollectionList);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
-                _response.IsSuccess= false;
-                _response.ErrorMessages= new List<string>() { ex.ToString()};
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // GET: api/GSTBillAndFeeCollection/5
@@ -80,14 +85,19 @@ namespace AtoTax.API.Controllers
 
                 _response.Result = _mapper.Map<GSTBillAndFeeCollectionDTO>(GSTBillAndFeeCollection);
                 _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
            
         }
 
@@ -98,12 +108,26 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> UpdateGSTBillAndFeeCollection(Guid id, GSTBillAndFeeCollectionUpdateDTO GSTBillAndFeeCollectionUpdateDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.Result = GSTBillAndFeeCollectionUpdateDTO;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { "GSTBillAndFeeCollection modelstate invalid" };
+                return Ok(_response);
+            }
+
             try
             {
                 if (id == Guid.Empty || !(id == GSTBillAndFeeCollectionUpdateDTO.Id))
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = GSTBillAndFeeCollectionUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "Update GSTBillAndFeeCollection failed" };
+                    return Ok(_response);
                 }
 
 
@@ -112,7 +136,11 @@ namespace AtoTax.API.Controllers
                 if (oldGSTBillAndFeeCollection == null)
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;
-                    return _response;
+                    _response.Result = GSTBillAndFeeCollectionUpdateDTO;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "GSTBillAndFeeCollection data is Null" };
+                    return Ok(_response);
                 }
 
                 var GSTBillAndFeeCollection = _mapper.Map<GSTBillAndFeeCollection>(GSTBillAndFeeCollectionUpdateDTO);
@@ -125,24 +153,23 @@ namespace AtoTax.API.Controllers
 
                 await _unitOfWork.GSTBillAndFeeCollections.UpdateAsync(GSTBillAndFeeCollection);
 
-                if (!ModelState.IsValid)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Result = ModelState;
-                    return _response;
-                 }
-
                 await _unitOfWork.CompleteAsync();
+
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = GSTBillAndFeeCollection;
-                return Ok(_response);
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "GSTBillAndFeeCollection updated";
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
         // POST: api/GSTBillAndFeeCollection
@@ -157,7 +184,7 @@ namespace AtoTax.API.Controllers
                 //if (await _dbGSTBillAndFeeCollection.GetAsync(u => u.FilingType == GSTBillAndFeeCollectionCreateDTO.FilingType) != null)
                 //{
                 //    _response.StatusCode = HttpStatusCode.BadRequest;
-                //    return _response;
+                //    return Ok(_response);
                 //}
 
                 var GSTBillAndFeeCollection = _mapper.Map<GSTBillAndFeeCollection>(GSTBillAndFeeCollectionCreateDTO);
@@ -165,77 +192,27 @@ namespace AtoTax.API.Controllers
                 await _unitOfWork.GSTBillAndFeeCollections.CreateAsync(GSTBillAndFeeCollection);
 
                 await _unitOfWork.CompleteAsync();
-                _response.Result = _mapper.Map<GSTBillAndFeeCollectionDTO>(GSTBillAndFeeCollection);
+
                 _response.StatusCode = HttpStatusCode.Created;
+                _response.Result = _mapper.Map<GSTBillAndFeeCollectionDTO>(GSTBillAndFeeCollection);
+                _response.IsSuccess = false;
+                _response.SuccessMessage = "New GSTBillAndFeeCollection created";
+                _response.ErrorMessages = null;
 
                 return CreatedAtAction("GetGSTBillAndFeeCollection", new { id = GSTBillAndFeeCollection.Id }, _response);
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
 
-        //// POST: api/GSTBillAndFeeCollection
-        //[HttpPost]
-        //[ProducesResponseType(StatusCodes.Status201Created)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //public async Task<ActionResult<APIResponse>> AutoPopulateGSTBillAndFeeCollectionTable(string month, int year)
-        //{
-        //    try
-        //    {
-        //        var listGstClients = await _unitOfWork.GSTClients.GetAllAsync(u=> u.StatusId==(int)EStatus.active);
-
-        //        GSTBillAndFeeCollectionCreateDTO gstBillAndFeeCollectionCreateDTO = new GSTBillAndFeeCollectionCreateDTO();
-        //        CollectionAndBalance collectionAndBalance = new CollectionAndBalance();
-
-        //        foreach (var gstclient in listGstClients)
-        //        {
-        //            var gstBillAndFeeItem = await _unitOfWork.GSTBillAndFeeCollections.GetAllAsync(u => u.GSTClientId == gstclient.Id && u.DueMonth == month && u.DueYear == year);
-        //            if (gstBillAndFeeItem != null)
-        //            {
-        //                continue;
-        //            }
-        //            else
-        //            { 
-        //                gstBillAndFeeCollectionCreateDTO.GSTClientID = gstclient.Id;
-        //                gstBillAndFeeCollectionCreateDTO.DueMonth = month;
-        //                gstBillAndFeeCollectionCreateDTO.DueYear = year;
-
-
-        //                //collection and Balance Table record
-        //                collectionAndBalance.GSTClientId = gstclient.Id;
-        //                collectionAndBalance.DueMonth = month;
-        //                collectionAndBalance.DueYear = year;
-
-        //                var clientFeeMap = await _unitOfWork.ClientFeeMaps.GetAllAsync(c => c.ServiceCategoryId == 1 && c.GSTClientId == gstclient.Id);
-        //                collectionAndBalance.FeesAmount = clientFeeMap.FirstOrDefault().DefaultCharge;
-
-
-        //            }
-        //         }
-                 
-
-        //        var GSTBillAndFeeCollection = _mapper.Map<GSTBillAndFeeCollection>(gstBillAndFeeCollectionCreateDTO);
-        //        //GSTBillAndFeeCollection.CreatedDate= DateTime.UtcNow;
-        //        await _unitOfWork.GSTBillAndFeeCollections.CreateAsync(GSTBillAndFeeCollection);
-
-        //        await _unitOfWork.CompleteAsync();
-        //        _response.Result = _mapper.Map<GSTBillAndFeeCollectionDTO>(GSTBillAndFeeCollection);
-        //        _response.StatusCode = HttpStatusCode.Created;
-
-        //        return CreatedAtAction("GetGSTBillAndFeeCollection", new { id = GSTBillAndFeeCollection.Id }, _response);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _response.IsSuccess = false;
-        //        _response.ErrorMessages = new List<string>() { ex.ToString() };
-        //    }
-        //    return _response;
-        //}
 
         // DELETE: api/GSTBillAndFeeCollection/5
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -249,27 +226,42 @@ namespace AtoTax.API.Controllers
                 if (id == Guid.Empty)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "GSTBillAndFeeCollection Id not found" };
+                    return Ok(_response);
                 }
                 var GSTBillAndFeeCollection = await _unitOfWork.GSTBillAndFeeCollections.GetAsync(u => u.Id == id);
                 if (GSTBillAndFeeCollection == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    return NotFound(_response);
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "GSTBillAndFeeCollection not found" };
+                    return Ok(_response);
                 }
 
                 await _unitOfWork.GSTBillAndFeeCollections.RemoveAsync(GSTBillAndFeeCollection);
 
                 await _unitOfWork.CompleteAsync();
+
                 _response.StatusCode = HttpStatusCode.NoContent;
-                return Ok(_response);
+                _response.Result = GSTBillAndFeeCollection;
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "GSTBillAndFeeCollection deleted";
+                _response.ErrorMessages = null;
             }
             catch (Exception ex)
             {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
-            return _response;
+            return Ok(_response);
         }
 
     }
