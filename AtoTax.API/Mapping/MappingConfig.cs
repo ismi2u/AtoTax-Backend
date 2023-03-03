@@ -62,6 +62,7 @@ namespace AtoTax.API.Mapping
             CreateMap<PaymentTypeUpdateDTO, PaymentType>()
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
             CreateMap<PaymentType, ActivePaymentTypeForDD>();
+                
 
             //EmpJobRoles
             CreateMap<EmpJobRole, EmpJobRoleDTO>().ReverseMap();

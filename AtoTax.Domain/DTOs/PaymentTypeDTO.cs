@@ -22,7 +22,7 @@ namespace AtoTax.Domain.DTOs
     public class ActivePaymentTypeForDD
     {
         public int Id { get; set; }
-        public string? PaymentType { get; set; }
+        public string PaymentMethod { get; set; }
     }
 
     public class PaymentTypeCreateDTO

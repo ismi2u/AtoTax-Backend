@@ -72,6 +72,7 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> GetActivePaymentTypesForDD()
         {
+
             try
             {
                 IEnumerable<PaymentType> PaymentTypesList = await _unitOfWork.PaymentTypes.GetAllAsync(a => a.StatusId == (int)EStatus.active, 0, 0);
