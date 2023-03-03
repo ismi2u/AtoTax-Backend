@@ -681,12 +681,21 @@ namespace AtoTax.API.Repository.Repos
 
                 if (!result.Succeeded)
                 {
+
+                    _response.Result = roleRemoval;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.StatusCode = HttpStatusCode.NoContent;
                     _response.ErrorMessages.Add("Role : " + role.Name + " Assignment failed");
                   
                 }
                 else
                 {
-                    _response.ErrorMessages.Add("Role : "  + role.Name + " Assigned Successfully");
+                    _response.Result = roleRemoval;
+                    _response.IsSuccess = true;
+                    _response.ErrorMessages = null;
+                    _response.StatusCode = HttpStatusCode.OK;
+                    _response.SuccessMessage = _response.SuccessMessage == null ? "Role : " + role.Name + " Assigned Successfully" : _response.SuccessMessage + " ,  Role : " + role.Name + " Assigned Successfully";
                 }
             }
 

@@ -123,11 +123,6 @@ namespace AtoTax.API.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateUser(string id, UpdateUserDTO model)
         {
-            if(id != model.Id)
-            {
-                return BadRequest();
-            }
-
             return Ok(await _userRepository.UpdateUser(model));
         }
 
