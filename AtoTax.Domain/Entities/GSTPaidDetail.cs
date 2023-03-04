@@ -16,7 +16,7 @@ namespace AtoTax.Domain.Entities
         [Required]
         public string? PaymentDueMonth { get; set; }
         [Required]
-        public sbyte PaymentDueYear { get; set; }
+        public int PaymentDueYear { get; set; }
         [Required]
         public double Amount { get; set; }
 
