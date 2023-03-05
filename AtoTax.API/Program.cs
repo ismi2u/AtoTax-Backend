@@ -33,6 +33,8 @@ var _loggerconf = new LoggerConfiguration().ReadFrom.Configuration(builder.Confi
     //.MinimumLevel.Information()
     //.WriteTo.File("AtoTax-.log", rollingInterval: RollingInterval.Day)
     .CreateLogger();
+//"Domain": "atocashuat.tk"
+//"Domain": "localhost:3000"
 
 
 builder.Services.AddHangfire(c => c.UseMemoryStorage());

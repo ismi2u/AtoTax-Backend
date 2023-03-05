@@ -191,7 +191,7 @@ namespace AtoTax.API.Mapping
             //GSTPaidDetail
             CreateMap<GSTPaidDetail, GSTPaidDetailDTO>().ReverseMap();
             CreateMap<GSTPaidDetailCreateDTO, GSTPaidDetail>().ReverseMap();
-
+            CreateMap<GSTPaidDetailUpdateDTO, GSTPaidDetail>().ReverseMap();
 
             //UserLoggedActivity
             CreateMap<UserLoggedActivity, UserLoggedActivityDTO>().ReverseMap();

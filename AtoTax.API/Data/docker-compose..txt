@@ -24,3 +24,21 @@ services:
 networks:
     mynetwork:
         driver: bridge
+
+
+docker inspect -f '{{range $key, $value := .NetworkSettings.Networks}}{{$key}} {{end}}' appserver
+
+
+docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' appserver
+
+172.29.0.2 appserver
+172.29.0.3 react
+
+
+docker container exec -it appserver bash
+
+
+docker exec reactapp ping appserver -c2
+
+
+docker inspect -f '{{index .Options "com.docker.network.bridge.enable_icc"}}' atotax_mynetwork
