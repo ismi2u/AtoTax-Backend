@@ -9,8 +9,6 @@ namespace AtoTax.API.GenericRepository
         IAmendTypeRepository AmendTypes { get; }
 
         IClientFeeMapRepository ClientFeeMaps { get; }
-        IEmpJobRoleRepository EmpJobRoles { get; }
-        IEmployeeRepository Employees { get; }
         ICollectionAndBalanceRepository CollectionAndBalances { get; }
         IGSTBillAndFeeCollectionRepository GSTBillAndFeeCollections { get; }
         IGSTClientAddressExtensionRepository GSTClientAddressExtensions { get; }

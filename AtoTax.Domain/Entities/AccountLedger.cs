@@ -14,10 +14,8 @@ namespace AtoTax.Domain.Entities
         public Guid? GSTClientId { get; set; }
         public virtual GSTClient GSTClient { get; set; }
 
-        [Required]
-        [ForeignKey("DataEntryEmployee")]
-        public int DataEntryEmployee { get; set; }
-        public virtual Employee Employee { get; set; }
+
+        public string User { get; set; }
 
         [Required]
         public DateTime Date { get; set; }

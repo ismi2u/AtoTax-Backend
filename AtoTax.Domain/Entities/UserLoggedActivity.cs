@@ -14,9 +14,7 @@ namespace AtoTax.Domain.Entities
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
-        [ForeignKey("Employee")]
-        public Guid EmployeeId { get; set; }
-        public virtual Employee Employee { get; set; }
+        public string User { get; set; }
         public string Activity { get; set; }
 
         public string AdditionalDetails { get; set; }

@@ -77,8 +77,6 @@ builder.Services.AddScoped<IServiceChargeUpdateHistoryRepository, ServiceChargeU
 builder.Services.AddScoped<IUserLoggedActivityRepository, UserLoggedActivityRepository>();
 builder.Services.AddScoped<IPaymentTypeRepository, PaymentTypeRepository>();
 
-builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-builder.Services.AddScoped<IEmpJobRoleRepository, EmpJobRoleRepository>();
 builder.Services.AddScoped<IAmendTypeRepository, AmendTypeRepository>();
 builder.Services.AddScoped<IAmendmentRepository, AmendmentRepository>();
 builder.Services.AddScoped<IClientFeeMapRepository, ClientFeeMapRepository>();

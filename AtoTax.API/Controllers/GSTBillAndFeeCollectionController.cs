@@ -22,7 +22,7 @@ namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    [Authorize(Roles="User")]
+    //[Authorize(Roles="User")]
     public class GSTBillAndFeeCollectionController : ControllerBase
     {
         protected APIResponse _response;
@@ -154,9 +154,8 @@ namespace AtoTax.API.Controllers
 
                 //// dont update the FilingType number which is the Identity of the FilingType
                 string loggedUserName = User.Identity.Name;
-                var loggedUserEmpId = _userManager.FindByNameAsync(loggedUserName).Result.EmployeeId;
                 
-                GSTBillAndFeeCollection.FiledBy = loggedUserEmpId;
+                GSTBillAndFeeCollection.FiledBy = loggedUserName;
                 GSTBillAndFeeCollection.ReceivedBy = oldGSTBillAndFeeCollection.ReceivedBy;
                 GSTBillAndFeeCollection.ReceivedDate = oldGSTBillAndFeeCollection.ReceivedDate;
                 GSTBillAndFeeCollection.FiledDate = oldGSTBillAndFeeCollection.ReceivedDate;
@@ -194,21 +193,13 @@ namespace AtoTax.API.Controllers
         public async Task<ActionResult<APIResponse>> CreateGSTBillAndFeeCollection(GSTBillAndFeeCollectionCreateDTO GSTBillAndFeeCollectionCreateDTO)
         {
             string loggedUserName = User.Identity.Name;
-            var loggedUserEmpId = _userManager.FindByNameAsync(loggedUserName).Result.EmployeeId;
-            GSTBillAndFeeCollectionCreateDTO.ReceivedBy = loggedUserEmpId;
 
 
             try
             {
-
-                //if (await _dbGSTBillAndFeeCollection.GetAsync(u => u.FilingType == GSTBillAndFeeCollectionCreateDTO.FilingType) != null)
-                //{
-                //    _response.StatusCode = HttpStatusCode.BadRequest;
-                //    return Ok(_response);
-                //}
-
                 var GSTBillAndFeeCollection = _mapper.Map<GSTBillAndFeeCollection>(GSTBillAndFeeCollectionCreateDTO);
-                //GSTBillAndFeeCollection.CreatedDate= DateTime.UtcNow;
+                GSTBillAndFeeCollection.ReceivedBy = loggedUserName;
+
                 await _unitOfWork.GSTBillAndFeeCollections.CreateAsync(GSTBillAndFeeCollection);
 
                 await _unitOfWork.CompleteAsync();

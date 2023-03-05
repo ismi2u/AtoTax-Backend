@@ -46,8 +46,9 @@ namespace AtoTax.API.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
-                    EmployeeId = table.Column<Guid>(type: "uuid", nullable: true),
                     Name = table.Column<string>(type: "text", nullable: true),
+                    DOB = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DOJ = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -79,6 +80,21 @@ namespace AtoTax.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Status", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserLoggedActivities",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    User = table.Column<string>(type: "text", nullable: false),
+                    Activity = table.Column<string>(type: "text", nullable: false),
+                    AdditionalDetails = table.Column<string>(type: "text", nullable: false),
+                    loggedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserLoggedActivities", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -233,29 +249,6 @@ namespace AtoTax.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EmpJobRoles",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    JobRole = table.Column<string>(type: "text", nullable: false),
-                    JobDescription = table.Column<string>(type: "text", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    StatusId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EmpJobRoles", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_EmpJobRoles_Status_StatusId",
-                        column: x => x.StatusId,
-                        principalTable: "Status",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "GSTClients",
                 columns: table => new
                 {
@@ -388,39 +381,6 @@ namespace AtoTax.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Employees",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    FirstName = table.Column<string>(type: "text", nullable: false),
-                    LastName = table.Column<string>(type: "text", nullable: false),
-                    DOB = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DOJ = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    ConcactNo = table.Column<string>(type: "text", nullable: true),
-                    EmpJobRoleId = table.Column<int>(type: "integer", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    StatusId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Employees", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Employees_EmpJobRoles_EmpJobRoleId",
-                        column: x => x.EmpJobRoleId,
-                        principalTable: "EmpJobRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Employees_Status_StatusId",
-                        column: x => x.StatusId,
-                        principalTable: "Status",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Amendments",
                 columns: table => new
                 {
@@ -524,6 +484,36 @@ namespace AtoTax.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AccountLedgers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    GSTClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    User = table.Column<string>(type: "text", nullable: false),
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IncomingAmount = table.Column<double>(type: "double precision", nullable: true),
+                    ExpenseAmount = table.Column<double>(type: "double precision", nullable: true),
+                    PaymentTypeId = table.Column<int>(type: "integer", nullable: false),
+                    Comments = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AccountLedgers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AccountLedgers_GSTClients_GSTClientId",
+                        column: x => x.GSTClientId,
+                        principalTable: "GSTClients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AccountLedgers_PaymentTypes_PaymentTypeId",
+                        column: x => x.PaymentTypeId,
+                        principalTable: "PaymentTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ClientFeeMaps",
                 columns: table => new
                 {
@@ -545,6 +535,54 @@ namespace AtoTax.API.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ClientFeeMaps_ServiceCategories_ServiceCategoryId",
+                        column: x => x.ServiceCategoryId,
+                        principalTable: "ServiceCategories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GSTBillAndFeeCollections",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    GSTClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    DueMonth = table.Column<string>(type: "text", nullable: false),
+                    DueYear = table.Column<int>(type: "integer", nullable: false),
+                    ServiceCategoryId = table.Column<int>(type: "integer", nullable: false),
+                    GSTFilingTypeId = table.Column<int>(type: "integer", nullable: false),
+                    ReceivedBy = table.Column<string>(type: "text", nullable: false),
+                    ReceivedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    MultimediaTypeId = table.Column<int>(type: "integer", nullable: false),
+                    FiledBy = table.Column<string>(type: "text", nullable: false),
+                    FiledDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsBillsReceived = table.Column<bool>(type: "boolean", nullable: true),
+                    IsFiled = table.Column<bool>(type: "boolean", nullable: true),
+                    FeesAmount = table.Column<double>(type: "double precision", nullable: true),
+                    FeesPaidAmt = table.Column<double>(type: "double precision", nullable: true),
+                    Balance = table.Column<double>(type: "double precision", nullable: true),
+                    ReceivedAckEmailSent = table.Column<bool>(type: "boolean", nullable: true),
+                    GSTFiledAckEmailSent = table.Column<bool>(type: "boolean", nullable: true),
+                    ReceivedAckSMSSent = table.Column<bool>(type: "boolean", nullable: true),
+                    GSTFiledAckSMSSent = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GSTBillAndFeeCollections", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GSTBillAndFeeCollections_GSTClients_GSTClientId",
+                        column: x => x.GSTClientId,
+                        principalTable: "GSTClients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GSTBillAndFeeCollections_GSTFilingTypes_GSTFilingTypeId",
+                        column: x => x.GSTFilingTypeId,
+                        principalTable: "GSTFilingTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GSTBillAndFeeCollections_ServiceCategories_ServiceCategoryId",
                         column: x => x.ServiceCategoryId,
                         principalTable: "ServiceCategories",
                         principalColumn: "Id",
@@ -616,126 +654,6 @@ namespace AtoTax.API.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "AccountLedgers",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    GSTClientId = table.Column<Guid>(type: "uuid", nullable: false),
-                    DataEntryEmployee = table.Column<int>(type: "integer", nullable: false),
-                    EmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    IncomingAmount = table.Column<double>(type: "double precision", nullable: true),
-                    ExpenseAmount = table.Column<double>(type: "double precision", nullable: true),
-                    PaymentTypeId = table.Column<int>(type: "integer", nullable: false),
-                    Comments = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AccountLedgers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AccountLedgers_Employees_EmployeeId",
-                        column: x => x.EmployeeId,
-                        principalTable: "Employees",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AccountLedgers_GSTClients_GSTClientId",
-                        column: x => x.GSTClientId,
-                        principalTable: "GSTClients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AccountLedgers_PaymentTypes_PaymentTypeId",
-                        column: x => x.PaymentTypeId,
-                        principalTable: "PaymentTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "GSTBillAndFeeCollections",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    GSTClientId = table.Column<Guid>(type: "uuid", nullable: false),
-                    DueMonth = table.Column<string>(type: "text", nullable: false),
-                    DueYear = table.Column<int>(type: "integer", nullable: false),
-                    ServiceCategoryId = table.Column<int>(type: "integer", nullable: false),
-                    GSTFilingTypeId = table.Column<int>(type: "integer", nullable: false),
-                    ReceivedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    ReceivedByEmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ReceivedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    MultimediaTypeId = table.Column<int>(type: "integer", nullable: false),
-                    FiledBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    FiledByEmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
-                    FiledDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    IsBillsReceived = table.Column<bool>(type: "boolean", nullable: true),
-                    IsFiled = table.Column<bool>(type: "boolean", nullable: true),
-                    FeesAmount = table.Column<double>(type: "double precision", nullable: true),
-                    FeesPaidAmt = table.Column<double>(type: "double precision", nullable: true),
-                    Balance = table.Column<double>(type: "double precision", nullable: true),
-                    ReceivedAckEmailSent = table.Column<bool>(type: "boolean", nullable: true),
-                    GSTFiledAckEmailSent = table.Column<bool>(type: "boolean", nullable: true),
-                    ReceivedAckSMSSent = table.Column<bool>(type: "boolean", nullable: true),
-                    GSTFiledAckSMSSent = table.Column<bool>(type: "boolean", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GSTBillAndFeeCollections", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_GSTBillAndFeeCollections_Employees_FiledByEmployeeId",
-                        column: x => x.FiledByEmployeeId,
-                        principalTable: "Employees",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_GSTBillAndFeeCollections_Employees_ReceivedByEmployeeId",
-                        column: x => x.ReceivedByEmployeeId,
-                        principalTable: "Employees",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_GSTBillAndFeeCollections_GSTClients_GSTClientId",
-                        column: x => x.GSTClientId,
-                        principalTable: "GSTClients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_GSTBillAndFeeCollections_GSTFilingTypes_GSTFilingTypeId",
-                        column: x => x.GSTFilingTypeId,
-                        principalTable: "GSTFilingTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_GSTBillAndFeeCollections_ServiceCategories_ServiceCategoryId",
-                        column: x => x.ServiceCategoryId,
-                        principalTable: "ServiceCategories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserLoggedActivities",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    EmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Activity = table.Column<string>(type: "text", nullable: false),
-                    AdditionalDetails = table.Column<string>(type: "text", nullable: false),
-                    loggedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserLoggedActivities", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserLoggedActivities_Employees_EmployeeId",
-                        column: x => x.EmployeeId,
-                        principalTable: "Employees",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.InsertData(
                 table: "ApprovalStatusTypes",
                 columns: new[] { "Id", "StatusType" },
@@ -760,10 +678,10 @@ namespace AtoTax.API.Migrations
                 columns: new[] { "Id", "AddressTypeDesc", "AddressTypeName", "CreatedDate", "LastModifiedDate", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, "Postal Street address", "Office Street Address", new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6232), new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6233), 1 },
-                    { 2, "Residential Street address", "Residential Address", new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6237), new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6238), 1 },
-                    { 3, "Godown/Factory Address", "Godown/Factory Address", new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6241), new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6242), 1 },
-                    { 4, "Postoffice Box Number", "PostBox Address", new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6245), new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6246), 1 }
+                    { 1, "Postal Street address", "Office Street Address", new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(5050), new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(5051), 1 },
+                    { 2, "Residential Street address", "Residential Address", new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(5054), new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(5054), 1 },
+                    { 3, "Godown/Factory Address", "Godown/Factory Address", new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(5056), new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(5057), 1 },
+                    { 4, "Postoffice Box Number", "PostBox Address", new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(5058), new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(5058), 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -771,8 +689,8 @@ namespace AtoTax.API.Migrations
                 columns: new[] { "Id", "AmendTypeName", "CreatedDate", "LastModifiedDate", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, "Core", new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5813), new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5816), 1 },
-                    { 2, "Non-Core", new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5819), new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5821), 1 }
+                    { 1, "Core", new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4827), new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4829), 1 },
+                    { 2, "Non-Core", new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4831), new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4832), 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -780,22 +698,22 @@ namespace AtoTax.API.Migrations
                 columns: new[] { "Id", "CreatedDate", "FilingType", "LastModifiedDate", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5967), "GSTR-1", new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5969), 1 },
-                    { 2, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5973), "GSTR-3B", new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5974), 1 },
-                    { 3, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5981), "GSTR-4", new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5983), 1 },
-                    { 4, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5985), "GSTR-5", new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5986), 1 },
-                    { 5, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5989), "GSTR-5A", new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5990), 1 },
-                    { 6, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5992), "GSTR-6", new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5993), 1 },
-                    { 7, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5996), "GSTR-7", new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5997), 1 },
-                    { 8, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5999), "GSTR-8", new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6000), 1 },
-                    { 9, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6003), "GSTR-9", new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6004), 1 },
-                    { 10, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6006), "GSTR-9C", new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6008), 1 },
-                    { 11, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6010), "GSTR-10", new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6011), 1 },
-                    { 12, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6014), "GSTR-11", new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6015), 1 },
-                    { 13, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6022), "CMP-08", new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6023), 1 },
-                    { 14, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6025), "NILGSTR1", new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6026), 1 },
-                    { 15, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6028), "NIL3B", new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6030), 1 },
-                    { 16, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6032), "ITC-04", new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6033), 1 }
+                    { 1, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4927), "GSTR-1", new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4927), 1 },
+                    { 2, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4933), "GSTR-3B", new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4933), 1 },
+                    { 3, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4935), "GSTR-4", new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4935), 1 },
+                    { 4, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4937), "GSTR-5", new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4937), 1 },
+                    { 5, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4940), "GSTR-5A", new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4940), 1 },
+                    { 6, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4942), "GSTR-6", new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4942), 1 },
+                    { 7, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4943), "GSTR-7", new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4944), 1 },
+                    { 8, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4946), "GSTR-8", new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4947), 1 },
+                    { 9, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4948), "GSTR-9", new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4949), 1 },
+                    { 10, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4950), "GSTR-9C", new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4951), 1 },
+                    { 11, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4952), "GSTR-10", new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4952), 1 },
+                    { 12, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4954), "GSTR-11", new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4954), 1 },
+                    { 13, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4955), "CMP-08", new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4956), 1 },
+                    { 14, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4957), "NILGSTR1", new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4958), 1 },
+                    { 15, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4959), "NIL3B", new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4960), 1 },
+                    { 16, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4961), "ITC-04", new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4961), 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -803,13 +721,13 @@ namespace AtoTax.API.Migrations
                 columns: new[] { "Id", "CreatedDate", "Description", "LastModifiedDate", "Media", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6097), null, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6101), "HardCopy", 1 },
-                    { 2, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6105), null, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6107), "Email", 1 },
-                    { 3, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6110), null, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6111), "WhatsApp", 1 },
-                    { 4, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6113), null, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6115), "USB/Pen Drive", 1 },
-                    { 5, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6117), null, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6118), "Courier", 1 },
-                    { 6, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6120), null, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6121), "Cloud Drive", 1 },
-                    { 7, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6124), null, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(6125), "Hard Disk", 1 }
+                    { 1, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4992), null, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4994), "HardCopy", 1 },
+                    { 2, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4996), null, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4997), "Email", 1 },
+                    { 3, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4998), null, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4999), "WhatsApp", 1 },
+                    { 4, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(5000), null, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(5001), "USB/Pen Drive", 1 },
+                    { 5, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(5002), null, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(5003), "Courier", 1 },
+                    { 6, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(5004), null, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(5005), "Cloud Drive", 1 },
+                    { 7, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(5007), null, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(5007), "Hard Disk", 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -817,12 +735,12 @@ namespace AtoTax.API.Migrations
                 columns: new[] { "Id", "CreatedDate", "LastModifiedDate", "PaymentMethod", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5869), new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5871), "Cash", 1 },
-                    { 2, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5875), new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5876), "Bank Transfer", 1 },
-                    { 3, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5879), new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5880), "UPIPay", 1 },
-                    { 4, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5882), new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5884), "GooglePay", 1 },
-                    { 5, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5886), new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5887), "Bank Cheque", 1 },
-                    { 6, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5890), new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5891), "PayTM", 1 }
+                    { 1, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4854), new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4856), "Cash", 1 },
+                    { 2, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4858), new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4859), "Bank Transfer", 1 },
+                    { 3, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4860), new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4861), "UPIPay", 1 },
+                    { 4, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4862), new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4863), "GooglePay", 1 },
+                    { 5, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4864), new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4865), "Bank Cheque", 1 },
+                    { 6, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4866), new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4866), "PayTM", 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -830,17 +748,12 @@ namespace AtoTax.API.Migrations
                 columns: new[] { "Id", "CreatedDate", "Description", "FixedCharge", "LastModifiedDate", "PreviousCharge", "ServiceName", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5721), "GST Monthly Submission", 500.0, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5728), 500.0, "GSTMonthlySubmission", 1 },
-                    { 2, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5733), "GST Amendment", 500.0, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5735), 500.0, "GSTAmendment", 1 },
-                    { 3, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5738), "GST Annual Return Filing", 1000.0, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5739), 1000.0, "GSTAnnualReturnFiling", 1 },
-                    { 4, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5744), "GST Notice Service", 1000.0, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5745), 1000.0, "GSTNoticeService", 1 },
-                    { 5, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5749), "Penalty while transporting", 1000.0, new DateTime(2023, 3, 5, 19, 19, 52, 645, DateTimeKind.Utc).AddTicks(5750), 1000.0, "PenaltyBySquad", 1 }
+                    { 1, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4783), "GST Monthly Submission", 500.0, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4787), 500.0, "GSTMonthlySubmission", 1 },
+                    { 2, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4790), "GST Amendment", 500.0, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4790), 500.0, "GSTAmendment", 1 },
+                    { 3, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4793), "GST Annual Return Filing", 1000.0, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4793), 1000.0, "GSTAnnualReturnFiling", 1 },
+                    { 4, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4795), "GST Notice Service", 1000.0, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4796), 1000.0, "GSTNoticeService", 1 },
+                    { 5, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4797), "Penalty while transporting", 1000.0, new DateTime(2023, 3, 5, 20, 41, 54, 745, DateTimeKind.Utc).AddTicks(4798), 1000.0, "PenaltyBySquad", 1 }
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AccountLedgers_EmployeeId",
-                table: "AccountLedgers",
-                column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AccountLedgers_GSTClientId",
@@ -930,26 +843,6 @@ namespace AtoTax.API.Migrations
                 column: "GSTClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmpJobRoles_StatusId",
-                table: "EmpJobRoles",
-                column: "StatusId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Employees_EmpJobRoleId",
-                table: "Employees",
-                column: "EmpJobRoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Employees_StatusId",
-                table: "Employees",
-                column: "StatusId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GSTBillAndFeeCollections_FiledByEmployeeId",
-                table: "GSTBillAndFeeCollections",
-                column: "FiledByEmployeeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_GSTBillAndFeeCollections_GSTClientId",
                 table: "GSTBillAndFeeCollections",
                 column: "GSTClientId");
@@ -958,11 +851,6 @@ namespace AtoTax.API.Migrations
                 name: "IX_GSTBillAndFeeCollections_GSTFilingTypeId",
                 table: "GSTBillAndFeeCollections",
                 column: "GSTFilingTypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GSTBillAndFeeCollections_ReceivedByEmployeeId",
-                table: "GSTBillAndFeeCollections",
-                column: "ReceivedByEmployeeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GSTBillAndFeeCollections_ServiceCategoryId",
@@ -1033,11 +921,6 @@ namespace AtoTax.API.Migrations
                 name: "IX_ServiceChargeUpdateHistories_ServiceCategoryId",
                 table: "ServiceChargeUpdateHistories",
                 column: "ServiceCategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserLoggedActivities_EmployeeId",
-                table: "UserLoggedActivities",
-                column: "EmployeeId");
         }
 
         /// <inheritdoc />
@@ -1114,12 +997,6 @@ namespace AtoTax.API.Migrations
 
             migrationBuilder.DropTable(
                 name: "ServiceCategories");
-
-            migrationBuilder.DropTable(
-                name: "Employees");
-
-            migrationBuilder.DropTable(
-                name: "EmpJobRoles");
 
             migrationBuilder.DropTable(
                 name: "Status");

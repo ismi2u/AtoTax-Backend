@@ -14,7 +14,6 @@ namespace AtoTax.Domain.DTOs
         public virtual GSTClientDTO GSTClient { get; set; } 
 
         public int DataEntryEmployee { get; set; }
-        public virtual Employee Employee { get; set; }
         public DateTime Date { get; set; }
         public double? IncomingAmount { get; set; }
         public double? ExpenseAmount { get; set; }

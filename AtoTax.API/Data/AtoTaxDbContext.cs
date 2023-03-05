@@ -102,8 +102,6 @@ namespace AtoTaxAPI.Data
         public DbSet<MultimediaType> MultimediaTypes { get; set; }
         public DbSet<ServiceCategory> ServiceCategories { get; set; }
         public DbSet<ClientFeeMap> ClientFeeMaps { get; set; }
-        public DbSet<EmpJobRole> EmpJobRoles { get; set; }
-        public DbSet<Employee> Employees { get; set; }
         public DbSet<GSTFilingType> GSTFilingTypes { get; set; }
 
         public DbSet<GSTPaidDetail> GSTPaidDetails { get; set; }

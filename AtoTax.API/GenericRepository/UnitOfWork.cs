@@ -15,9 +15,6 @@ namespace AtoTax.API.GenericRepository
         public IAmendmentRepository Amendments { get; private set; }
         public IAmendTypeRepository AmendTypes { get; private set; }
         public IClientFeeMapRepository ClientFeeMaps { get; private set; }
-        public IEmpJobRoleRepository EmpJobRoles { get; private set; }
-        public IEmployeeRepository Employees { get; private set; }
-
         public ICollectionAndBalanceRepository CollectionAndBalances { get; private set; }
         public IGSTBillAndFeeCollectionRepository GSTBillAndFeeCollections { get; private set; }
         public IGSTClientAddressExtensionRepository GSTClientAddressExtensions { get; private set; }
@@ -40,8 +37,6 @@ namespace AtoTax.API.GenericRepository
         private readonly ILogger<Amendment> _AmendmentLogger;
         private readonly ILogger<AmendType> _AmendTypeLogger;
         private readonly ILogger<ClientFeeMap> _ClientFeeMapLogger;
-        private readonly ILogger<EmpJobRole> _EmpJobRoleLogger;
-        private readonly ILogger<Employee> _EmployeeLogger;
         private readonly ILogger<CollectionAndBalance> _CollectionAndBalanceLogger;
         private readonly ILogger<GSTBillAndFeeCollection> _GSTBillAndFeeCollectionLogger;
         private readonly ILogger<GSTClientAddressExtension> _GSTClientAddressExtensionLogger;
@@ -62,8 +57,6 @@ namespace AtoTax.API.GenericRepository
              ILogger<Amendment> AmendmentLogger,
              ILogger<AmendType> AmendTypeLogger,
             ILogger<ClientFeeMap> ClientFeeMapLogger,
-            ILogger<EmpJobRole> EmpJobRoleLogger,
-            ILogger<Employee> EmployeeLogger,
             ILogger<CollectionAndBalance> CollectionAndBalanceLogger,
             ILogger<GSTBillAndFeeCollection> GSTBillAndFeeCollectionLogger,
             ILogger<GSTClientAddressExtension> GSTClientAddressExtensionLogger,
@@ -86,8 +79,6 @@ namespace AtoTax.API.GenericRepository
             _AmendmentLogger = AmendmentLogger;
             _AmendTypeLogger = AmendTypeLogger;
             _ClientFeeMapLogger = ClientFeeMapLogger;
-            _EmpJobRoleLogger = EmpJobRoleLogger;
-            _EmployeeLogger = EmployeeLogger;
             _CollectionAndBalanceLogger = CollectionAndBalanceLogger;
             _GSTBillAndFeeCollectionLogger = GSTBillAndFeeCollectionLogger;
             _GSTClientAddressExtensionLogger = GSTClientAddressExtensionLogger;
@@ -106,8 +97,6 @@ namespace AtoTax.API.GenericRepository
             Amendments = new AmendmentRepository(_context, _AmendmentLogger);
             AmendTypes = new AmendTypeRepository(_context, _AmendTypeLogger);
             ClientFeeMaps = new ClientFeeMapRepository(_context, _ClientFeeMapLogger);
-            EmpJobRoles = new EmpJobRoleRepository(_context, _EmpJobRoleLogger);
-            Employees = new EmployeeRepository(_context, _EmployeeLogger);
             CollectionAndBalances = new CollectionAndBalanceRepository(_context, _CollectionAndBalanceLogger);
             GSTBillAndFeeCollections = new GSTBillAndFeeCollectionRepository(_context, _GSTBillAndFeeCollectionLogger);
             GSTClientAddressExtensions = new GSTClientAddressExtensionRepository(_context, _GSTClientAddressExtensionLogger);

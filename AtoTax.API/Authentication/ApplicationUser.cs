@@ -10,7 +10,9 @@ namespace AtoTax.API.Authentication
 {
     public class ApplicationUser : IdentityUser
     {
-        public Guid? EmployeeId { get; set; }
         public string Name { get; set; }
+        public DateTime? DOB { get; set; }
+        public DateTime? DOJ { get; set; }
+        
     }
 }

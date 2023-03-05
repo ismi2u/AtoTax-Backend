@@ -32,22 +32,21 @@ namespace AtoTax.API.Repository.Repos
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signinManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly ILogger<EmpJobRole> _logger;
         private readonly IMapper _mapper;
+        private readonly ILogger<ApplicationUser> _logger;
         private string secretkey;
         protected APIResponse _response;
         private readonly IEmailSender _emailSender;
         private readonly IConfiguration _config;
 
 
-        public UserRepository(AtoTaxDbContext context, ILogger<EmpJobRole> logger,
+        public UserRepository(AtoTaxDbContext context, 
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signinManager,
             IEmailSender emailSender,
-            RoleManager<IdentityRole> roleManager, IMapper mapper, IConfiguration config)
+            RoleManager<IdentityRole> roleManager, IMapper mapper, IConfiguration config, ILogger<ApplicationUser> logger)
         {
             _context = context;
-            _logger = logger;
             _userManager = userManager;
             _roleManager = roleManager;
             _signinManager = signinManager;
@@ -56,6 +55,7 @@ namespace AtoTax.API.Repository.Repos
             _emailSender = emailSender;
             secretkey = config.GetValue<string>("ApiSettings:Secret");
             _config = config;
+            _logger = logger;
         }
         public bool IsUniqueUser(string username)
         {
@@ -166,10 +166,6 @@ namespace AtoTax.API.Repository.Repos
             }
 
             ApplicationUser appuser = new ApplicationUser();
-            if(registrationRequestDTO.EmployeeId != null)
-            {
-                appuser.EmployeeId = registrationRequestDTO.EmployeeId;
-            }
 
             if (!registrationRequestDTO.UserName.IsNullOrEmpty())
             {
@@ -196,7 +192,10 @@ namespace AtoTax.API.Repository.Repos
             newAppUser.Email = registrationRequestDTO.Email;
             newAppUser.NormalizedEmail = registrationRequestDTO.Email.ToUpper();
             newAppUser.UserName = registrationRequestDTO.UserName;
-            
+            newAppUser.DOB = registrationRequestDTO.DOB;
+            newAppUser.DOJ= registrationRequestDTO.DOJ;
+
+
             try
             {
                 var result = await _userManager.CreateAsync(newAppUser, registrationRequestDTO.Password);

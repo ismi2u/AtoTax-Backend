@@ -24,18 +24,11 @@ namespace AtoTax.Domain.Entities
         public int GSTFilingTypeId { get; set; }
         public virtual GSTFilingType GSTFilingType { get; set; }
 
-      
-        [ForeignKey("ReceivedBy")]
-        public Guid? ReceivedBy { get; set; }
-        public virtual Employee ReceivedByEmployee { get; set; }
+        public string ReceivedBy { get; set; }
 
         public DateTime? ReceivedDate { get; set; }
         public int MultimediaTypeId { get; set; }
-
-
-        [ForeignKey("FiledBy")]
-        public Guid? FiledBy { get; set; }
-        public virtual Employee FiledByEmployee { get; set; }
+        public string FiledBy { get; set; }
         public DateTime? FiledDate { get; set; }
         public bool? IsBillsReceived { get; set; }
         public bool? IsFiled { get; set; }

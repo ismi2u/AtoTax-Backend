@@ -64,14 +64,6 @@ namespace AtoTax.API.Mapping
             CreateMap<PaymentType, ActivePaymentTypeForDD>();
                 
 
-            //EmpJobRoles
-            CreateMap<EmpJobRole, EmpJobRoleDTO>().ReverseMap();
-            CreateMap<EmpJobRoleCreateDTO, EmpJobRole>()
-                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
-                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow)); ;
-            CreateMap<EmpJobRoleUpdateDTO, EmpJobRole>()
-                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
-            CreateMap<EmpJobRole, ActiveEmpJobRoleForDD>();
 
 
             //Amend Type
@@ -123,18 +115,6 @@ namespace AtoTax.API.Mapping
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
             CreateMap<ClientFeeMapUpdateDTO, ClientFeeMap>()
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
-
-
-
-            //Employee
-            CreateMap<Employee, EmployeeDTO>().ReverseMap();
-            CreateMap<EmployeeCreateDTO, Employee>()
-                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
-                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
-            CreateMap<EmployeeUpdateDTO, Employee>()
-                .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
-            CreateMap<Employee, ActiveEmployeeForDD>();
-
 
 
 
