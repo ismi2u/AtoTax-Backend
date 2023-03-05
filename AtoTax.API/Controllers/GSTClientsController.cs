@@ -38,7 +38,7 @@ namespace AtoTax.API.Controllers
 
         // GET: api/GSTClients
         [HttpGet]
-        [ResponseCache(Duration = 30)]
+        //[ResponseCache(Duration = 30)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> GetGSTClients([FromQuery] int pageSize = 0, int pageNumber = 1)
@@ -73,7 +73,7 @@ namespace AtoTax.API.Controllers
             return Ok(_response);
         }
         [HttpGet]
-        [ResponseCache(Duration = 30)]
+        [ResponseCache(Duration = 10)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> GetActiveGSTClientsForDD([FromQuery] int pageSize = 0, int pageNumber = 1)
@@ -105,7 +105,7 @@ namespace AtoTax.API.Controllers
         }
         // GET: api/GSTClients/5
         [HttpGet("{id}")]
-        [ResponseCache(CacheProfileName = "Default30")]
+        //[ResponseCache(CacheProfileName = "Default30")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
