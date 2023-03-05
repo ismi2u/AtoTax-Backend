@@ -204,6 +204,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+//hangfine job defined here
 app.UseHangfireDashboard();
 app.MapHangfireDashboard();
 RecurringJob.AddOrUpdate<ICollectionAndBalanceRepository>(x => x.SyncDataAsync(), Cron.Hourly);

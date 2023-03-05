@@ -26,7 +26,7 @@ namespace AtoTax.Domain.Entities
 
       
         [ForeignKey("ReceivedBy")]
-        public int ReceivedBy { get; set; }
+        public Guid? ReceivedBy { get; set; }
         public virtual Employee ReceivedByEmployee { get; set; }
 
         public DateTime? ReceivedDate { get; set; }
@@ -34,7 +34,7 @@ namespace AtoTax.Domain.Entities
 
 
         [ForeignKey("FiledBy")]
-        public int FiledBy { get; set; }
+        public Guid? FiledBy { get; set; }
         public virtual Employee FiledByEmployee { get; set; }
         public DateTime? FiledDate { get; set; }
         public bool? IsBillsReceived { get; set; }

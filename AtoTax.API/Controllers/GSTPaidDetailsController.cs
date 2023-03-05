@@ -14,25 +14,30 @@ using AtoTax.API.Repository.Interfaces;
 using AtoTax.API.GenericRepository;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
+using System.Security.Claims;
+using AtoTax.API.Authentication;
+using Microsoft.AspNetCore.Identity;
 
 namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    [Authorize(Roles="Admin")]
+    [Authorize(Roles="User")]
     public class GSTPaidDetailsController : ControllerBase
     {
         protected APIResponse _response;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
+      
 
         public GSTPaidDetailsController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
         {
             _mapper = mapper;
-            this._response= new();
+            this._response = new();
             _context = context;
-            _unitOfWork= unitOfWork;
+            _unitOfWork = unitOfWork;
+            
         }
 
         // GET: api/GSTPaidDetails
@@ -113,6 +118,8 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> UpdateGSTPaidDetail(Guid id, GSTPaidDetailUpdateDTO GSTPaidDetailUpdateDTO)
         {
+           
+
             if (!ModelState.IsValid)
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;

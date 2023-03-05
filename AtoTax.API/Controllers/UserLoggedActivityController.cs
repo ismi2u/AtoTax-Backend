@@ -19,7 +19,7 @@ namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    [Authorize(Roles="Admin")]
+    [Authorize(Roles="User")]
     public class UserLoggedActivityController : ControllerBase
     {
         protected APIResponse _response;

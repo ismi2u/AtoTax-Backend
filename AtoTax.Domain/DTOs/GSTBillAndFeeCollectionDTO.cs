@@ -13,11 +13,11 @@ namespace AtoTax.Domain.DTOs
         public int DueYear { get; set; }
         public int GSTFilingTypeId { get; set; }
         public GSTFilingTypeDTO GSTFilingType { get; set; }
-        public int ReceivedBy { get; set; }
+        public Guid? ReceivedBy { get; set; }
         public EmployeeDTO ReceivedByEmployee { get; set; }
         public DateTime? ReceivedDate { get; set; }
         public int MultimediaTypeId { get; set; }
-        public int FiledBy { get; set; }
+        public Guid? FiledBy { get; set; }
         public EmployeeDTO FiledByEmployee { get; set; }
         public DateTime? FiledDate { get; set; }
         public bool IsBillsReceived { get; set; }
@@ -42,10 +42,10 @@ namespace AtoTax.Domain.DTOs
         public int DueYear { get; set; }
         [Required]
         public int GSTFilingTypeId { get; set; }
-        public int ReceivedBy { get; set; }
+        public Guid? ReceivedBy { get; set; }
         public DateTime? ReceivedDate { get; set; }
         public int MultimediaTypeId { get; set; }
-        public int FiledBy { get; set; }
+        public Guid? FiledBy { get; set; }
         public DateTime? FiledDate { get; set; }
         public bool IsBillsReceived { get; set; }
         public bool IsFiled { get; set; }
@@ -71,10 +71,10 @@ namespace AtoTax.Domain.DTOs
         public int DueYear { get; set; }
         [Required]
         public int GSTFilingTypeId { get; set; }
-        public int ReceivedBy { get; set; }
+        public Guid? ReceivedBy { get; set; }
         public DateTime? ReceivedDate { get; set; }
         public int MultimediaTypeId { get; set; }
-        public int FiledBy { get; set; }
+        public Guid? FiledBy { get; set; }
         public DateTime? FiledDate { get; set; }
         public bool IsBillsReceived { get; set; }
         public bool IsFiled { get; set; }

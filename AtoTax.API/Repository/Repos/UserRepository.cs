@@ -166,6 +166,11 @@ namespace AtoTax.API.Repository.Repos
             }
 
             ApplicationUser appuser = new ApplicationUser();
+            if(registrationRequestDTO.EmployeeId != null)
+            {
+                appuser.EmployeeId = registrationRequestDTO.EmployeeId;
+            }
+
             if (!registrationRequestDTO.UserName.IsNullOrEmpty())
             {
                 appuser = _userManager.Users.FirstOrDefault(u => u.UserName == registrationRequestDTO.UserName);
@@ -241,7 +246,7 @@ namespace AtoTax.API.Repository.Repos
                 _logger.LogInformation("Confirm Email: " + receiverEmail + " Mail ID Confirmation Email Sent for the user!");
 
 
-                bool isroleExists = await _roleManager.RoleExistsAsync("Admin");
+                bool isroleExists = await _roleManager.RoleExistsAsync("User");
                 if (!isroleExists)
                 {
                     //var role = await  _context.Roles.AddAsync(new IdentityRole("admin"));
@@ -249,7 +254,7 @@ namespace AtoTax.API.Repository.Repos
 
 
                     IdentityRole identityRole = new();
-                    identityRole.Name = "Admin";
+                    identityRole.Name = "User";
 
 
                     IdentityResult rolAddresult = await _roleManager.CreateAsync(identityRole);
@@ -267,7 +272,7 @@ namespace AtoTax.API.Repository.Repos
                 }
                 if (result.Succeeded)
                 {
-                    IdentityRole role = await _roleManager.FindByNameAsync("Admin");
+                    IdentityRole role = await _roleManager.FindByNameAsync("User");
                     IdentityResult addRoleResult = await _userManager.AddToRoleAsync(newAppUser, role.Name);
 
                     if (!addRoleResult.Succeeded)

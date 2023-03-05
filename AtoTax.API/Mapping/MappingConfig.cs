@@ -177,7 +177,10 @@ namespace AtoTax.API.Mapping
 
             //GSTBillAndFeeCollection
             CreateMap<GSTBillAndFeeCollection, GSTBillAndFeeCollectionDTO>().ReverseMap();
-            CreateMap<GSTBillAndFeeCollectionCreateDTO, GSTBillAndFeeCollection>().ReverseMap();
+            CreateMap<GSTBillAndFeeCollectionCreateDTO, GSTBillAndFeeCollection>()
+                .ForMember(dest => dest.ReceivedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+            CreateMap<GSTBillAndFeeCollectionUpdateDTO, GSTBillAndFeeCollection>()
+                .ForMember(dest => dest.FiledDate, opt => opt.MapFrom(src => DateTime.UtcNow));
 
 
             //ServiceChargeUpdateHistory

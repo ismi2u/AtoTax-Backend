@@ -14,25 +14,30 @@ using AtoTax.API.Repository.Interfaces;
 using AtoTax.API.GenericRepository;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
+using AtoTax.API.Authentication;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    [Authorize(Roles="Admin")]
+    [Authorize(Roles="User")]
     public class GSTBillAndFeeCollectionController : ControllerBase
     {
         protected APIResponse _response;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public GSTBillAndFeeCollectionController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
+        public GSTBillAndFeeCollectionController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context, UserManager<ApplicationUser> userManager)
         {
             _mapper = mapper;
-            this._response= new();
+            this._response = new();
             _context = context;
-            _unitOfWork= unitOfWork;
+            _unitOfWork = unitOfWork;
+            _userManager = userManager;
         }
 
         // GET: api/GSTBillAndFeeCollection
@@ -118,6 +123,7 @@ namespace AtoTax.API.Controllers
                 return Ok(_response);
             }
 
+
             try
             {
                 if (id == Guid.Empty || !(id == GSTBillAndFeeCollectionUpdateDTO.Id))
@@ -130,6 +136,7 @@ namespace AtoTax.API.Controllers
                     return Ok(_response);
                 }
 
+               
 
                 var oldGSTBillAndFeeCollection = await _unitOfWork.GSTBillAndFeeCollections.GetAsync(u => u.Id == id, tracked: false);
 
@@ -146,7 +153,15 @@ namespace AtoTax.API.Controllers
                 var GSTBillAndFeeCollection = _mapper.Map<GSTBillAndFeeCollection>(GSTBillAndFeeCollectionUpdateDTO);
 
                 //// dont update the FilingType number which is the Identity of the FilingType
-                //GSTBillAndFeeCollection.FilingType = oldGSTBillAndFeeCollection.FilingType;
+                string loggedUserName = User.Identity.Name;
+                var loggedUserEmpId = _userManager.FindByNameAsync(loggedUserName).Result.EmployeeId;
+                
+                GSTBillAndFeeCollection.FiledBy = loggedUserEmpId;
+                GSTBillAndFeeCollection.ReceivedBy = oldGSTBillAndFeeCollection.ReceivedBy;
+                GSTBillAndFeeCollection.ReceivedDate = oldGSTBillAndFeeCollection.ReceivedDate;
+                GSTBillAndFeeCollection.FiledDate = oldGSTBillAndFeeCollection.ReceivedDate;
+                GSTBillAndFeeCollection.DueMonth = oldGSTBillAndFeeCollection.DueMonth;
+                GSTBillAndFeeCollection.DueYear = oldGSTBillAndFeeCollection.DueYear;
 
                 ////// dont update the below field as they are not part of updateDTO  and hence will become null
                 //GSTBillAndFeeCollection.CreatedDate = oldGSTBillAndFeeCollection.CreatedDate;
@@ -178,6 +193,11 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> CreateGSTBillAndFeeCollection(GSTBillAndFeeCollectionCreateDTO GSTBillAndFeeCollectionCreateDTO)
         {
+            string loggedUserName = User.Identity.Name;
+            var loggedUserEmpId = _userManager.FindByNameAsync(loggedUserName).Result.EmployeeId;
+            GSTBillAndFeeCollectionCreateDTO.ReceivedBy = loggedUserEmpId;
+
+
             try
             {
 
