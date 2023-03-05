@@ -569,10 +569,18 @@ namespace AtoTax.API.Repository.Repos
             return _response;
         }
 
+
+
+
+
         public async Task<APIResponse> UpdateUser(UpdateUserDTO updateUserDTO)
         {
 
-            if(updateUserDTO.Id == null)
+            bool isEmailUpdated = false;
+
+           
+
+            if (updateUserDTO.Id == null)
             {
                 _response.Result = updateUserDTO;
                 _response.IsSuccess = false;
@@ -581,27 +589,11 @@ namespace AtoTax.API.Repository.Repos
             }
 
 
-            if (updateUserDTO.OldEmail == null && updateUserDTO.NewEmail == null ||
-                updateUserDTO.OldName == null && updateUserDTO.NewName == null )
-            {
-                _response.Result = updateUserDTO;
-                _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string> { "Username/Email/Name/Password are required" };
-                _response.StatusCode = HttpStatusCode.BadRequest;
-
-                return _response;
-
-            }
-
-
             ApplicationUser appuser = new();
 
+            appuser = await _userManager.FindByIdAsync(updateUserDTO.Id);
 
-            if (!updateUserDTO.NewUserName.IsNullOrEmpty())
-            {
-                appuser = _userManager.Users.FirstOrDefault(u => u.UserName == updateUserDTO.NewUserName);
-            }
-            else if (appuser == null)
+            if (appuser == null)
             {
                 _response.Result = updateUserDTO;
                 _response.IsSuccess = false;
@@ -610,28 +602,68 @@ namespace AtoTax.API.Repository.Repos
 
                 return _response;
             }
-            else
+
+            if (updateUserDTO.NewEmail == appuser.Email &&  updateUserDTO.NewName == appuser.Name && updateUserDTO.NewUserName == appuser.UserName)
             {
-                bool ifUserUniqueEmail = IsUniqueEmail(updateUserDTO.NewEmail);
+                _response.Result = updateUserDTO;
+                _response.IsSuccess = true;
+                _response.ErrorMessages = new List<string> { "No changes to User detected" };
+                _response.StatusCode = HttpStatusCode.NoContent;
 
-                if (!ifUserUniqueEmail)
-                {
-                    _response.Result = updateUserDTO;
-                    _response.IsSuccess = false;
-                    _response.ErrorMessages = new List<string> { "Email Id should be Unique" };
-                    _response.StatusCode = HttpStatusCode.BadRequest;
+                return _response;
 
-                    return _response;
-                }
             }
 
-            var validCredentials = await _signinManager.UserManager.CheckPasswordAsync(appuser, updateUserDTO.Password);
+           
+            ApplicationUser oldUser = new ApplicationUser();
 
-            if (validCredentials)
+            if (updateUserDTO.NewUserName != appuser.UserName)
+            {
+                oldUser = _userManager.Users.FirstOrDefault(u => u.UserName == updateUserDTO.NewUserName);
+            }
+
+            if (oldUser != null)
+            {
+                _response.Result = updateUserDTO;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "UserName must Unique" };
+                _response.StatusCode = HttpStatusCode.BadRequest;
+
+                return _response;
+            }
+
+
+            bool ifUserUniqueEmail = IsUniqueEmail(updateUserDTO.NewEmail);
+
+            if (!ifUserUniqueEmail)
+            {
+                _response.Result = updateUserDTO;
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string> { "Email Id should be Unique" };
+                _response.StatusCode = HttpStatusCode.BadRequest;
+
+                return _response;
+            }
+
+
+            appuser = await _userManager.FindByIdAsync(updateUserDTO.Id);
+            if (updateUserDTO.NewEmail != appuser.Email)
             {
                 appuser.Email = updateUserDTO.NewEmail;
+                appuser.NormalizedEmail = updateUserDTO.NewEmail.ToUpper();
+                isEmailUpdated = true;
+                appuser.EmailConfirmed = false;
+            }
+           
+
+
+            appuser.UserName = updateUserDTO.NewUserName;
+            appuser.NormalizedUserName = updateUserDTO.NewUserName.ToUpper();
+           if (updateUserDTO.NewName != string.Empty)
+            {
                 appuser.Name = updateUserDTO.NewName;
             }
+           
 
             IdentityResult result = await _userManager.UpdateAsync(appuser);
 
@@ -645,6 +677,46 @@ namespace AtoTax.API.Repository.Repos
 
                 return _response;
             }
+
+            if(isEmailUpdated)
+            {
+                // Send Mail ID confirmation email
+
+                string[] paths = { Directory.GetCurrentDirectory(), "ConfirmEmail.html" };
+                string FilePath = Path.Combine(paths);
+                _logger.LogInformation("Email template path " + FilePath);
+                StreamReader str = new StreamReader(FilePath);
+                string MailText = str.ReadToEnd();
+                str.Close();
+
+                var domain = _config.GetSection("Domain").Value;
+                MailText = MailText.Replace("{Domain}", domain);
+
+                var builder = new MimeKit.BodyBuilder();
+                var receiverEmail = updateUserDTO.NewEmail;
+                string subject = "AtoTax: Confirm your Email Id";
+
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(appuser);
+                token = token.Replace("+", "^^^");
+                string txtdata = "http://" + domain + "/confirm-email?token=" + token + "&email=" + updateUserDTO.NewEmail;
+
+                MailText = MailText.Replace("{Domain}", domain);
+                MailText = MailText.Replace("{ConfirmEmailUrl}", txtdata);
+
+
+                builder.HtmlBody = MailText;
+
+                EmailDto emailDto = new EmailDto();
+                emailDto.To = receiverEmail;
+                emailDto.Subject = subject;
+                emailDto.Body = builder.HtmlBody;
+
+                await _emailSender.SendEmailAsync(emailDto);
+                _logger.LogInformation("Confirm Email: " + receiverEmail + " Mail ID Confirmation Email Sent for the user!");
+
+            }
+
+
             _response.Result = result;
             _response.IsSuccess = true; 
             _response.SuccessMessage = "User data updated successfully.";

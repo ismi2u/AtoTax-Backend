@@ -218,6 +218,8 @@ namespace AtoTax.API.Controllers
                 ServiceCategory.PreviousCharge= ServiceCategoryCreateDTO.FixedCharge;
                 await _unitOfWork.ServiceCategories.CreateAsync(ServiceCategory);
 
+                await _unitOfWork.CompleteAsync();
+
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.Result = _mapper.Map<ServiceCategoryDTO>(ServiceCategory);
                 _response.IsSuccess = true;
