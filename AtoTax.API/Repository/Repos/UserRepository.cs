@@ -578,9 +578,11 @@ namespace AtoTax.API.Repository.Repos
 
             bool isEmailUpdated = false;
 
-           
+            ApplicationUser appuser = new();
 
-            if (updateUserDTO.Id == null)
+            appuser = await _userManager.FindByIdAsync(updateUserDTO.Id);
+
+            if (updateUserDTO.Id == null || appuser == null)
             {
                 _response.Result = updateUserDTO;
                 _response.IsSuccess = false;
@@ -588,20 +590,6 @@ namespace AtoTax.API.Repository.Repos
                 _response.StatusCode = HttpStatusCode.BadRequest;
             }
 
-
-            ApplicationUser appuser = new();
-
-            appuser = await _userManager.FindByIdAsync(updateUserDTO.Id);
-
-            if (appuser == null)
-            {
-                _response.Result = updateUserDTO;
-                _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string> { "UserName not found" };
-                _response.StatusCode = HttpStatusCode.BadRequest;
-
-                return _response;
-            }
 
             if (updateUserDTO.NewEmail == appuser.Email &&  updateUserDTO.NewName == appuser.Name && updateUserDTO.NewUserName == appuser.UserName)
             {
@@ -617,48 +605,47 @@ namespace AtoTax.API.Repository.Repos
            
             ApplicationUser oldUser = new ApplicationUser();
 
-            if (updateUserDTO.NewUserName != appuser.UserName)
+            if (updateUserDTO.NewUserName != string.Empty && updateUserDTO.NewName != appuser.UserName )
             {
                 oldUser = _userManager.Users.FirstOrDefault(u => u.UserName == updateUserDTO.NewUserName);
+
+                if (oldUser != null)
+                {
+                    _response.Result = updateUserDTO;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages = new List<string> { "UserName must Unique" };
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+
+                    return _response;
+                }
+
+                appuser.UserName = updateUserDTO.NewUserName;
+                appuser.NormalizedUserName = updateUserDTO.NewUserName.ToUpper();
+
             }
 
-            if (oldUser != null)
+            if (updateUserDTO.NewEmail != string.Empty && updateUserDTO.NewEmail != appuser.Email)
             {
-                _response.Result = updateUserDTO;
-                _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string> { "UserName must Unique" };
-                _response.StatusCode = HttpStatusCode.BadRequest;
+                bool ifUserUniqueEmail = IsUniqueEmail(updateUserDTO.NewEmail);
 
-                return _response;
+                if (!ifUserUniqueEmail)
+                {
+                    _response.Result = updateUserDTO;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages = new List<string> { "Email Id should be Unique" };
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+
+                    return _response;
+                }
+
+                    appuser.Email = updateUserDTO.NewEmail;
+                    appuser.NormalizedEmail = updateUserDTO.NewEmail.ToUpper();
+                    isEmailUpdated = true;
+                    appuser.EmailConfirmed = false;
+
             }
 
 
-            bool ifUserUniqueEmail = IsUniqueEmail(updateUserDTO.NewEmail);
-
-            if (!ifUserUniqueEmail)
-            {
-                _response.Result = updateUserDTO;
-                _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string> { "Email Id should be Unique" };
-                _response.StatusCode = HttpStatusCode.BadRequest;
-
-                return _response;
-            }
-
-
-            appuser = await _userManager.FindByIdAsync(updateUserDTO.Id);
-            if (updateUserDTO.NewEmail != appuser.Email)
-            {
-                appuser.Email = updateUserDTO.NewEmail;
-                appuser.NormalizedEmail = updateUserDTO.NewEmail.ToUpper();
-                isEmailUpdated = true;
-                appuser.EmailConfirmed = false;
-            }
-           
-
-
-            appuser.UserName = updateUserDTO.NewUserName;
-            appuser.NormalizedUserName = updateUserDTO.NewUserName.ToUpper();
            if (updateUserDTO.NewName != string.Empty)
             {
                 appuser.Name = updateUserDTO.NewName;
