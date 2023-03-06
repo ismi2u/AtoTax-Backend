@@ -27,7 +27,10 @@ namespace AtoTax.Domain.Entities
         public string ReceivedBy { get; set; }
 
         public DateTime? ReceivedDate { get; set; }
+
+        [ForeignKey("MultimediaType")]
         public int MultimediaTypeId { get; set; }
+        public virtual MultimediaType MultimediaType { get; set; }
         public string? FiledBy { get; set; }
         public DateTime? FiledDate { get; set; }
         public bool? IsBillsReceived { get; set; }
