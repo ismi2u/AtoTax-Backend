@@ -7,10 +7,13 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["AtoTax.API/AtoTax.API.csproj", "AtoTax.API/"]
+
 COPY ["AtoTax.API/GSTBillsReceived.html", "AtoTax.API/"]
+COPY ["AtoTax.API/GSTFiled.html", "AtoTax.API/"]
 COPY ["AtoTax.API/PasswordReset.html", "AtoTax.API/"]
 COPY ["AtoTax.API/ConfirmEmail.html", "AtoTax.API/"]
+
+COPY ["AtoTax.API/AtoTax.API.csproj", "AtoTax.API/"]
 COPY ["AtoTax.Domain/AtoTax.Domain.csproj", "AtoTax.Domain/"]
 COPY ["AtoTax.EmailService/AtoTax.EmailService.csproj", "AtoTax.EmailService/"]
 RUN dotnet restore "AtoTax.API/AtoTax.API.csproj"

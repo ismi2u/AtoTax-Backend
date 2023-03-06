@@ -161,6 +161,8 @@ namespace AtoTax.API.Controllers
                     return Ok(_response);
                 }
 
+                GSTClient gstclient = await _unitOfWork.GSTClients.GetAsync(c => c.Id == oldGSTBillAndFeeCollection.GSTClientId);
+
 
 
                 var GSTBillAndFeeCollection = _mapper.Map<GSTBillAndFeeCollection>(GSTBillAndFeeCollectionUpdateDTO);
@@ -169,9 +171,52 @@ namespace AtoTax.API.Controllers
                 string loggedUserName = User.Identity.Name;
 
 
-                GSTBillAndFeeCollection.FiledBy = loggedUserName;
-                GSTBillAndFeeCollection.IsFiled = true;
-                
+               
+                string strEmailNotSentError = string.Empty;
+                try
+                {
+                    // Send Mail ID confirmation email
+
+                    string[] paths = { Directory.GetCurrentDirectory(), "GSTBillsReceived.html" };
+                    string FilePath = Path.Combine(paths);
+                    // _logger.LogInformation("Email template path " + FilePath);
+                    StreamReader str = new StreamReader(FilePath);
+                    string MailText = str.ReadToEnd();
+                    str.Close();
+
+                    var domain = _config.GetSection("Domain").Value;
+                    var duemonth = GSTBillAndFeeCollection.DueMonth;
+                    var dueyear = GSTBillAndFeeCollection.DueYear;
+                    var builder = new MimeKit.BodyBuilder();
+                    var receiverEmail = gstclient.GSTEmailId;
+                    string subject = "AtoTax: GST Filed for the month of " + duemonth + "-" + dueyear;
+
+                    MailText = MailText.Replace("{Domain}", domain);
+                    MailText = MailText.Replace("{employee}", loggedUserName);
+                    MailText = MailText.Replace("{month}", duemonth);
+                    MailText = MailText.Replace("{year}", dueyear.ToString());
+                    MailText = MailText.Replace("{gstclient}", gstclient.ProprietorName);
+
+
+                    builder.HtmlBody = MailText;
+
+                    EmailDto emailDto = new EmailDto();
+                    emailDto.To = receiverEmail;
+                    emailDto.Subject = subject;
+                    emailDto.Body = builder.HtmlBody;
+
+                    await _emailSender.SendEmailAsync(emailDto);
+                    _logger.LogInformation("GST Filed Acknowledgement for " + gstclient.ProprietorName + " for the month of " + " for the month of " + duemonth + "-" + dueyear);
+                    ///
+                    GSTBillAndFeeCollection.FiledBy = loggedUserName;
+                    GSTBillAndFeeCollection.IsFiled = true;
+                    GSTBillAndFeeCollection.GSTFiledAckEmailSent = true;
+                    GSTBillAndFeeCollection.GSTFiledAckSMSSent = false;
+                }
+                catch (Exception)
+                {
+                    strEmailNotSentError = "GST Filed Acknowledgement could not be sent to GST Client";
+                }
 
 
                 ////// dont update the below field as they are not part of updateDTO  and hence will become null
@@ -184,7 +229,7 @@ namespace AtoTax.API.Controllers
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = GSTBillAndFeeCollection;
                 _response.IsSuccess = true;
-                _response.SuccessMessage = "GSTBillAndFeeCollection updated";
+                _response.SuccessMessage = "GSTBillAndFeeCollection updated " + strEmailNotSentError;
                 _response.ErrorMessages = null;
             }
             catch (Exception ex)
