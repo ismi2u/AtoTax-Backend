@@ -255,7 +255,7 @@ namespace AtoTax.API.Controllers
                 emailDto.Body = builder.HtmlBody;
 
                 await _emailSender.SendEmailAsync(emailDto);
-                _logger.LogInformation("GSTBillsReceived: Confirmation sent to " + gstclient.ProprietorName + " for the month of " + duemonth + "-" + dueyear);
+                _logger.LogInformation("Email Acknowledgement: Acknowledgement sent to " + gstclient.ProprietorName + " for the month of " + duemonth + "-" + dueyear);
                 ///
 
 
