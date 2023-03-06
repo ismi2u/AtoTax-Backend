@@ -9,6 +9,8 @@
         public string Password { get; set; }
         public DateTime? DOB { get; set; }
         public DateTime? DOJ { get; set; }
+
+        public string? PhoneNumber { get;set; }
         
     }
 }

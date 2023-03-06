@@ -194,6 +194,7 @@ namespace AtoTax.API.Repository.Repos
             newAppUser.UserName = registrationRequestDTO.UserName;
             newAppUser.DOB = registrationRequestDTO.DOB;
             newAppUser.DOJ= registrationRequestDTO.DOJ;
+            newAppUser.PhoneNumber = registrationRequestDTO.PhoneNumber;
 
 
             try
