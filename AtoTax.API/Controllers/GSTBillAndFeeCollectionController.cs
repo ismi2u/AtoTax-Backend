@@ -17,6 +17,9 @@ using System.Data;
 using AtoTax.API.Authentication;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using AtoTax.Domain.DTOs.AuthDTOs;
+using EmailService;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace AtoTax.API.Controllers
 {
@@ -30,14 +33,22 @@ namespace AtoTax.API.Controllers
         private readonly IMapper _mapper;
         private readonly AtoTaxDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IConfiguration _config;
+        private readonly IEmailSender _emailSender;
+        private readonly ILogger<GSTBillAndFeeCollection> _logger;
 
-        public GSTBillAndFeeCollectionController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context, UserManager<ApplicationUser> userManager)
+        public GSTBillAndFeeCollectionController(IUnitOfWork unitOfWork, IMapper mapper,
+            IConfiguration config, 
+            AtoTaxDbContext context, UserManager<ApplicationUser> userManager, IEmailSender emailSender, ILogger<GSTBillAndFeeCollection> logger)
         {
             _mapper = mapper;
             this._response = new();
             _context = context;
             _unitOfWork = unitOfWork;
             _userManager = userManager;
+            _config = config;
+            _emailSender = emailSender;
+            _logger = logger;
         }
 
         // GET: api/GSTBillAndFeeCollection
@@ -197,8 +208,57 @@ namespace AtoTax.API.Controllers
 
             try
             {
+                var clientFeeMap = _unitOfWork.ClientFeeMaps.GetAllAsync(c => c.GSTClientId == GSTBillAndFeeCollectionCreateDTO.GSTClientID 
+                                        && c.ServiceCategoryId == GSTBillAndFeeCollectionCreateDTO.ServiceCategoryId).Result.FirstOrDefault();
+
                 var GSTBillAndFeeCollection = _mapper.Map<GSTBillAndFeeCollection>(GSTBillAndFeeCollectionCreateDTO);
                 GSTBillAndFeeCollection.ReceivedBy = loggedUserName;
+                GSTBillAndFeeCollection.IsBillsReceived = true;
+                GSTBillAndFeeCollection.IsFiled = false;
+                GSTBillAndFeeCollection.FeesAmount = clientFeeMap.DefaultCharge;
+                GSTBillAndFeeCollection.Balance = clientFeeMap.DefaultCharge;
+
+                GSTClient gstclient = new();
+                if (GSTBillAndFeeCollectionCreateDTO.GSTClientID != null)
+                {
+                   gstclient = await _unitOfWork.GSTClients.GetAsync(c => c.Id == GSTBillAndFeeCollectionCreateDTO.GSTClientID);
+                }
+               
+                // Send Mail ID confirmation email
+
+                string[] paths = { Directory.GetCurrentDirectory(), "GSTBillsReceived.html" };
+                string FilePath = Path.Combine(paths);
+               // _logger.LogInformation("Email template path " + FilePath);
+                StreamReader str = new StreamReader(FilePath);
+                string MailText = str.ReadToEnd();
+                str.Close();
+
+                var domain = _config.GetSection("Domain").Value;
+                var duemonth = GSTBillAndFeeCollectionCreateDTO.DueMonth;
+                var dueyear = GSTBillAndFeeCollectionCreateDTO.DueYear;
+                var builder = new MimeKit.BodyBuilder();
+                var receiverEmail = gstclient.GSTEmailId;
+                string subject = "AtoTax: GST Bills Received for the month of " + duemonth + "-" + dueyear;
+
+                MailText = MailText.Replace("{Domain}", domain);
+                MailText = MailText.Replace("{employee}", loggedUserName);
+                MailText = MailText.Replace("{month}", duemonth);
+                MailText = MailText.Replace("{year}", dueyear.ToString());
+                MailText = MailText.Replace("{gstclient}", gstclient.ProprietorName);
+
+
+                builder.HtmlBody = MailText;
+
+                EmailDto emailDto = new EmailDto();
+                emailDto.To = receiverEmail;
+                emailDto.Subject = subject;
+                emailDto.Body = builder.HtmlBody;
+
+                await _emailSender.SendEmailAsync(emailDto);
+                _logger.LogInformation("GSTBillsReceived: Confirmation sent to " + gstclient.ProprietorName + " for the month of " + duemonth + "-" + dueyear);
+                ///
+
+
 
                 await _unitOfWork.GSTBillAndFeeCollections.CreateAsync(GSTBillAndFeeCollection);
 

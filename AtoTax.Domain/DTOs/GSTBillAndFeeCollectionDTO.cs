@@ -49,6 +49,7 @@ namespace AtoTax.Domain.DTOs
         public int MultimediaTypeId { get; set; }
         //public Guid? FiledBy { get; set; }
         //public DateTime? FiledDate { get; set; }
+
         //public bool IsBillsReceived { get; set; }
         ////public bool IsFiled { get; set; }
         //public double FeesAmount { get; set; }
