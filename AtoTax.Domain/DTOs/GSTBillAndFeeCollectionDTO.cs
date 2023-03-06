@@ -40,20 +40,24 @@ namespace AtoTax.Domain.DTOs
         public int DueYear { get; set; }
         [Required]
         public int GSTFilingTypeId { get; set; }
-        public Guid? ReceivedBy { get; set; }
-        public DateTime? ReceivedDate { get; set; }
+
+        [Required]
+        public int ServiceCategoryId { get; set; }
+        //public Guid? ReceivedBy { get; set; }
+        //public DateTime? ReceivedDate { get; set; }
+        [Required]
         public int MultimediaTypeId { get; set; }
-        public Guid? FiledBy { get; set; }
-        public DateTime? FiledDate { get; set; }
-        public bool IsBillsReceived { get; set; }
-        public bool IsFiled { get; set; }
-        public double FeesAmount { get; set; }
-        public double FeesPaidAmt { get; set; }
-        public double Balance { get; set; }
-        public bool ReceivedAckEmailSent { get; set; }
-        public bool GSTFiledAckEmailSent { get; set; }
-        public bool ReceivedAckSMSSent { get; set; }
-        public bool GSTFiledAckSMSSent { get; set; }
+        //public Guid? FiledBy { get; set; }
+        //public DateTime? FiledDate { get; set; }
+        //public bool IsBillsReceived { get; set; }
+        ////public bool IsFiled { get; set; }
+        //public double FeesAmount { get; set; }
+        //public double FeesPaidAmt { get; set; }
+        //public double Balance { get; set; }
+        //public bool ReceivedAckEmailSent { get; set; }
+        //public bool GSTFiledAckEmailSent { get; set; }
+        //public bool ReceivedAckSMSSent { get; set; }
+        //public bool GSTFiledAckSMSSent { get; set; }
 
     }
 
