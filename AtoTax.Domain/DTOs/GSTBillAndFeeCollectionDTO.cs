@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AtoTax.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AtoTax.Domain.DTOs
@@ -9,6 +10,9 @@ namespace AtoTax.Domain.DTOs
         public Guid Id { get; set; }
         public Guid GSTClientID { get; set; }
         public GSTClientDTO GSTClient { get; set; }
+
+        public int ServiceCategoryId { get; set; }
+        public ServiceCategoryDTO ServiceCategory { get; set; }
         public string DueMonth { get; set; }
         public int DueYear { get; set; }
         public int GSTFilingTypeId { get; set; }
@@ -16,6 +20,7 @@ namespace AtoTax.Domain.DTOs
         public string ReceivedBy { get; set; }
         public DateTime? ReceivedDate { get; set; }
         public int MultimediaTypeId { get; set; }
+        public MultimediaTypeDTO MultimediaType { get; set; }
         public string FiledBy { get; set; }
         public DateTime? FiledDate { get; set; }
         public bool IsBillsReceived { get; set; }
