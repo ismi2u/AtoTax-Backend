@@ -66,24 +66,12 @@ namespace AtoTax.Domain.DTOs
     {
         public Guid Id { get; set; }
 
-        [Required]
         public Guid GSTClientID { get; set; }
         [Required]
         public string DueMonth { get; set; }
         [Required]
         public int DueYear { get; set; }
-        [Required]
-        public int GSTFilingTypeId { get; set; }
-        public Guid? ReceivedBy { get; set; }
-        public DateTime? ReceivedDate { get; set; }
-        public int MultimediaTypeId { get; set; }
-        public Guid? FiledBy { get; set; }
-        public DateTime? FiledDate { get; set; }
-        public bool IsBillsReceived { get; set; }
-        public bool IsFiled { get; set; }
-        public double FeesAmount { get; set; }
-        public double FeesPaidAmt { get; set; }
-        public double Balance { get; set; }
+
         public bool ReceivedAckEmailSent { get; set; }
         public bool GSTFiledAckEmailSent { get; set; }
         public bool ReceivedAckSMSSent { get; set; }

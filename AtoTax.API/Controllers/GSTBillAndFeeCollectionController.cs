@@ -161,17 +161,18 @@ namespace AtoTax.API.Controllers
                     return Ok(_response);
                 }
 
+
+
                 var GSTBillAndFeeCollection = _mapper.Map<GSTBillAndFeeCollection>(GSTBillAndFeeCollectionUpdateDTO);
 
                 //// dont update the FilingType number which is the Identity of the FilingType
                 string loggedUserName = User.Identity.Name;
-                
+
+
                 GSTBillAndFeeCollection.FiledBy = loggedUserName;
-                GSTBillAndFeeCollection.ReceivedBy = oldGSTBillAndFeeCollection.ReceivedBy;
-                GSTBillAndFeeCollection.ReceivedDate = oldGSTBillAndFeeCollection.ReceivedDate;
-                GSTBillAndFeeCollection.FiledDate = oldGSTBillAndFeeCollection.ReceivedDate;
-                GSTBillAndFeeCollection.DueMonth = oldGSTBillAndFeeCollection.DueMonth;
-                GSTBillAndFeeCollection.DueYear = oldGSTBillAndFeeCollection.DueYear;
+                GSTBillAndFeeCollection.IsFiled = true;
+                
+
 
                 ////// dont update the below field as they are not part of updateDTO  and hence will become null
                 //GSTBillAndFeeCollection.CreatedDate = oldGSTBillAndFeeCollection.CreatedDate;
@@ -223,42 +224,52 @@ namespace AtoTax.API.Controllers
                 {
                    gstclient = await _unitOfWork.GSTClients.GetAsync(c => c.Id == GSTBillAndFeeCollectionCreateDTO.GSTClientID);
                 }
-               
-                // Send Mail ID confirmation email
 
-                string[] paths = { Directory.GetCurrentDirectory(), "GSTBillsReceived.html" };
-                string FilePath = Path.Combine(paths);
-               // _logger.LogInformation("Email template path " + FilePath);
-                StreamReader str = new StreamReader(FilePath);
-                string MailText = str.ReadToEnd();
-                str.Close();
+                string strEmailNotSentError = string.Empty;
+                try
+                {
+                    // Send Mail ID confirmation email
 
-                var domain = _config.GetSection("Domain").Value;
-                var duemonth = GSTBillAndFeeCollectionCreateDTO.DueMonth;
-                var dueyear = GSTBillAndFeeCollectionCreateDTO.DueYear;
-                var builder = new MimeKit.BodyBuilder();
-                var receiverEmail = gstclient.GSTEmailId;
-                string subject = "AtoTax: GST Bills Received for the month of " + duemonth + "-" + dueyear;
+                    string[] paths = { Directory.GetCurrentDirectory(), "GSTBillsReceived.html" };
+                    string FilePath = Path.Combine(paths);
+                    // _logger.LogInformation("Email template path " + FilePath);
+                    StreamReader str = new StreamReader(FilePath);
+                    string MailText = str.ReadToEnd();
+                    str.Close();
 
-                MailText = MailText.Replace("{Domain}", domain);
-                MailText = MailText.Replace("{employee}", loggedUserName);
-                MailText = MailText.Replace("{month}", duemonth);
-                MailText = MailText.Replace("{year}", dueyear.ToString());
-                MailText = MailText.Replace("{gstclient}", gstclient.ProprietorName);
+                    var domain = _config.GetSection("Domain").Value;
+                    var duemonth = GSTBillAndFeeCollectionCreateDTO.DueMonth;
+                    var dueyear = GSTBillAndFeeCollectionCreateDTO.DueYear;
+                    var builder = new MimeKit.BodyBuilder();
+                    var receiverEmail = gstclient.GSTEmailId;
+                    string subject = "AtoTax: GST Bills Received for the month of " + duemonth + "-" + dueyear;
 
-
-                builder.HtmlBody = MailText;
-
-                EmailDto emailDto = new EmailDto();
-                emailDto.To = receiverEmail;
-                emailDto.Subject = subject;
-                emailDto.Body = builder.HtmlBody;
-
-                await _emailSender.SendEmailAsync(emailDto);
-                _logger.LogInformation("Email Acknowledgement: Acknowledgement sent to " + gstclient.ProprietorName + " for the month of " + duemonth + "-" + dueyear);
-                ///
+                    MailText = MailText.Replace("{Domain}", domain);
+                    MailText = MailText.Replace("{employee}", loggedUserName);
+                    MailText = MailText.Replace("{month}", duemonth);
+                    MailText = MailText.Replace("{year}", dueyear.ToString());
+                    MailText = MailText.Replace("{gstclient}", gstclient.ProprietorName);
 
 
+                    builder.HtmlBody = MailText;
+
+                    EmailDto emailDto = new EmailDto();
+                    emailDto.To = receiverEmail;
+                    emailDto.Subject = subject;
+                    emailDto.Body = builder.HtmlBody;
+
+                    await _emailSender.SendEmailAsync(emailDto);
+                    _logger.LogInformation("Email Acknowledgement: Acknowledgement sent to " + gstclient.ProprietorName + " for the month of " + duemonth + "-" + dueyear);
+                    ///
+
+                    GSTBillAndFeeCollection.ReceivedAckEmailSent = true;
+                    GSTBillAndFeeCollection.ReceivedAckSMSSent = false;
+                }
+                catch (Exception)
+                {
+                    strEmailNotSentError = "Email Acknowledge could not be sent to GST Client";
+                }
+                
 
                 await _unitOfWork.GSTBillAndFeeCollections.CreateAsync(GSTBillAndFeeCollection);
 
@@ -267,7 +278,7 @@ namespace AtoTax.API.Controllers
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.Result = _mapper.Map<GSTBillAndFeeCollectionDTO>(GSTBillAndFeeCollection);
                 _response.IsSuccess = true;
-                _response.SuccessMessage = "New GSTBillAndFeeCollection created";
+                _response.SuccessMessage = "New GSTBillAndFeeCollection created " + strEmailNotSentError;
                 _response.ErrorMessages = null;
 
                 return CreatedAtAction("GetGSTBillAndFeeCollection", new { id = GSTBillAndFeeCollection.Id }, _response);
