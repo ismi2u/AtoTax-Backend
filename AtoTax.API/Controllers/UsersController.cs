@@ -62,7 +62,7 @@ namespace AtoTax.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[Authorize(Roles = "Admin, User")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDTO model)
         {
             return Ok(await _userRepository.Register(model));
@@ -91,7 +91,7 @@ namespace AtoTax.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO model)
         {
             return Ok(await _userRepository.ChangePassword(model));
@@ -110,7 +110,7 @@ namespace AtoTax.API.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[Authorize(Roles = "Admin, User")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> DeleteUser(string id)
         {
 
@@ -120,7 +120,7 @@ namespace AtoTax.API.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[Authorize(Roles = "Admin, User")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> UpdateUser(string id, UpdateUserDTO model)
         {
             return Ok(await _userRepository.UpdateUser(model));
@@ -130,7 +130,7 @@ namespace AtoTax.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[Authorize(Roles = "Admin, User")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> AssignRoles([FromBody] AssignRolesDTO model)
         {
             return Ok(await _userRepository.AssignRoles(model));
@@ -147,7 +147,7 @@ namespace AtoTax.API.Controllers
 
         [HttpGet]
         [ActionName("GetAllUsers")]
-        //[Authorize(Roles = "Admin, User")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> GetAllUsers()
         {
             return Ok(await _userRepository.GetUsers());
@@ -156,7 +156,7 @@ namespace AtoTax.API.Controllers
 
         [HttpGet]
         [ActionName("GetAllRoles")]
-        //[Authorize(Roles = "Admin, User")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> GetAllRoles()
         {
             return Ok(await _userRepository.GetRoles());
@@ -165,7 +165,7 @@ namespace AtoTax.API.Controllers
         
         [HttpGet]
         [ActionName("GetRolesforUser")]
-        //[Authorize(Roles = "Admin, User")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> GetRolesforUser(string id)
         {
             return Ok(await _userRepository.GetRolesforUser(id));
