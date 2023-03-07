@@ -740,6 +740,10 @@ namespace AtoTax.API.Repository.Repos
           
             foreach (string RoleId in assignRolesDTO.RoleIds)
             {
+                if (RoleId == null)
+                {
+                    continue;
+                }
                 IdentityRole role = await _roleManager.FindByIdAsync(RoleId);
                 IdentityResult result = await _userManager.AddToRoleAsync(user, role.Name);
 

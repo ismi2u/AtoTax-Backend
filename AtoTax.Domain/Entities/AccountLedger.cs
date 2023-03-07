@@ -9,24 +9,25 @@ namespace AtoTax.Domain.Entities
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
-
-        [ForeignKey("GSTClient")]
-        public Guid? GSTClientId { get; set; }
-        public virtual GSTClient GSTClient { get; set; }
-
-
-        public string User { get; set; }
-
-        [Required]
-        public DateTime Date { get; set; }
-        public double? IncomingAmount { get; set; }
+    
+        public double? IncomeAmount { get; set; }
         public double? ExpenseAmount { get; set; }
+
+        public bool? IsGSTClientPaid { get; set; }
         [Required]
         [ForeignKey("PaymentType")]
         public int PaymentTypeId { get; set; }
         public virtual PaymentType PaymentType { get; set; }
+
+        [Required]
+        public string? TransactionReferenceNo{ get; set; }
+
+        [Required]
+        public DateTime TransactionDate { get; set; }
+
+        public string? TransactionRecordedBy { get; set; }
+
         public string? Comments { get; set; }
-        
 
     }
 }

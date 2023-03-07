@@ -86,6 +86,9 @@ builder.Services.AddScoped<IGSTClientAddressExtensionRepository, GSTClientAddres
 builder.Services.AddScoped<IGSTBillAndFeeCollectionRepository, GSTBillAndFeeCollectionRepository>();
 builder.Services.AddScoped<IGSTPaidDetailRepository, GSTPaidDetailRepository>();
 
+builder.Services.AddScoped<IClientMonthlyPaymentRepository, ClientMonthlyPaymentRepository>();
+
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddAuthentication(options =>
@@ -205,7 +208,7 @@ app.MapControllers();
 //hangfine job defined here
 app.UseHangfireDashboard();
 app.MapHangfireDashboard();
-RecurringJob.AddOrUpdate<ICollectionAndBalanceRepository>(x => x.SyncDataAsync(), Cron.Hourly);
+RecurringJob.AddOrUpdate<ICollectionAndBalanceRepository>(x => x.SyncDataAsync(), Cron.Minutely);
 
 //app.UseStaticFiles(new StaticFileOptions
 //{

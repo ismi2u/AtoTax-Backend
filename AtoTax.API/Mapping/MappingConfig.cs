@@ -31,7 +31,7 @@ namespace AtoTax.API.Mapping
             //Account Ledger
             CreateMap<AccountLedger, AccountLedgerDTO>().ReverseMap();
             CreateMap<AccountLedgerCreateDTO, AccountLedger>()
-               .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateTime.UtcNow));
+               .ForMember(dest => dest.TransactionDate, opt => opt.MapFrom(src => DateTime.UtcNow));
 
 
             //Address Type
@@ -117,6 +117,10 @@ namespace AtoTax.API.Mapping
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
 
 
+            CreateMap<ClientMonthlyPayment, ClientMonthlyPaymentDTO>().ReverseMap();
+            CreateMap<ClientMonthlyPaymentCreateDTO, ClientMonthlyPayment>()
+                .ForMember(dest => dest.TransactionDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
 
             //GSTClientAddressExtension
             CreateMap<GSTClientAddressExtension, GSTClientAddressExtensionDTO>().ReverseMap();
@@ -149,11 +153,13 @@ namespace AtoTax.API.Mapping
 
             //CollectionAndBalance
             CreateMap<CollectionAndBalance, CollectionAndBalanceDTO>().ReverseMap();
-            CreateMap<CollectionAndBalanceCreateDTO, CollectionAndBalance>().ReverseMap();
+            //CreateMap<CollectionAndBalanceCreateDTO, CollectionAndBalance>().ReverseMap();
 
             //AccountLedger
             CreateMap<AccountLedger, AccountLedgerDTO>().ReverseMap();
-            CreateMap<AccountLedgerCreateDTO, AccountLedger>().ReverseMap();
+            CreateMap<AccountLedgerCreateDTO, AccountLedger>()
+                 .ForMember(dest => dest.TransactionDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+                 .ForMember(dest => dest.IsGSTClientPaid, opt => opt.MapFrom(src => false));
 
             //GSTBillAndFeeCollection
             CreateMap<GSTBillAndFeeCollection, GSTBillAndFeeCollectionDTO>().ReverseMap();

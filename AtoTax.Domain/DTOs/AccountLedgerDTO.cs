@@ -10,49 +10,29 @@ namespace AtoTax.Domain.DTOs
     public class AccountLedgerDTO
     {
         public Guid Id { get; set; }
-        public Guid? GSTClientId { get; set; }
-        public virtual GSTClientDTO GSTClient { get; set; } 
-
-        public int DataEntryEmployee { get; set; }
-        public DateTime Date { get; set; }
-        public double? IncomingAmount { get; set; }
+        public double? IncomeAmount { get; set; }
         public double? ExpenseAmount { get; set; }
-
+        public bool? IsGSTClientPaid { get; set; }
         public int PaymentTypeId { get; set; }
-        public virtual PaymentType PaymentType { get; set; }
+        public  PaymentTypeDTO PaymentType { get; set; }
+        public string? TransactionReferenceNo { get; set; }
+
+        public DateTime TransactionDate { get; set; }
+
+        public string? TransactionRecordedBy { get; set; }
+
         public string? Comments { get; set; }
 
     }
 
     public class AccountLedgerCreateDTO
     {
-        [Required]
-        public Guid? GSTClientId { get; set; }
-        [Required]
-        public int DataEntryEmployee { get; set; }
-        public DateTime? Date { get; set; }
-        public double? IncomingAmount { get; set; }
+        public double? IncomeAmount { get; set; }
         public double? ExpenseAmount { get; set; }
-        [Required]
         public int PaymentTypeId { get; set; }
+        public string? TransactionReferenceNo { get; set; }
         public string? Comments { get; set; }
 
     }
 
-    public class AccountLedgerUpdateDTO
-    {
-        [Required]
-        public Guid Id { get; set; }
-        [Required]
-        public Guid? GSTClientId { get; set; }
-        [Required]
-        public int DataEntryEmployee { get; set; }
-        public DateTime? Date { get; set; }
-        public double? IncomingAmount { get; set; }
-        public double? ExpenseAmount { get; set; }
-        [Required]
-        public int PaymentTypeId { get; set; }
-        public string? Comments { get; set; }
-
-    }
 }

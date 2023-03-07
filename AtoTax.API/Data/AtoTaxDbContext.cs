@@ -98,6 +98,7 @@ namespace AtoTaxAPI.Data
         public DbSet<ApprovalStatusType> ApprovalStatusTypes { get; set; }
         public DbSet<Status> Status { get; set; }
         public DbSet<GSTClient> GSTClients { get; set; }
+        public DbSet<ClientMonthlyPayment> ClientMonthlyPayments { get; set; }
         public DbSet<PaymentType> PaymentTypes { get; set; }
         public DbSet<MultimediaType> MultimediaTypes { get; set; }
         public DbSet<ServiceCategory> ServiceCategories { get; set; }

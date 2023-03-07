@@ -29,7 +29,7 @@ namespace AtoTax.API.GenericRepository
         public IUserLoggedActivityRepository UserLoggedActivities { get; private set; }
         public IServiceChargeUpdateHistoryRepository ServiceChargeUpdateHistories { get; private set; }
 
-
+        public IClientMonthlyPaymentRepository ClientMonthlyPayments { get; private set; }
 
         private readonly AtoTaxDbContext _context;
 
@@ -50,6 +50,7 @@ namespace AtoTax.API.GenericRepository
         private readonly ILogger<Status> _StatusLogger;
         private readonly ILogger<UserLoggedActivity> _UserLoggedActivityLogger;
         private readonly ILogger<ServiceChargeUpdateHistory> _ServiceChargeUpdateHistoryLogger;
+        private readonly ILogger<ClientMonthlyPayment> _ClientMonthlyPaymentLogger;
 
         public UnitOfWork(AtoTaxDbContext context,
 
@@ -69,7 +70,8 @@ namespace AtoTax.API.GenericRepository
             ILogger<ServiceCategory> ServiceCategoryLogger,
             ILogger<Status> StatusLogger,
             ILogger<UserLoggedActivity> UserLoggedActivityLogger,
-            ILogger<ServiceChargeUpdateHistory> ServiceChargeUpdateHistoryLogger
+            ILogger<ServiceChargeUpdateHistory> ServiceChargeUpdateHistoryLogger,
+            ILogger<ClientMonthlyPayment> ClientMonthlyPaymentLogger
 
             )
         {
@@ -92,6 +94,7 @@ namespace AtoTax.API.GenericRepository
             _ServiceCategoryLogger = ServiceCategoryLogger;
             _UserLoggedActivityLogger = UserLoggedActivityLogger;
             _ServiceChargeUpdateHistoryLogger = ServiceChargeUpdateHistoryLogger;
+            _ClientMonthlyPaymentLogger= ClientMonthlyPaymentLogger;
 
             AddressTypes = new AddressTypeRepository(_context, _AddressTypeLogger);
             Amendments = new AmendmentRepository(_context, _AmendmentLogger);
@@ -110,6 +113,7 @@ namespace AtoTax.API.GenericRepository
             Statuses = new StatusRepository(_context, _StatusLogger);
             UserLoggedActivities = new UserLoggedActivityRepository(_context, _UserLoggedActivityLogger);
             ServiceChargeUpdateHistories = new ServiceChargeUpdateHistoryRepository(_context, _ServiceChargeUpdateHistoryLogger);
+            ClientMonthlyPayments = new ClientMonthlyPaymentRepository(_context, _ClientMonthlyPaymentLogger);
         }
 
         public async Task CompleteAsync()

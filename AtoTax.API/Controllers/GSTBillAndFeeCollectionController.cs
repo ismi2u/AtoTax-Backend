@@ -128,7 +128,8 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> UpdateGSTBillAndFeeCollection(Guid id, GSTBillAndFeeCollectionUpdateDTO GSTBillAndFeeCollectionUpdateDTO)
+        public async Task<ActionResult<APIResponse>> UpdateGSTBillAndFeeCollection(Guid id, 
+            GSTBillAndFeeCollectionUpdateDTO GSTBillAndFeeCollectionUpdateDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -257,6 +258,16 @@ namespace AtoTax.API.Controllers
         {
             string loggedUserName = User.Identity.Name;
 
+            bool recordAlreadyExists =   _unitOfWork.GSTBillAndFeeCollections.GetAllAsync(g=> g.GSTClientId == GSTBillAndFeeCollectionCreateDTO.GSTClientID && g.DueMonth == GSTBillAndFeeCollectionCreateDTO.DueMonth  && g.DueYear == GSTBillAndFeeCollectionCreateDTO.DueYear && g.ServiceCategoryId == GSTBillAndFeeCollectionCreateDTO.ServiceCategoryId).Result.Any();
+
+            if(recordAlreadyExists)
+            {
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.Result = null;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { "Duplicate record not allowed" };
+            }
 
             try
             {
@@ -323,6 +334,37 @@ namespace AtoTax.API.Controllers
                 
 
                 await _unitOfWork.GSTBillAndFeeCollections.CreateAsync(GSTBillAndFeeCollection);
+
+                /// Create entry in Collection in Balance for IsBillsreceived and IsGSTFiled
+
+               CollectionAndBalance updCollectionAndBalance =  _unitOfWork.CollectionAndBalances.GetAllAsync(c=> c.GSTClientId == GSTBillAndFeeCollectionCreateDTO.GSTClientID 
+               && c.DueMonth == GSTBillAndFeeCollectionCreateDTO.DueMonth 
+               && c.DueYear == GSTBillAndFeeCollectionCreateDTO.DueYear
+               && c.ServiceCategoryId == GSTBillAndFeeCollectionCreateDTO.ServiceCategoryId).Result.FirstOrDefault();
+                if(updCollectionAndBalance != null)
+                {
+                    updCollectionAndBalance.IsGSTBillReceived = true;
+                    updCollectionAndBalance.IsGSTFiled = false;
+                    updCollectionAndBalance.CurrentBalance = GSTBillAndFeeCollection.FeesAmount ?? 0;
+                    updCollectionAndBalance.FeesAmount = GSTBillAndFeeCollection.FeesAmount ?? 0;
+                    updCollectionAndBalance.AmountPaid = 0;
+
+                    await _unitOfWork.CollectionAndBalances.UpdateAsync(updCollectionAndBalance);
+                }
+                else
+                {// this record already created by Hangfire CRON job, but in case if it missed due 
+                 // to trigger time, create a record
+                    CollectionAndBalance NewCollectionAndBalance = new();
+                    NewCollectionAndBalance.GSTClientId = GSTBillAndFeeCollection.GSTClientId;
+                    NewCollectionAndBalance.DueMonth = GSTBillAndFeeCollection.DueMonth;
+                    NewCollectionAndBalance.DueYear = GSTBillAndFeeCollection.DueYear;
+                    NewCollectionAndBalance.FeesAmount = GSTBillAndFeeCollection.FeesAmount;
+                    NewCollectionAndBalance.CurrentBalance = GSTBillAndFeeCollection.FeesAmount ?? 0;
+                    NewCollectionAndBalance.ServiceCategoryId = GSTBillAndFeeCollectionCreateDTO.ServiceCategoryId;//GSTMonthlySubmission
+                    NewCollectionAndBalance.AmountPaid = 0;
+
+                    await _unitOfWork.CollectionAndBalances.CreateAsync(NewCollectionAndBalance);
+                }
 
                 await _unitOfWork.CompleteAsync();
 

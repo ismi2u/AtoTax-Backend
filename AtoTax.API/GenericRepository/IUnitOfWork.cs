@@ -4,6 +4,8 @@ namespace AtoTax.API.GenericRepository
 {
     public interface IUnitOfWork: IDisposable
     {
+        IClientMonthlyPaymentRepository ClientMonthlyPayments { get; }
+
         IAddressTypeRepository AddressTypes { get; }
         IAmendmentRepository Amendments { get; }
         IAmendTypeRepository AmendTypes { get; }

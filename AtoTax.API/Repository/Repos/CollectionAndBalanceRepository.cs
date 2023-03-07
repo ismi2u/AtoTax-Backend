@@ -47,8 +47,9 @@ namespace AtoTax.API.Repository.Repos
                 }
                 CollectionAndBalance collectionAndBalance = new();
                 // ServiceCategoryId == 1 refers to GST Monthly Submission category
-                var clientFeeMap = _context.ClientFeeMaps.Where(c => c.GSTClientId == client.Id && c.ServiceCategoryId == 1).FirstOrDefault();
-
+                var clientFeeMap = _context.ClientFeeMaps.Where(c => c.GSTClientId == client.Id 
+                                                                && c.ServiceCategoryId == 1).FirstOrDefault();
+                collectionAndBalance.ServiceCategoryId = 1;
                 collectionAndBalance.GSTClientId = client.Id;
                 collectionAndBalance.DueMonth = newMonth;
                 collectionAndBalance.DueYear = newMonthYear;

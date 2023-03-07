@@ -108,7 +108,7 @@ namespace AtoTax.API.Controllers
             {
 
                 var AccountLedger = _mapper.Map<AccountLedger>(AccountLedgerCreateDTO);
-                AccountLedger.Date = DateTime.UtcNow;
+                AccountLedger.TransactionDate = DateTime.UtcNow;
                 await _unitOfWork.AccountLedgers.CreateAsync(AccountLedger);
 
                 await _unitOfWork.CompleteAsync();
