@@ -21,7 +21,7 @@ namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-   // [Authorize(Roles="User")]
+    //[Authorize(Roles="User")]
     public class AddressTypesController : ControllerBase
     {
         protected APIResponse _response;

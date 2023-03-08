@@ -20,7 +20,7 @@ namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-   // [Authorize(Roles="User")]
+    //[Authorize(Roles="User")]
     public class CollectionAndBalancesController : ControllerBase
     {
         protected APIResponse _response;
@@ -275,6 +275,52 @@ namespace AtoTax.API.Controllers
             }
             return Ok(_response);
            
+        }
+
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetMonthAndYearDataforGSTClient(Guid id)
+        {
+
+            List<string> includelist = new List<string>();
+            includelist.Add("Status");
+            includelist.Add("GSTClient");
+            includelist.Add("ServiceCategory");
+            includelist.Add("PaymentType");
+            string[] arrIncludes = includelist.ToArray();
+            try
+            {
+                var collectionAndBalances = await _unitOfWork.CollectionAndBalances.GetAllAsync(u => u.GSTClientId == id);
+
+
+                List<string> mnths = new List<string>();
+                List<int> yrs = new List<int>();
+
+                ClientGSTRelatedMonthandYearDTO clientGSTRelatedMonthandYearDTO = new();
+                clientGSTRelatedMonthandYearDTO.GSTClientId = id;
+
+                foreach (var item in collectionAndBalances)
+                {
+                    mnths.Add(item.DueMonth);
+                    yrs.Add(item.DueYear ?? 2000);
+
+                }
+                clientGSTRelatedMonthandYearDTO.ListMonths = mnths.Distinct().ToList();
+                clientGSTRelatedMonthandYearDTO.ListYears = yrs.Distinct().ToList();
+                _response.Result = clientGSTRelatedMonthandYearDTO;
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+            return Ok(_response);
+
         }
 
         //// PUT: api/CollectionAndBalances/5

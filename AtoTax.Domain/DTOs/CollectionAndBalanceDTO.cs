@@ -20,6 +20,15 @@ namespace AtoTax.Domain.Entities
 
     }
 
+    //used in ClientMonthlyPayments
+    public class ClientGSTRelatedMonthandYearDTO
+    {
+        public Guid GSTClientId { get; set; }
+
+        public List<string> ListMonths { get; set; }
+        public List<int> ListYears { get; set; }
+    }
+
     //public class CollectionAndBalanceCreateDTO
     //{
     //    [Required]

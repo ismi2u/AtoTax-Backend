@@ -19,7 +19,7 @@ namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-   // [Authorize(Roles="User")]
+    //[Authorize(Roles="User")]
     public class AccountLedgersController : ControllerBase
     {
         protected APIResponse _response;
@@ -43,7 +43,6 @@ namespace AtoTax.API.Controllers
         {
 
             List<string> includelist = new List<string>();
-            includelist.Add("Employee");
             includelist.Add("GSTClient");
             includelist.Add("PaymentType");
             string[] arrIncludes = includelist.ToArray();
@@ -74,7 +73,6 @@ namespace AtoTax.API.Controllers
         {
 
             List<string> includelist = new List<string>();
-            includelist.Add("Employee");
             includelist.Add("GSTClient");
             includelist.Add("PaymentType");
             string[] arrIncludes = includelist.ToArray();
