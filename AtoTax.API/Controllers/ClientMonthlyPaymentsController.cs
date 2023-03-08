@@ -181,7 +181,7 @@ namespace AtoTax.API.Controllers
                     _response.Result = null;
                     _response.IsSuccess = false;
                     _response.SuccessMessage = null;
-                    _response.ErrorMessages = new List<string> { "Error fetching Collection And Balances record" };
+                    _response.ErrorMessages = new List<string> { "Fee payments in advance not allowed" };
                     return Ok(_response);
                 }
                
