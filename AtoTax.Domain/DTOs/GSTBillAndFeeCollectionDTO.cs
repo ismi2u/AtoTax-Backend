@@ -77,10 +77,10 @@ namespace AtoTax.Domain.DTOs
         [Required]
         public int DueYear { get; set; }
 
-        public bool ReceivedAckEmailSent { get; set; }
-        public bool GSTFiledAckEmailSent { get; set; }
-        public bool ReceivedAckSMSSent { get; set; }
-        public bool GSTFiledAckSMSSent { get; set; }
+        //public bool ReceivedAckEmailSent { get; set; }
+        //public bool GSTFiledAckEmailSent { get; set; }
+        //public bool ReceivedAckSMSSent { get; set; }
+        //public bool GSTFiledAckSMSSent { get; set; }
 
     }
 
