@@ -20,7 +20,7 @@ namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    //[Authorize(Roles="User")]
+    [Authorize(Roles="User")]
     public class AmendmentController : ControllerBase
     {
         protected APIResponse _response;

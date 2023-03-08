@@ -25,7 +25,7 @@ namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    //[Authorize(Roles="User")]
+    [Authorize(Roles="User")]
     public class GSTBillAndFeeCollectionController : ControllerBase
     {
         protected APIResponse _response;
@@ -172,7 +172,7 @@ namespace AtoTax.API.Controllers
 
 
 
-                var GSTBillAndFeeCollection = _mapper.Map<GSTBillAndFeeCollection>(GSTBillAndFeeCollectionUpdateDTO);
+                //var GSTBillAndFeeCollection = _mapper.Map<GSTBillAndFeeCollection>(GSTBillAndFeeCollectionUpdateDTO);
 
                 //// dont update the FilingType number which is the Identity of the FilingType
                 string loggedUserName = User.Identity.Name;
@@ -192,8 +192,8 @@ namespace AtoTax.API.Controllers
                     str.Close();
 
                     var domain = _config.GetSection("Domain").Value;
-                    var duemonth = GSTBillAndFeeCollection.DueMonth;
-                    var dueyear = GSTBillAndFeeCollection.DueYear;
+                    var duemonth = oldGSTBillAndFeeCollection.DueMonth;
+                    var dueyear = oldGSTBillAndFeeCollection.DueYear;
                     var builder = new MimeKit.BodyBuilder();
                     var receiverEmail = gstclient.GSTEmailId;
                     string subject = "AtoTax: GST Filed for the month of " + duemonth + "-" + dueyear;
@@ -215,10 +215,10 @@ namespace AtoTax.API.Controllers
                     await _emailSender.SendEmailAsync(emailDto);
                     _logger.LogInformation("GST Filed Acknowledgement for " + gstclient.ProprietorName + " for the month of " + " for the month of " + duemonth + "-" + dueyear);
                     ///
-                    GSTBillAndFeeCollection.FiledBy = loggedUserName;
-                    GSTBillAndFeeCollection.IsFiled = true;
-                    GSTBillAndFeeCollection.GSTFiledAckEmailSent = true;
-                    GSTBillAndFeeCollection.GSTFiledAckSMSSent = false;
+                    oldGSTBillAndFeeCollection.FiledBy = loggedUserName;
+                    oldGSTBillAndFeeCollection.IsFiled = true;
+                    oldGSTBillAndFeeCollection.GSTFiledAckEmailSent = true;
+                    oldGSTBillAndFeeCollection.GSTFiledAckSMSSent = false;
                 }
                 catch (Exception)
                 {
@@ -229,12 +229,12 @@ namespace AtoTax.API.Controllers
                 ////// dont update the below field as they are not part of updateDTO  and hence will become null
                 //GSTBillAndFeeCollection.CreatedDate = oldGSTBillAndFeeCollection.CreatedDate;
 
-                await _unitOfWork.GSTBillAndFeeCollections.UpdateAsync(GSTBillAndFeeCollection);
+                await _unitOfWork.GSTBillAndFeeCollections.UpdateAsync(oldGSTBillAndFeeCollection);
 
                 await _unitOfWork.CompleteAsync();
 
                 _response.StatusCode = HttpStatusCode.NoContent;
-                _response.Result = GSTBillAndFeeCollection;
+                _response.Result = oldGSTBillAndFeeCollection;
                 _response.IsSuccess = true;
                 _response.SuccessMessage = "GSTBillAndFeeCollection updated " + strEmailNotSentError;
                 _response.ErrorMessages = null;

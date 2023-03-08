@@ -20,7 +20,7 @@ namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    //[Authorize(Roles="User")]
+    [Authorize(Roles="User")]
     public class CollectionAndBalancesController : ControllerBase
     {
         protected APIResponse _response;
@@ -44,10 +44,8 @@ namespace AtoTax.API.Controllers
         {
 
             List<string> includelist = new List<string>();
-            includelist.Add("Status");
             includelist.Add("GSTClient");
             includelist.Add("ServiceCategory");
-            includelist.Add("PaymentType");
             string[] arrIncludes = includelist.ToArray();
 
             try

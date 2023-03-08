@@ -21,10 +21,10 @@ namespace AtoTax.Domain.Entities
         public virtual ServiceCategory ServiceCategory { get; set; }
 
         [ForeignKey("GSTFilingType")]
-        public int GSTFilingTypeId { get; set; }
+        public int? GSTFilingTypeId { get; set; }
         public virtual GSTFilingType GSTFilingType { get; set; }
 
-        public string ReceivedBy { get; set; }
+        public string? ReceivedBy { get; set; }
 
         public DateTime? ReceivedDate { get; set; }
 
