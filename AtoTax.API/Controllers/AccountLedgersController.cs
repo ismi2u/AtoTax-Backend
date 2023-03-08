@@ -100,11 +100,36 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> CreateAccountLedger(AccountLedgerCreateDTO AccountLedgerCreateDTO)
         {
+            if((AccountLedgerCreateDTO.IncomeAmount == 0 || AccountLedgerCreateDTO.IncomeAmount == null) && (AccountLedgerCreateDTO.ExpenseAmount == 0 || AccountLedgerCreateDTO.ExpenseAmount == null))
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string>() { "Ledger entry should be Income Or Expense" };
+
+            }
+
             try
             {
 
                 var AccountLedger = _mapper.Map<AccountLedger>(AccountLedgerCreateDTO);
+
+
+                if(AccountLedger.ExpenseAmount==0)
+                {
+                    AccountLedger.ExpenseAmount = null;
+                }
+                if (AccountLedger.IncomeAmount == 0)
+                {
+                    AccountLedger.IncomeAmount = null;
+                }
+
+
+
                 AccountLedger.TransactionDate = DateTime.UtcNow;
+                AccountLedger.TransactionRecordedBy = User.Identity.Name;
+
+
                 await _unitOfWork.AccountLedgers.CreateAsync(AccountLedger);
 
                 await _unitOfWork.CompleteAsync();

@@ -231,6 +231,29 @@ namespace AtoTax.API.Controllers
 
                 await _unitOfWork.GSTBillAndFeeCollections.UpdateAsync(oldGSTBillAndFeeCollection);
 
+
+
+                //GST Filed should be set to true
+                CollectionAndBalance updCollectionAndBalance = _unitOfWork.CollectionAndBalances.GetAllAsync(c => c.GSTClientId == oldGSTBillAndFeeCollection.GSTClientId
+              && c.DueMonth == oldGSTBillAndFeeCollection.DueMonth
+              && c.DueYear == oldGSTBillAndFeeCollection.DueYear
+              && c.ServiceCategoryId == oldGSTBillAndFeeCollection.ServiceCategoryId).Result.FirstOrDefault();
+                if (updCollectionAndBalance != null)
+                {
+
+                    updCollectionAndBalance.IsGSTFiled = true;
+
+                    await _unitOfWork.CollectionAndBalances.UpdateAsync(updCollectionAndBalance);
+                }
+                else
+                {
+                    _response.StatusCode = HttpStatusCode.NoContent;
+                    _response.Result = null;
+                    _response.IsSuccess = false;
+                    _response.SuccessMessage = null;
+                    _response.ErrorMessages = new List<string> { "Warning: Collection and Balance Table record missing" };
+                }
+
                 await _unitOfWork.CompleteAsync();
 
                 _response.StatusCode = HttpStatusCode.NoContent;
@@ -362,6 +385,8 @@ namespace AtoTax.API.Controllers
                     NewCollectionAndBalance.CurrentBalance = GSTBillAndFeeCollection.FeesAmount ?? 0;
                     NewCollectionAndBalance.ServiceCategoryId = GSTBillAndFeeCollectionCreateDTO.ServiceCategoryId;//GSTMonthlySubmission
                     NewCollectionAndBalance.AmountPaid = 0;
+                    NewCollectionAndBalance.IsGSTBillReceived = true;
+                    NewCollectionAndBalance.IsGSTFiled = false;
 
                     await _unitOfWork.CollectionAndBalances.CreateAsync(NewCollectionAndBalance);
                 }

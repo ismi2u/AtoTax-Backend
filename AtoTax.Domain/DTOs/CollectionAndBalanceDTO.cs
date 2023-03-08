@@ -17,6 +17,7 @@ namespace AtoTax.Domain.Entities
         public double? AmountPaid { get; set; }
         public bool IsGSTBillReceived { get; set; }
         public bool IsGSTFiled { get; set; }
+        public double CurrentBalance { get; set; }
 
     }
 

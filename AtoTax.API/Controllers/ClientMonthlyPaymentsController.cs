@@ -161,6 +161,8 @@ namespace AtoTax.API.Controllers
 
                 if (updCollectionAndBalance != null)
                 {
+
+                    double CurBalance = updCollectionAndBalance.CurrentBalance;
                     updCollectionAndBalance.AmountPaid = ClientMonthlyPaymentCreateDTO.ReceivedAmount ?? 0;
                     updCollectionAndBalance.CurrentBalance = updCollectionAndBalance.CurrentBalance - (ClientMonthlyPaymentCreateDTO.ReceivedAmount ?? 0);
 
@@ -170,7 +172,7 @@ namespace AtoTax.API.Controllers
                         _response.Result = null;
                         _response.IsSuccess = false;
                         _response.SuccessMessage = null;
-                        _response.ErrorMessages = new List<string> { "You cannot pay in excess of " + updCollectionAndBalance.CurrentBalance + " for this period" };
+                        _response.ErrorMessages = new List<string> { "You cannot pay in excess of " + CurBalance + " for this period" };
                         return Ok(_response);
                     }
 
@@ -192,7 +194,7 @@ namespace AtoTax.API.Controllers
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.Result = _mapper.Map<ClientMonthlyPaymentDTO>(ClientMonthlyPayment);
                 _response.IsSuccess = true;
-                _response.SuccessMessage = "ClientMonthly Payment record created and Account Ledger entered successuflly";
+                _response.SuccessMessage = "Client Monthly Payment record created and Account Ledger entered successuflly";
                 _response.ErrorMessages = null;
 
                 return CreatedAtAction("GetClientMonthlyPayment", new { id = ClientMonthlyPayment.Id }, _response);
