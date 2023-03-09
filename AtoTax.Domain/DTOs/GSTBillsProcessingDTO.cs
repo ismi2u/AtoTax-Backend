@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AtoTax.Domain.DTOs
 {
-    public class GSTBillAndFeeCollectionDTO
+    public class GSTBillsProcessingDTO
     {
 
         public Guid Id { get; set; }
@@ -35,7 +35,7 @@ namespace AtoTax.Domain.DTOs
 
     }
 
-    public class GSTBillAndFeeCollectionCreateDTO
+    public class GSTBillsProcessingCreateDTO
     {
         [Required]
         public Guid GSTClientID { get; set; }
@@ -67,7 +67,7 @@ namespace AtoTax.Domain.DTOs
 
     }
 
-    public class GSTBillAndFeeCollectionUpdateDTO
+    public class GSTBillsProcessingUpdateDTO
     {
         public Guid Id { get; set; }
 

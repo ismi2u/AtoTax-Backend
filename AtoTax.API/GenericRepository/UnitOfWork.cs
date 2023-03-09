@@ -16,7 +16,7 @@ namespace AtoTax.API.GenericRepository
         public IAmendTypeRepository AmendTypes { get; private set; }
         public IClientFeeMapRepository ClientFeeMaps { get; private set; }
         public ICollectionAndBalanceRepository CollectionAndBalances { get; private set; }
-        public IGSTBillAndFeeCollectionRepository GSTBillAndFeeCollections { get; private set; }
+        public IGSTBillsProcessingRepository GSTBillsProcessings { get; private set; }
         public IGSTClientAddressExtensionRepository GSTClientAddressExtensions { get; private set; }
         public IAccountLedgerRepository AccountLedgers { get; private set; }
         public IGSTClientRepository GSTClients { get; private set; }
@@ -38,7 +38,7 @@ namespace AtoTax.API.GenericRepository
         private readonly ILogger<AmendType> _AmendTypeLogger;
         private readonly ILogger<ClientFeeMap> _ClientFeeMapLogger;
         private readonly ILogger<CollectionAndBalance> _CollectionAndBalanceLogger;
-        private readonly ILogger<GSTBillAndFeeCollection> _GSTBillAndFeeCollectionLogger;
+        private readonly ILogger<GSTBillsProcessing> _GSTBillsProcessingLogger;
         private readonly ILogger<GSTClientAddressExtension> _GSTClientAddressExtensionLogger;
         private readonly ILogger<AccountLedger> _AccountLedgerLogger;
         private readonly ILogger<GSTClient> _GSTClientLogger;
@@ -59,7 +59,7 @@ namespace AtoTax.API.GenericRepository
              ILogger<AmendType> AmendTypeLogger,
             ILogger<ClientFeeMap> ClientFeeMapLogger,
             ILogger<CollectionAndBalance> CollectionAndBalanceLogger,
-            ILogger<GSTBillAndFeeCollection> GSTBillAndFeeCollectionLogger,
+            ILogger<GSTBillsProcessing> GSTBillsProcessingLogger,
             ILogger<GSTClientAddressExtension> GSTClientAddressExtensionLogger,
             ILogger<AccountLedger> AccountLedgerLogger,
             ILogger<GSTClient> GSTClientLogger,
@@ -82,7 +82,7 @@ namespace AtoTax.API.GenericRepository
             _AmendTypeLogger = AmendTypeLogger;
             _ClientFeeMapLogger = ClientFeeMapLogger;
             _CollectionAndBalanceLogger = CollectionAndBalanceLogger;
-            _GSTBillAndFeeCollectionLogger = GSTBillAndFeeCollectionLogger;
+            _GSTBillsProcessingLogger = GSTBillsProcessingLogger;
             _GSTClientAddressExtensionLogger = GSTClientAddressExtensionLogger;
             _AccountLedgerLogger = AccountLedgerLogger;
             _GSTClientLogger = GSTClientLogger;
@@ -101,7 +101,7 @@ namespace AtoTax.API.GenericRepository
             AmendTypes = new AmendTypeRepository(_context, _AmendTypeLogger);
             ClientFeeMaps = new ClientFeeMapRepository(_context, _ClientFeeMapLogger);
             CollectionAndBalances = new CollectionAndBalanceRepository(_context, _CollectionAndBalanceLogger);
-            GSTBillAndFeeCollections = new GSTBillAndFeeCollectionRepository(_context, _GSTBillAndFeeCollectionLogger);
+            GSTBillsProcessings = new GSTBillsProcessingRepository(_context, _GSTBillsProcessingLogger);
             GSTClientAddressExtensions = new GSTClientAddressExtensionRepository(_context, _GSTClientAddressExtensionLogger);
             AccountLedgers = new AccountLedgerRepository(_context, _AccountLedgerLogger);
             GSTClients = new GSTClientRepository(_context, _GSTClientLogger);

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 namespace AtoTax.Domain.Entities
 {
-    public class GSTBillAndFeeCollection
+    public class GSTBillsProcessing
     {
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]

@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AtoTax.API.Repository.Repos
 {
-    public class GSTBillAndFeeCollectionRepository : Repository<GSTBillAndFeeCollection>, IGSTBillAndFeeCollectionRepository
+    public class GSTBillsProcessingRepository : Repository<GSTBillsProcessing>, IGSTBillsProcessingRepository
     {
         private readonly AtoTaxDbContext _context;
-        private readonly ILogger<GSTBillAndFeeCollection> _logger;
-        public GSTBillAndFeeCollectionRepository(AtoTaxDbContext context, ILogger<GSTBillAndFeeCollection> logger) : base(context, logger)
+        private readonly ILogger<GSTBillsProcessing> _logger;
+        public GSTBillsProcessingRepository(AtoTaxDbContext context, ILogger<GSTBillsProcessing> logger) : base(context, logger)
         {
 
             _context = context;
@@ -18,7 +18,7 @@ namespace AtoTax.API.Repository.Repos
         }
 
 
-        public async Task<GSTBillAndFeeCollection> UpdateAsync(GSTBillAndFeeCollection entity)
+        public async Task<GSTBillsProcessing> UpdateAsync(GSTBillsProcessing entity)
         {
            // entity.LastModifiedDate = DateTime.UtcNow;
 

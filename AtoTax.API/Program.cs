@@ -83,7 +83,7 @@ builder.Services.AddScoped<IClientFeeMapRepository, ClientFeeMapRepository>();
 
 builder.Services.AddScoped<IGSTFilingTypeRepository, GSTFilingTypeRepository>();
 builder.Services.AddScoped<IGSTClientAddressExtensionRepository, GSTClientAddressExtensionRepository>();
-builder.Services.AddScoped<IGSTBillAndFeeCollectionRepository, GSTBillAndFeeCollectionRepository>();
+builder.Services.AddScoped<IGSTBillsProcessingRepository, GSTBillsProcessingRepository>();
 builder.Services.AddScoped<IGSTPaidDetailRepository, GSTPaidDetailRepository>();
 
 builder.Services.AddScoped<IClientMonthlyPaymentRepository, ClientMonthlyPaymentRepository>();

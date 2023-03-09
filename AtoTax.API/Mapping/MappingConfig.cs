@@ -161,11 +161,11 @@ namespace AtoTax.API.Mapping
                  .ForMember(dest => dest.TransactionDate, opt => opt.MapFrom(src => DateTime.UtcNow))
                  .ForMember(dest => dest.IsGSTClientPaid, opt => opt.MapFrom(src => false));
 
-            //GSTBillAndFeeCollection
-            CreateMap<GSTBillAndFeeCollection, GSTBillAndFeeCollectionDTO>().ReverseMap();
-            CreateMap<GSTBillAndFeeCollectionCreateDTO, GSTBillAndFeeCollection>()
+            //GSTBillsProcessing
+            CreateMap<GSTBillsProcessing, GSTBillsProcessingDTO>().ReverseMap();
+            CreateMap<GSTBillsProcessingCreateDTO, GSTBillsProcessing>()
                 .ForMember(dest => dest.ReceivedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
-            CreateMap<GSTBillAndFeeCollectionUpdateDTO, GSTBillAndFeeCollection>()
+            CreateMap<GSTBillsProcessingUpdateDTO, GSTBillsProcessing>()
                 .ForMember(dest => dest.FiledDate, opt => opt.MapFrom(src => DateTime.UtcNow));
 
 

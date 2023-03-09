@@ -119,7 +119,7 @@ namespace AtoTaxAPI.Data
 
         public DbSet<ServiceChargeUpdateHistory> ServiceChargeUpdateHistories { get; set; }
 
-        public DbSet<GSTBillAndFeeCollection> GSTBillAndFeeCollections { get; set; }
+        public DbSet<GSTBillsProcessing> GSTBillsProcessings { get; set; }
        
         public DbSet<UserLoggedActivity> UserLoggedActivities { get; set; }
 
