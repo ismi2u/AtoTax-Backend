@@ -24,6 +24,7 @@ namespace AtoTax.Domain.Entities
         public string? MobileNumber { get; set; }
         public string? PhoneNumber { get; set; }
         public string? ContactEmailId { get; set; }
+        [Required]
         public string? GSTEmailId { get; set; }
         public string? GSTEmailPassword { get; set; }
         public string? GSTRecoveryEmailId { get; set; }

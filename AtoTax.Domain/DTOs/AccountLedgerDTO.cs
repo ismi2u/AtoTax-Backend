@@ -13,6 +13,8 @@ namespace AtoTax.Domain.DTOs
         public double? IncomeAmount { get; set; }
         public double? ExpenseAmount { get; set; }
         public bool? IsGSTClientPaid { get; set; }
+        public Guid GSTClientId { get; set; }
+        public GSTClientDTO GSTClient { get; set; }
         public int PaymentTypeId { get; set; }
         public  PaymentTypeDTO PaymentType { get; set; }
         public string? TransactionReferenceNo { get; set; }

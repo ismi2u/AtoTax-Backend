@@ -14,6 +14,11 @@ namespace AtoTax.Domain.Entities
         public double? ExpenseAmount { get; set; }
 
         public bool? IsGSTClientPaid { get; set; }
+
+        [ForeignKey("GSTClient")]
+        public Guid? GSTClientId { get; set; }
+        public virtual GSTClient? GSTClient { get; set; }
+
         [Required]
         [ForeignKey("PaymentType")]
         public int PaymentTypeId { get; set; }

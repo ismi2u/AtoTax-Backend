@@ -184,7 +184,7 @@ namespace AtoTax.API.Controllers
                 {
                     // Send Mail ID confirmation email
 
-                    string[] paths = { Directory.GetCurrentDirectory(), "GSTBillsReceived.html" };
+                    string[] paths = { Directory.GetCurrentDirectory(), "GSTFiled.html" };
                     string FilePath = Path.Combine(paths);
                     // _logger.LogInformation("Email template path " + FilePath);
                     StreamReader str = new StreamReader(FilePath);
