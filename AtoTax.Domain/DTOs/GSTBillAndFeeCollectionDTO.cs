@@ -25,9 +25,9 @@ namespace AtoTax.Domain.DTOs
         public DateTime? FiledDate { get; set; }
         public bool IsBillsReceived { get; set; }
         public bool IsFiled { get; set; }
-        public double FeesAmount { get; set; }
-        public double FeesPaidAmt { get; set; }
-        public double Balance { get; set; }
+        //public double FeesAmount { get; set; }
+        //public double FeesPaidAmt { get; set; }
+        //public double Balance { get; set; }
         public bool ReceivedAckEmailSent { get; set; }
         public bool GSTFiledAckEmailSent { get; set; }
         public bool ReceivedAckSMSSent { get; set; }

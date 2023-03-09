@@ -141,11 +141,12 @@ namespace AtoTax.API.Controllers
                 // Now Add a record in Account Ledger for accounts keeping
                     AccountLedger NewAccountLedgerEntry = new();
                     NewAccountLedgerEntry.IncomeAmount = ClientMonthlyPaymentCreateDTO.ReceivedAmount;
-                    NewAccountLedgerEntry.PaymentTypeId = ClientMonthlyPaymentCreateDTO.PaymentTypeId;
-                    NewAccountLedgerEntry.TransactionReferenceNo = ClientMonthlyPaymentCreateDTO.PaymentReferenceNumber;
-                    NewAccountLedgerEntry.TransactionRecordedBy = loggedUserName;
-                    NewAccountLedgerEntry.IsGSTClientPaid = true;
-                    NewAccountLedgerEntry.Comments = "Refer: GST Client Payment amount";
+                NewAccountLedgerEntry.PaymentTypeId = ClientMonthlyPaymentCreateDTO.PaymentTypeId;
+                NewAccountLedgerEntry.TransactionReferenceNo = ClientMonthlyPaymentCreateDTO.PaymentReferenceNumber;
+                NewAccountLedgerEntry.TransactionRecordedBy = loggedUserName;
+                NewAccountLedgerEntry.TransactionDate = DateTime.UtcNow;
+                NewAccountLedgerEntry.IsGSTClientPaid = true;
+                NewAccountLedgerEntry.Comments = "Refer: GST Client Payment amount";
 
                 await _unitOfWork.AccountLedgers.CreateAsync(NewAccountLedgerEntry);
                 ////
@@ -176,7 +177,8 @@ namespace AtoTax.API.Controllers
                         return Ok(_response);
                     }
 
-                    await _unitOfWork.CollectionAndBalances.UpdateAsync(updCollectionAndBalance);
+
+                        await _unitOfWork.CollectionAndBalances.UpdateAsync(updCollectionAndBalance);
                 }else
                 {
                     _response.StatusCode = HttpStatusCode.NoContent;

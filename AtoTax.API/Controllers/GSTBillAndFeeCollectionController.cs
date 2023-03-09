@@ -68,8 +68,8 @@ namespace AtoTax.API.Controllers
             try
             {
                 IEnumerable<GSTBillAndFeeCollection> GSTBillAndFeeCollectionList = await _unitOfWork.GSTBillAndFeeCollections.GetAllAsync(null, 0, 0, arrIncludes);
-
                 _response.Result = _mapper.Map<IEnumerable<GSTBillAndFeeCollectionDTO>>(GSTBillAndFeeCollectionList);
+
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 _response.SuccessMessage = null;
@@ -281,9 +281,11 @@ namespace AtoTax.API.Controllers
         {
             string loggedUserName = User.Identity.Name;
 
-            bool recordAlreadyExists =   _unitOfWork.GSTBillAndFeeCollections.GetAllAsync(g=> g.GSTClientId == GSTBillAndFeeCollectionCreateDTO.GSTClientID && g.DueMonth == GSTBillAndFeeCollectionCreateDTO.DueMonth  && g.DueYear == GSTBillAndFeeCollectionCreateDTO.DueYear && g.ServiceCategoryId == GSTBillAndFeeCollectionCreateDTO.ServiceCategoryId).Result.Any();
+            bool recordAlreadyExists =   _unitOfWork.GSTBillAndFeeCollections.GetAllAsync(g=> g.GSTClientId == GSTBillAndFeeCollectionCreateDTO.GSTClientID && g.DueMonth == GSTBillAndFeeCollectionCreateDTO.DueMonth  && g.DueYear == GSTBillAndFeeCollectionCreateDTO.DueYear).Result.Any();
 
-            if(recordAlreadyExists)
+            // && g.ServiceCategoryId == GSTBillAndFeeCollectionCreateDTO.ServiceCategoryId
+
+            if (recordAlreadyExists)
             {
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.Result = null;
@@ -301,8 +303,6 @@ namespace AtoTax.API.Controllers
                 GSTBillAndFeeCollection.ReceivedBy = loggedUserName;
                 GSTBillAndFeeCollection.IsBillsReceived = true;
                 GSTBillAndFeeCollection.IsFiled = false;
-                GSTBillAndFeeCollection.FeesAmount = clientFeeMap.DefaultCharge;
-                GSTBillAndFeeCollection.Balance = clientFeeMap.DefaultCharge;
 
                 GSTClient gstclient = new();
                 if (GSTBillAndFeeCollectionCreateDTO.GSTClientID != null)
@@ -368,8 +368,8 @@ namespace AtoTax.API.Controllers
                 {
                     updCollectionAndBalance.IsGSTBillReceived = true;
                     updCollectionAndBalance.IsGSTFiled = false;
-                    updCollectionAndBalance.CurrentBalance = GSTBillAndFeeCollection.FeesAmount ?? 0;
-                    updCollectionAndBalance.FeesAmount = GSTBillAndFeeCollection.FeesAmount ?? 0;
+                    updCollectionAndBalance.CurrentBalance = clientFeeMap.DefaultCharge;
+                    updCollectionAndBalance.FeesAmount = clientFeeMap.DefaultCharge;
                     updCollectionAndBalance.AmountPaid = 0;
 
                     await _unitOfWork.CollectionAndBalances.UpdateAsync(updCollectionAndBalance);
@@ -381,10 +381,10 @@ namespace AtoTax.API.Controllers
                     NewCollectionAndBalance.GSTClientId = GSTBillAndFeeCollection.GSTClientId;
                     NewCollectionAndBalance.DueMonth = GSTBillAndFeeCollection.DueMonth;
                     NewCollectionAndBalance.DueYear = GSTBillAndFeeCollection.DueYear;
-                    NewCollectionAndBalance.FeesAmount = GSTBillAndFeeCollection.FeesAmount;
-                    NewCollectionAndBalance.CurrentBalance = GSTBillAndFeeCollection.FeesAmount ?? 0;
-                    NewCollectionAndBalance.ServiceCategoryId = GSTBillAndFeeCollectionCreateDTO.ServiceCategoryId;//GSTMonthlySubmission
+                    NewCollectionAndBalance.FeesAmount = clientFeeMap.DefaultCharge;
+                    NewCollectionAndBalance.CurrentBalance = clientFeeMap.DefaultCharge;
                     NewCollectionAndBalance.AmountPaid = 0;
+                    NewCollectionAndBalance.ServiceCategoryId = GSTBillAndFeeCollectionCreateDTO.ServiceCategoryId;//GSTMonthlySubmission
                     NewCollectionAndBalance.IsGSTBillReceived = true;
                     NewCollectionAndBalance.IsGSTFiled = false;
 
