@@ -8,6 +8,8 @@ namespace AtoTax.API.Repository.Interfaces
 
         Task<CollectionAndBalance> UpdateAsync(CollectionAndBalance entity);
 
-        Task SyncDataAsync();
+        Task SyncMonthlyDataAsync();
+        Task SyncAnnualDataAsync();
+        Task SyncQuaterlyDataAsync();
     }
 }

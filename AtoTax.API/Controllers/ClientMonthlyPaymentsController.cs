@@ -21,7 +21,7 @@ namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    [Authorize(Roles="User")]
+    //[Authorize(Roles="User")]
     public class ClientMonthlyPaymentsController : ControllerBase
     {
         protected APIResponse _response;
@@ -158,7 +158,7 @@ namespace AtoTax.API.Controllers
                                                         c => c.GSTClientId == ClientMonthlyPaymentCreateDTO.GSTClientId
                                                         && c.DueMonth == ClientMonthlyPaymentCreateDTO.DueMonth
                                                         && c.DueYear == ClientMonthlyPaymentCreateDTO.DueYear
-                                                        && c.ServiceCategoryId == ClientMonthlyPaymentCreateDTO.ServiceCategoryId)
+                                                        )
                                                     .Result.FirstOrDefault();
 
                 if (updCollectionAndBalance != null)

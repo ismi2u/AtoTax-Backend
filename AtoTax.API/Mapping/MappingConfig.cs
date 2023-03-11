@@ -34,6 +34,11 @@ namespace AtoTax.API.Mapping
                .ForMember(dest => dest.TransactionDate, opt => opt.MapFrom(src => DateTime.UtcNow));
 
 
+            //Frequency
+            CreateMap<Frequency, FrequencyDTO>().ReverseMap();
+            CreateMap<FrequencyCreateDTO, Frequency>();
+              
+
             //Address Type
             CreateMap<AddressType, AddressTypeDTO>().ReverseMap();
             CreateMap<AddressTypeCreateDTO, AddressType>()

@@ -25,7 +25,7 @@ namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    [Authorize(Roles="User")]
+    //[Authorize(Roles = "User")]
     public class GSTBillsProcessingController : ControllerBase
     {
         protected APIResponse _response;
@@ -38,7 +38,7 @@ namespace AtoTax.API.Controllers
         private readonly ILogger<GSTBillsProcessing> _logger;
 
         public GSTBillsProcessingController(IUnitOfWork unitOfWork, IMapper mapper,
-            IConfiguration config, 
+            IConfiguration config,
             AtoTaxDbContext context, UserManager<ApplicationUser> userManager, IEmailSender emailSender, ILogger<GSTBillsProcessing> logger)
         {
             _mapper = mapper;
@@ -120,7 +120,7 @@ namespace AtoTax.API.Controllers
                 _response.ErrorMessages = new List<string> { ex.Message.ToString() };
             }
             return Ok(_response);
-           
+
         }
 
         // PUT: api/GSTBillsProcessing/5
@@ -128,7 +128,7 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> UpdateGSTBillsProcessing(Guid id, 
+        public async Task<ActionResult<APIResponse>> UpdateGSTBillsProcessing(Guid id,
             GSTBillsProcessingUpdateDTO GSTBillsProcessingUpdateDTO)
         {
             if (!ModelState.IsValid)
@@ -154,7 +154,7 @@ namespace AtoTax.API.Controllers
                     return Ok(_response);
                 }
 
-               
+
 
                 var oldGSTBillsProcessing = await _unitOfWork.GSTBillsProcessings.GetAsync(u => u.Id == id, tracked: false);
 
@@ -178,7 +178,7 @@ namespace AtoTax.API.Controllers
                 string loggedUserName = User.Identity.Name;
 
 
-               
+
                 string strEmailNotSentError = string.Empty;
                 try
                 {
@@ -237,11 +237,11 @@ namespace AtoTax.API.Controllers
                 CollectionAndBalance updCollectionAndBalance = _unitOfWork.CollectionAndBalances.GetAllAsync(c => c.GSTClientId == oldGSTBillsProcessing.GSTClientId
               && c.DueMonth == oldGSTBillsProcessing.DueMonth
               && c.DueYear == oldGSTBillsProcessing.DueYear
-              && c.ServiceCategoryId == oldGSTBillsProcessing.ServiceCategoryId).Result.FirstOrDefault();
+             ).Result.FirstOrDefault();
                 if (updCollectionAndBalance != null)
                 {
 
-                    updCollectionAndBalance.IsGSTFiled = true;
+                    //updCollectionAndBalance.IsGSTFiled = true;
 
                     await _unitOfWork.CollectionAndBalances.UpdateAsync(updCollectionAndBalance);
                 }
@@ -281,7 +281,7 @@ namespace AtoTax.API.Controllers
         {
             string loggedUserName = User.Identity.Name;
 
-            bool recordAlreadyExists =   _unitOfWork.GSTBillsProcessings.GetAllAsync(g=> g.GSTClientId == GSTBillsProcessingCreateDTO.GSTClientID && g.DueMonth == GSTBillsProcessingCreateDTO.DueMonth  && g.DueYear == GSTBillsProcessingCreateDTO.DueYear).Result.Any();
+            bool recordAlreadyExists = _unitOfWork.GSTBillsProcessings.GetAllAsync(g => g.GSTClientId == GSTBillsProcessingCreateDTO.GSTClientID && g.DueMonth == GSTBillsProcessingCreateDTO.DueMonth && g.DueYear == GSTBillsProcessingCreateDTO.DueYear).Result.Any();
 
             // && g.ServiceCategoryId == GSTBillsProcessingCreateDTO.ServiceCategoryId
 
@@ -296,8 +296,8 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                var clientFeeMap = _unitOfWork.ClientFeeMaps.GetAllAsync(c => c.GSTClientId == GSTBillsProcessingCreateDTO.GSTClientID 
-                                        && c.ServiceCategoryId == GSTBillsProcessingCreateDTO.ServiceCategoryId).Result.FirstOrDefault();
+                var clientFeeMap = _unitOfWork.ClientFeeMaps.GetAllAsync(c => c.GSTClientId == GSTBillsProcessingCreateDTO.GSTClientID
+                                       ).Result.FirstOrDefault();
 
                 var GSTBillsProcessing = _mapper.Map<GSTBillsProcessing>(GSTBillsProcessingCreateDTO);
                 GSTBillsProcessing.ReceivedBy = loggedUserName;
@@ -307,7 +307,7 @@ namespace AtoTax.API.Controllers
                 GSTClient gstclient = new();
                 if (GSTBillsProcessingCreateDTO.GSTClientID != null)
                 {
-                   gstclient = await _unitOfWork.GSTClients.GetAsync(c => c.Id == GSTBillsProcessingCreateDTO.GSTClientID);
+                    gstclient = await _unitOfWork.GSTClients.GetAsync(c => c.Id == GSTBillsProcessingCreateDTO.GSTClientID);
                 }
 
                 string strEmailNotSentError = string.Empty;
@@ -354,20 +354,20 @@ namespace AtoTax.API.Controllers
                 {
                     strEmailNotSentError = "Email Acknowledge could not be sent to GST Client";
                 }
-                
+
 
                 await _unitOfWork.GSTBillsProcessings.CreateAsync(GSTBillsProcessing);
 
                 /// Create entry in Collection in Balance for IsBillsreceived and IsGSTFiled
 
-               CollectionAndBalance updCollectionAndBalance =  _unitOfWork.CollectionAndBalances.GetAllAsync(c=> c.GSTClientId == GSTBillsProcessingCreateDTO.GSTClientID 
-               && c.DueMonth == GSTBillsProcessingCreateDTO.DueMonth 
-               && c.DueYear == GSTBillsProcessingCreateDTO.DueYear
-               && c.ServiceCategoryId == GSTBillsProcessingCreateDTO.ServiceCategoryId).Result.FirstOrDefault();
-                if(updCollectionAndBalance != null)
+                CollectionAndBalance updCollectionAndBalance = _unitOfWork.CollectionAndBalances.GetAllAsync(c => c.GSTClientId == GSTBillsProcessingCreateDTO.GSTClientID
+                && c.DueMonth == GSTBillsProcessingCreateDTO.DueMonth
+                && c.DueYear == GSTBillsProcessingCreateDTO.DueYear
+               ).Result.FirstOrDefault();
+                if (updCollectionAndBalance != null)
                 {
-                    updCollectionAndBalance.IsGSTBillReceived = true;
-                    updCollectionAndBalance.IsGSTFiled = false;
+                    //updCollectionAndBalance.IsGSTBillReceived = true;
+                    //updCollectionAndBalance.IsGSTFiled = false;
                     updCollectionAndBalance.CurrentBalance = clientFeeMap.DefaultCharge;
                     updCollectionAndBalance.FeesAmount = clientFeeMap.DefaultCharge;
                     updCollectionAndBalance.AmountPaid = 0;
@@ -384,9 +384,9 @@ namespace AtoTax.API.Controllers
                     NewCollectionAndBalance.FeesAmount = clientFeeMap.DefaultCharge;
                     NewCollectionAndBalance.CurrentBalance = clientFeeMap.DefaultCharge;
                     NewCollectionAndBalance.AmountPaid = 0;
-                    NewCollectionAndBalance.ServiceCategoryId = GSTBillsProcessingCreateDTO.ServiceCategoryId;//GSTMonthlySubmission
-                    NewCollectionAndBalance.IsGSTBillReceived = true;
-                    NewCollectionAndBalance.IsGSTFiled = false;
+                    //NewCollectionAndBalance.ServiceCategoryId = GSTBillsProcessingCreateDTO.ServiceCategoryId;//GSTMonthlySubmission
+                    //NewCollectionAndBalance.IsGSTBillReceived = true;
+                    //NewCollectionAndBalance.IsGSTFiled = false;
 
                     await _unitOfWork.CollectionAndBalances.CreateAsync(NewCollectionAndBalance);
                 }

@@ -14,6 +14,7 @@ namespace AtoTax.Domain.Entities
         [Required]
         public string GSTIN { get; set; }
         public string? ContactName { get; set; }
+        public bool isRegular { get; set; } = true;
         public string? GSTUserName { get; set; }
         public string? GSTUserPassword { get; set; }
         [Required]
@@ -36,6 +37,8 @@ namespace AtoTax.Domain.Entities
 
         public DateTime? CreatedDate { get; set; }
         public DateTime? LastModifiedDate { get; set; }
+
+        
 
         [Required]
         [ForeignKey("Status")]

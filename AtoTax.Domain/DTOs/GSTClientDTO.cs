@@ -13,6 +13,7 @@ namespace AtoTax.Domain.DTOs
         public string? ProprietorName { get; set; }
 
         public string? GSTIN { get; set; }
+        public bool isRegular { get; set; } 
         public string? ContactName { get; set; }
         public string? GSTUserName { get; set; }
         public string? GSTUserPassword { get; set; }
@@ -53,6 +54,7 @@ namespace AtoTax.Domain.DTOs
         public string ProprietorName { get; set; }
         [Required]
         public string GSTIN { get; set; }
+        public bool isRegular { get; set; }
         public string? ContactName { get; set; }
         public string? GSTUserName { get; set; }
         public string? GSTUserPassword { get; set; }

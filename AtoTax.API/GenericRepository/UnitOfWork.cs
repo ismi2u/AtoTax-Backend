@@ -12,6 +12,7 @@ namespace AtoTax.API.GenericRepository
     {
         private bool _disposed;
         public IAddressTypeRepository AddressTypes { get; private set; }
+        public IFrequencyRepository Frequencies { get; private set; }
         public IAmendmentRepository Amendments { get; private set; }
         public IAmendTypeRepository AmendTypes { get; private set; }
         public IClientFeeMapRepository ClientFeeMaps { get; private set; }
@@ -32,7 +33,7 @@ namespace AtoTax.API.GenericRepository
         public IClientMonthlyPaymentRepository ClientMonthlyPayments { get; private set; }
 
         private readonly AtoTaxDbContext _context;
-
+        private readonly ILogger<Frequency> _FrequencyLogger;
         private readonly ILogger<AddressType> _AddressTypeLogger;
         private readonly ILogger<Amendment> _AmendmentLogger;
         private readonly ILogger<AmendType> _AmendTypeLogger;
@@ -54,6 +55,7 @@ namespace AtoTax.API.GenericRepository
 
         public UnitOfWork(AtoTaxDbContext context,
 
+            ILogger<Frequency> FrequencyLogger,
             ILogger<AddressType> AddressTypeLogger,
              ILogger<Amendment> AmendmentLogger,
              ILogger<AmendType> AmendTypeLogger,
@@ -77,6 +79,7 @@ namespace AtoTax.API.GenericRepository
         {
             _context = context;
 
+            _FrequencyLogger = FrequencyLogger;
             _AddressTypeLogger = AddressTypeLogger;
             _AmendmentLogger = AmendmentLogger;
             _AmendTypeLogger = AmendTypeLogger;
@@ -96,6 +99,7 @@ namespace AtoTax.API.GenericRepository
             _ServiceChargeUpdateHistoryLogger = ServiceChargeUpdateHistoryLogger;
             _ClientMonthlyPaymentLogger= ClientMonthlyPaymentLogger;
 
+            Frequencies = new FrequencyRepository(_context, _FrequencyLogger);
             AddressTypes = new AddressTypeRepository(_context, _AddressTypeLogger);
             Amendments = new AmendmentRepository(_context, _AmendmentLogger);
             AmendTypes = new AmendTypeRepository(_context, _AmendTypeLogger);

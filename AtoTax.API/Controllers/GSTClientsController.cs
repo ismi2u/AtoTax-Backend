@@ -20,7 +20,7 @@ namespace AtoTax.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    [Authorize(Roles="User")]
+    //[Authorize(Roles="User")]
     public class GSTClientsController : ControllerBase
     {
         protected APIResponse _response;
@@ -202,13 +202,13 @@ namespace AtoTax.API.Controllers
                 var ListOfServiceCategories = await _unitOfWork.ServiceCategories.GetAllAsync();
                 foreach (var serviceCategory in ListOfServiceCategories)
                 {
-                    var existingClientFee = await _unitOfWork.ClientFeeMaps.GetAsync(u => u.ServiceCategoryId == serviceCategory.Id && u.GSTClientId == oldgstclient.Id, tracked: false);
+                    var existingClientFee = await _unitOfWork.ClientFeeMaps.GetAsync(u =>  u.GSTClientId == oldgstclient.Id, tracked: false);
                     if (existingClientFee == null)
                     {
                         ClientFeeMap clientFeeMap = new ClientFeeMap();
 
                         clientFeeMap.GSTClientId = gstClient.Id;
-                        clientFeeMap.ServiceCategoryId = serviceCategory.Id;
+                        //clientFeeMap.ServiceCategoryId = serviceCategory.Id;
                         clientFeeMap.DefaultCharge = serviceCategory.FixedCharge;
                         clientFeeMap.CreatedDate = DateTime.UtcNow;
                         clientFeeMap.LastModifiedDate = DateTime.UtcNow;
@@ -243,22 +243,25 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> CreateGSTClient(GSTClientCreateDTO gstClientCreateDTO)
         {
+            var isExisintClientGSTIN = _unitOfWork.GSTClients.GetAllAsync(g=> g.GSTIN == gstClientCreateDTO.GSTIN).Result.Any(); ;
+
+            if(isExisintClientGSTIN)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.Result = null;
+                _response.IsSuccess = false;
+                _response.SuccessMessage = null;
+                _response.ErrorMessages = new List<string> { "GSTIN should be unique" };
+                return Ok(_response);
+            }
+
             try
             {
 
-                if (await _unitOfWork.GSTClients.GetAsync(u => u.GSTIN == gstClientCreateDTO.GSTIN) != null)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Result = gstClientCreateDTO;
-                    _response.IsSuccess = false;
-                    _response.SuccessMessage = null;
-                    _response.ErrorMessages = new List<string> { "GSTIN should be unique" };
-                    return Ok(_response);
-                }
                 if (await _unitOfWork.GSTClients.GetAsync(u => u.ProprietorName == gstClientCreateDTO.ProprietorName) != null)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Result = gstClientCreateDTO;
+                    _response.Result = null;
                     _response.IsSuccess = false;
                     _response.SuccessMessage = null;
                     _response.ErrorMessages = new List<string> { "GSTClient Propreitor Name already exists" };
@@ -266,16 +269,20 @@ namespace AtoTax.API.Controllers
                 }
                 var gstClient = _mapper.Map<GSTClient>(gstClientCreateDTO);
                 gstClient.CreatedDate = DateTime.UtcNow;
+                if(gstClient.StatusId== 0) {
+
+                    gstClient.StatusId = 1;
+                }
                 await _unitOfWork.GSTClients.CreateAsync(gstClient);
 
-                var ListOfServiceCategories = await _unitOfWork.ServiceCategories.GetAllAsync();
-                foreach (var serviceCategory in ListOfServiceCategories)
+                var ListOfFrequencies = await _unitOfWork.Frequencies.GetAllAsync();
+                foreach (var freq in ListOfFrequencies)
                 {
                     ClientFeeMap clientFeeMap = new ClientFeeMap();
 
                     clientFeeMap.GSTClientId = gstClient.Id;
-                    clientFeeMap.ServiceCategoryId = serviceCategory.Id;
-                    clientFeeMap.DefaultCharge = serviceCategory.FixedCharge;
+                    clientFeeMap.FrequencyId = freq.Id;
+                    clientFeeMap.DefaultCharge = freq.FixedCharge;
                     clientFeeMap.CreatedDate = DateTime.UtcNow;
                     clientFeeMap.LastModifiedDate = DateTime.UtcNow;
 

@@ -42,8 +42,8 @@ builder.Services.AddHangfireServer();
 builder.Logging.AddSerilog(_loggerconf);
 
 
-//flyiopostgres
-//PostgreSQLInLocalAppInContainer
+//digitalOceanPostgres
+//PostgreSQLInAppInContainer
 //137.66.10.59
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddDbContextPool<AtoTaxDbContext>(options => options.UseNpgsql(
@@ -63,6 +63,9 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
 
 builder.Services.AddResponseCaching();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IFrequencyRepository, FrequencyRepository>();
+builder.Services.AddScoped<IMonthAndYearRepository, MonthAndYearRepository>();
+
 
 builder.Services.AddScoped<IGSTClientRepository, GSTClientRepository>();
 builder.Services.AddScoped<IStatusRepository, StatusRepository>();
@@ -208,7 +211,10 @@ app.MapControllers();
 //hangfine job defined here
 app.UseHangfireDashboard();
 app.MapHangfireDashboard();
-RecurringJob.AddOrUpdate<ICollectionAndBalanceRepository>(x => x.SyncDataAsync(), Cron.Minutely);
+RecurringJob.AddOrUpdate<IMonthAndYearRepository>(x => x.CreateMonthYearAsync(0, 0), Cron.Minutely);
+RecurringJob.AddOrUpdate<ICollectionAndBalanceRepository>(x => x.SyncMonthlyDataAsync(), Cron.Minutely);
+RecurringJob.AddOrUpdate<ICollectionAndBalanceRepository>(x => x.SyncAnnualDataAsync(), Cron.Minutely);
+RecurringJob.AddOrUpdate<ICollectionAndBalanceRepository>(x => x.SyncQuaterlyDataAsync(), Cron.Minutely);
 
 //app.UseStaticFiles(new StaticFileOptions
 //{

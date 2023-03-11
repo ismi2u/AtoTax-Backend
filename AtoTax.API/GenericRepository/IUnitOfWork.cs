@@ -9,7 +9,7 @@ namespace AtoTax.API.GenericRepository
         IAddressTypeRepository AddressTypes { get; }
         IAmendmentRepository Amendments { get; }
         IAmendTypeRepository AmendTypes { get; }
-
+        IFrequencyRepository Frequencies { get; }
         IClientFeeMapRepository ClientFeeMaps { get; }
         ICollectionAndBalanceRepository CollectionAndBalances { get; }
         IGSTBillsProcessingRepository GSTBillsProcessings { get; }

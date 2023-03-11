@@ -1,0 +1,27 @@
+version: '3.4'
+
+services:
+
+  atotaxreact:
+    image: atotax/frontend:latest
+    container_name: reactapp
+    ports:
+      - "80:3000"
+    networks:
+      mynetwork:
+
+  atotax:
+    image: atotax/backend:latest
+    command: tail -f /dev/null
+    container_name: appserver
+    tty: true
+    ports:
+      - "5000:80"
+      - "5001:443"
+    networks:
+      mynetwork:
+
+networks:
+    mynetwork:
+        driver: bridge
+
