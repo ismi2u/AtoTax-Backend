@@ -10,7 +10,7 @@ namespace AtoTax.Domain.Entities
         public Guid GSTClientId { get; set; }
         public GSTClientDTO GSTClient { get; set; }
         public int ServiceCategoryId { get; set; }
-        public ServiceCategoryDTO ServiceCategory { get; set; }
+        public FrequencyDTO Frequency { get; set; }
         public string? DueMonth { get; set; }
         public int? DueYear { get; set; }
         public double? FeesAmount { get; set; }
