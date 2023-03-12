@@ -305,7 +305,7 @@ namespace AtoTax.API.Controllers
                 GSTBillsProcessing.IsFiled = false;
 
                 GSTClient gstclient = new();
-                if (GSTBillsProcessingCreateDTO.GSTClientID != null)
+                if (GSTBillsProcessingCreateDTO.GSTClientID != Guid.Empty)
                 {
                     gstclient = await _unitOfWork.GSTClients.GetAsync(c => c.Id == GSTBillsProcessingCreateDTO.GSTClientID);
                 }

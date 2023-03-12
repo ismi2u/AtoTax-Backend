@@ -31,9 +31,9 @@ namespace AtoTax.API.Controllers
         public CollectionAndBalancesController(IUnitOfWork unitOfWork, IMapper mapper, AtoTaxDbContext context)
         {
             _mapper = mapper;
-            this._response= new();
+            this._response = new();
             _context = context;
-            _unitOfWork= unitOfWork;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/CollectionAndBalances
@@ -58,8 +58,8 @@ namespace AtoTax.API.Controllers
             }
             catch (Exception ex)
             {
-                _response.IsSuccess= false;
-                _response.ErrorMessages= new List<string>() { ex.ToString()};
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
             return Ok(_response);
         }
@@ -78,11 +78,11 @@ namespace AtoTax.API.Controllers
             try
             {
 
-                IEnumerable<CollectionAndBalance> CollectionAndBalancesList = new  List<CollectionAndBalance>();
+                IEnumerable<CollectionAndBalance> CollectionAndBalancesList = new List<CollectionAndBalance>();
 
                 if (!string.IsNullOrEmpty(month))
                 {
-                    if(year != null || year > 0)
+                    if (year != null || year > 0)
                     {
                         CollectionAndBalancesList = await _unitOfWork.CollectionAndBalances.GetAllAsync(c => c.CurrentBalance > 0 && c.DueMonth.ToUpper() == month.ToUpper() && c.DueYear == year, 0, 0, arrIncludes);
                     }
@@ -91,19 +91,19 @@ namespace AtoTax.API.Controllers
                         CollectionAndBalancesList = await _unitOfWork.CollectionAndBalances.GetAllAsync(c => c.CurrentBalance > 0 && c.DueMonth.ToUpper() == month.ToUpper(), 0, 0, arrIncludes);
                     }
 
-                    
+
                 }
                 else
                 {
                     if (year != null || year > 0)
                     {
-                        CollectionAndBalancesList = await _unitOfWork.CollectionAndBalances.GetAllAsync(c => c.CurrentBalance > 0  && c.DueYear == year, 0, 0, arrIncludes);
+                        CollectionAndBalancesList = await _unitOfWork.CollectionAndBalances.GetAllAsync(c => c.CurrentBalance > 0 && c.DueYear == year, 0, 0, arrIncludes);
                     }
                     else
                     {
                         CollectionAndBalancesList = await _unitOfWork.CollectionAndBalances.GetAllAsync(c => c.CurrentBalance > 0, 0, 0, arrIncludes);
                     }
-                   
+
                 }
 
 
@@ -228,7 +228,7 @@ namespace AtoTax.API.Controllers
 
                 IEnumerable<CollectionAndBalance> CollectionAndBalancesList = new List<CollectionAndBalance>();
 
-                CollectionAndBalancesList = await _unitOfWork.CollectionAndBalances.GetAllAsync(c =>  c.DueMonth.ToUpper() == month.ToUpper() && c.DueYear == year, 0, 0, arrIncludes);
+                CollectionAndBalancesList = await _unitOfWork.CollectionAndBalances.GetAllAsync(c => c.DueMonth.ToUpper() == month.ToUpper() && c.DueYear == year, 0, 0, arrIncludes);
 
 
                 _response.Result = _mapper.Map<IEnumerable<CollectionAndBalanceDTO>>(CollectionAndBalancesList);
@@ -270,7 +270,7 @@ namespace AtoTax.API.Controllers
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
             return Ok(_response);
-           
+
         }
 
 
@@ -278,7 +278,7 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetMonthAndYearDataforGSTClient(Guid id)
+        public async Task<ActionResult<APIResponse>> GetApplicableReturnsforGSTClient(Guid id)
         {
 
             List<string> includelist = new List<string>();
@@ -290,21 +290,24 @@ namespace AtoTax.API.Controllers
                 var collectionAndBalances = await _unitOfWork.CollectionAndBalances.GetAllAsync(u => u.GSTClientId == id);
 
 
-                List<string> mnths = new List<string>();
-                List<int> yrs = new List<int>();
+                //ClientApplicableReturnsDTO clientApplicableReturnsDTO = new();
+                //clientApplicableReturnsDTO.GSTClientId = id;
 
-                ClientGSTRelatedMonthandYearDTO clientGSTRelatedMonthandYearDTO = new();
-                clientGSTRelatedMonthandYearDTO.GSTClientId = id;
+                //List<ClientFrequencyForDD> ListFrequencyDTOs = new List<ClientFrequencyForDD>();
 
-                foreach (var item in collectionAndBalances)
-                {
-                    mnths.Add(item.DueMonth);
-                    yrs.Add(item.DueYear ?? 2000);
+                //foreach (var item in collectionAndBalances)
+                //{
+                //    ClientFrequencyForDD frequencyDTO = new ClientFrequencyForDD();
+                //    frequencyDTO.Id = item.FrequencyId;
+                //    frequencyDTO.GSTReturnFreqType = _unitOfWork.Frequencies.GetAsync(u => u.Id == item.FrequencyId).Result.GSTReturnFreqType;
 
-                }
-                clientGSTRelatedMonthandYearDTO.ListMonths = mnths.Distinct().ToList();
-                clientGSTRelatedMonthandYearDTO.ListYears = yrs.Distinct().ToList();
-                _response.Result = clientGSTRelatedMonthandYearDTO;
+                //    ListFrequencyDTOs.Add(frequencyDTO);
+
+                //}
+
+                //clientApplicableReturnsDTO.Frequencies = ListFrequencyDTOs.GroupBy(f => f.Id).Select(s => s.First()).ToList();
+
+                _response.Result = collectionAndBalances;
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
@@ -316,6 +319,67 @@ namespace AtoTax.API.Controllers
             return Ok(_response);
 
         }
+
+        //[HttpGet]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //public async Task<ActionResult<APIResponse>> GetApplicableReturnsforGSTClient(Guid Clientid, int freqId = 0, string monthyear = null)
+        //{
+
+
+        //    List<string> includelist = new List<string>();
+        //    includelist.Add("GSTClient");
+        //    includelist.Add("Frequency");
+        //    string[] arrIncludes = includelist.ToArray();
+
+        //    IQueryable<CollectionAndBalance> query =  _unitOfWork.CollectionAndBalances.GetAllAsync(c=> c.GSTClientId == Clientid).Result.AsQueryable();
+
+           
+        //    try
+        //    {
+        //        if (freqId != 0)
+        //        {
+        //            query = query.Where(u => u.FrequencyId == freqId);
+        //        }
+        //        if(!string.IsNullOrEmpty(monthyear))
+        //        {
+        //            query = query.Where(u => u.DueMonth == monthyear);
+        //        }
+                
+
+
+        //        ClientApplicableReturnsDTO clientApplicableReturnsDTO = new();
+        //        clientApplicableReturnsDTO.GSTClientId = Clientid;
+
+        //        List<ClientFrequencyForDD> ListFrequencyDTOs = new List<ClientFrequencyForDD>();
+
+        //        foreach (var item in query)
+        //        {
+        //            ClientFrequencyForDD frequencyDTO = new ClientFrequencyForDD();
+        //            frequencyDTO.Id = item.FrequencyId;
+        //            frequencyDTO.GSTReturnFreqType = _unitOfWork.Frequencies.GetAsync(u => u.Id == item.FrequencyId).Result.GSTReturnFreqType;
+
+        //            ListFrequencyDTOs.Add(frequencyDTO);
+
+        //        }
+
+                
+
+        //        clientApplicableReturnsDTO.Frequencies = ListFrequencyDTOs.GroupBy(f => f.Id).Select(s => s.First()).ToList();
+
+        //        _response.Result = clientApplicableReturnsDTO;
+        //        _response.StatusCode = HttpStatusCode.OK;
+        //        return Ok(_response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _response.IsSuccess = false;
+        //        _response.ErrorMessages = new List<string>() { ex.ToString() };
+        //    }
+        //    return Ok(_response);
+
+        //}
 
         //// PUT: api/CollectionAndBalances/5
         //[HttpPut("{id}")]

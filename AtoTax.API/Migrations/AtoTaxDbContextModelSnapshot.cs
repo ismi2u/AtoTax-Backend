@@ -175,8 +175,8 @@ namespace AtoTax.API.Migrations
                             Id = 1,
                             AddressTypeDesc = "Postal Street address",
                             AddressTypeName = "Office Street Address",
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6270),
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6270),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7399),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7400),
                             StatusId = 1
                         },
                         new
@@ -184,8 +184,8 @@ namespace AtoTax.API.Migrations
                             Id = 2,
                             AddressTypeDesc = "Residential Street address",
                             AddressTypeName = "Residential Address",
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6273),
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6274),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7402),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7403),
                             StatusId = 1
                         },
                         new
@@ -193,8 +193,8 @@ namespace AtoTax.API.Migrations
                             Id = 3,
                             AddressTypeDesc = "Godown/Factory Address",
                             AddressTypeName = "Godown/Factory Address",
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6276),
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6276),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7404),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7405),
                             StatusId = 1
                         },
                         new
@@ -202,8 +202,8 @@ namespace AtoTax.API.Migrations
                             Id = 4,
                             AddressTypeDesc = "Postoffice Box Number",
                             AddressTypeName = "PostBox Address",
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6278),
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6279),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7406),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7406),
                             StatusId = 1
                         });
                 });
@@ -240,16 +240,16 @@ namespace AtoTax.API.Migrations
                         {
                             Id = 1,
                             AmendTypeName = "Core",
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6054),
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6060),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7272),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7276),
                             StatusId = 1
                         },
                         new
                         {
                             Id = 2,
                             AmendTypeName = "Non-Core",
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6062),
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6063),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7278),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7278),
                             StatusId = 1
                         });
                 });
@@ -418,7 +418,7 @@ namespace AtoTax.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<double>("AmountPaid")
+                    b.Property<double?>("AmountPaid")
                         .HasColumnType("double precision");
 
                     b.Property<double>("CurrentBalance")
@@ -430,7 +430,7 @@ namespace AtoTax.API.Migrations
                     b.Property<int?>("DueYear")
                         .HasColumnType("integer");
 
-                    b.Property<double?>("FeesAmount")
+                    b.Property<double>("FeesAmount")
                         .HasColumnType("double precision");
 
                     b.Property<int>("FrequencyId")
@@ -439,7 +439,37 @@ namespace AtoTax.API.Migrations
                     b.Property<Guid>("GSTClientId")
                         .HasColumnType("uuid");
 
-                    b.Property<bool?>("IsPartialBillProcess")
+                    b.Property<bool?>("GSTR1")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("GSTR10")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("GSTR3B")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("GSTR9")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("GSTR9C")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("IsInvoiceBillsRecvd")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("IsMixedWithNILFiling")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("IsNilFiling")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("IsReturnFiled")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("NIL3B")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("NILGSTR1")
                         .HasColumnType("boolean");
 
                     b.HasKey("Id");
@@ -492,55 +522,55 @@ namespace AtoTax.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6313),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7428),
                             Description = "GSTR-1 & GSTR-3B",
                             FixedCharge = 500.0,
                             GSTReturnFreqType = "Monthly-Return",
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6314),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7429),
                             PreviousCharge = 500.0,
                             StatusId = 1
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6317),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7431),
                             Description = "GSTR-1 & GSTR-3B",
                             FixedCharge = 300.0,
                             GSTReturnFreqType = "NilGSTR",
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6317),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7431),
                             PreviousCharge = 300.0,
                             StatusId = 1
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6320),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7433),
                             Description = "GSTR-1 & GSTR-3B",
                             FixedCharge = 1000.0,
                             GSTReturnFreqType = "Quaterly-Return",
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6320),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7433),
                             PreviousCharge = 1000.0,
                             StatusId = 1
                         },
                         new
                         {
                             Id = 4,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6323),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7435),
                             Description = "GSTR-1 & GSTR-3B",
                             FixedCharge = 1000.0,
                             GSTReturnFreqType = "Annual-Return",
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6323),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7435),
                             PreviousCharge = 1000.0,
                             StatusId = 1
                         },
                         new
                         {
                             Id = 5,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6325),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7437),
                             Description = "GSTR-1 & GSTR-3B",
                             FixedCharge = 500.0,
                             GSTReturnFreqType = "FinalReturn",
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6326),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7437),
                             PreviousCharge = 500.0,
                             StatusId = 1
                         });
@@ -793,57 +823,57 @@ namespace AtoTax.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6142),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7327),
                             FilingType = "GSTR-1",
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6143),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7328),
                             StatusId = 1
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6145),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7329),
                             FilingType = "GSTR-3B",
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6146),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7330),
                             StatusId = 1
                         },
                         new
                         {
                             Id = 9,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6148),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7331),
                             FilingType = "GSTR-9",
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6148),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7331),
                             StatusId = 1
                         },
                         new
                         {
                             Id = 10,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6150),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7332),
                             FilingType = "GSTR-9C",
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6151),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7333),
                             StatusId = 1
                         },
                         new
                         {
                             Id = 11,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6152),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7334),
                             FilingType = "GSTR-10",
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6153),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7334),
                             StatusId = 1
                         },
                         new
                         {
                             Id = 14,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6159),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7336),
                             FilingType = "NILGSTR1",
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6160),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7336),
                             StatusId = 1
                         },
                         new
                         {
                             Id = 15,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6162),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7337),
                             FilingType = "NIL3B",
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6163),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7337),
                             StatusId = 1
                         });
                 });
@@ -956,56 +986,56 @@ namespace AtoTax.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6198),
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6200),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7353),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7355),
                             Media = "HardCopy",
                             StatusId = 1
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6204),
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6205),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7358),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7358),
                             Media = "Email",
                             StatusId = 1
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6206),
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6207),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7359),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7360),
                             Media = "WhatsApp",
                             StatusId = 1
                         },
                         new
                         {
                             Id = 4,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6210),
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6211),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7361),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7361),
                             Media = "USB/Pen Drive",
                             StatusId = 1
                         },
                         new
                         {
                             Id = 5,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6213),
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6213),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7362),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7362),
                             Media = "Courier",
                             StatusId = 1
                         },
                         new
                         {
                             Id = 6,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6215),
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6216),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7363),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7364),
                             Media = "Cloud Drive",
                             StatusId = 1
                         },
                         new
                         {
                             Id = 7,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6217),
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6218),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7367),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7367),
                             Media = "Hard Disk",
                             StatusId = 1
                         });
@@ -1041,48 +1071,48 @@ namespace AtoTax.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6092),
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6093),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7297),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7297),
                             PaymentMethod = "Cash",
                             StatusId = 1
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6095),
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6096),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7299),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7299),
                             PaymentMethod = "Bank Transfer",
                             StatusId = 1
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6097),
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6098),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7300),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7301),
                             PaymentMethod = "UPIPay",
                             StatusId = 1
                         },
                         new
                         {
                             Id = 4,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6100),
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6100),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7302),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7302),
                             PaymentMethod = "GooglePay",
                             StatusId = 1
                         },
                         new
                         {
                             Id = 5,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6102),
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6103),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7303),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7304),
                             PaymentMethod = "Bank Cheque",
                             StatusId = 1
                         },
                         new
                         {
                             Id = 6,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6104),
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6105),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7305),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7306),
                             PaymentMethod = "PayTM",
                             StatusId = 1
                         });
@@ -1128,10 +1158,10 @@ namespace AtoTax.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6347),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7466),
                             Description = "GSTR-1 & GSTR-3B",
                             FixedCharge = 500.0,
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6348),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7467),
                             PreviousCharge = 500.0,
                             ServiceName = "MonthlyFiling",
                             StatusId = 1
@@ -1139,10 +1169,10 @@ namespace AtoTax.API.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6351),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7469),
                             Description = "GST Amendment",
                             FixedCharge = 1000.0,
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6352),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7469),
                             PreviousCharge = 500.0,
                             ServiceName = "GSTAnnualReturnFiling",
                             StatusId = 1
@@ -1150,10 +1180,10 @@ namespace AtoTax.API.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6354),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7471),
                             Description = "GST Annual Return Filing",
                             FixedCharge = 1000.0,
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6355),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7471),
                             PreviousCharge = 1000.0,
                             ServiceName = "GSTAmendment",
                             StatusId = 1
@@ -1161,10 +1191,10 @@ namespace AtoTax.API.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6357),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7473),
                             Description = "GST Notice Service",
                             FixedCharge = 1000.0,
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6358),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7473),
                             PreviousCharge = 1000.0,
                             ServiceName = "GSTNoticeService",
                             StatusId = 1
@@ -1172,10 +1202,10 @@ namespace AtoTax.API.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6360),
+                            CreatedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7474),
                             Description = "Penalty while transporting",
                             FixedCharge = 1000.0,
-                            LastModifiedDate = new DateTime(2023, 3, 11, 17, 8, 23, 458, DateTimeKind.Utc).AddTicks(6361),
+                            LastModifiedDate = new DateTime(2023, 3, 12, 7, 16, 30, 695, DateTimeKind.Utc).AddTicks(7475),
                             PreviousCharge = 1000.0,
                             ServiceName = "PenaltyBySquad",
                             StatusId = 1

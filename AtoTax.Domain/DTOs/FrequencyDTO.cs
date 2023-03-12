@@ -55,5 +55,10 @@ namespace AtoTax.Domain.DTOs
         public int? StatusId { get; set; }
     }
 
+    public class ClientFrequencyForDD
+    {
+        public int Id { get; set; }
+        public string GSTReturnFreqType { get; set; }
+    }
 
 }

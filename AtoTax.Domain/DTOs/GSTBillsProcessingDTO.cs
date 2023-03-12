@@ -39,6 +39,10 @@ namespace AtoTax.Domain.DTOs
     {
         [Required]
         public Guid GSTClientID { get; set; }
+
+        [Required]
+        public int FrequencyId { get; set; }
+
         [Required]
         public string DueMonth { get; set; }
         [Required]
@@ -46,10 +50,6 @@ namespace AtoTax.Domain.DTOs
         [Required]
         public int GSTFilingTypeId { get; set; }
 
-        [Required]
-        public int ServiceCategoryId { get; set; }
-        //public Guid? ReceivedBy { get; set; }
-        //public DateTime? ReceivedDate { get; set; }
         [Required]
         public int MultimediaTypeId { get; set; }
         //public Guid? FiledBy { get; set; }
