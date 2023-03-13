@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AtoTax.API.Migrations
 {
     /// <inheritdoc />
-    public partial class newtest : Migration
+    public partial class applicationusertest : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -293,7 +293,7 @@ namespace AtoTax.API.Migrations
                     TallyDataFilePath = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    ClientRelationMgrId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ClientRelationMgrId = table.Column<Guid>(type: "uuid", nullable: false),
                     StatusId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -763,10 +763,10 @@ namespace AtoTax.API.Migrations
                 columns: new[] { "Id", "AddressTypeDesc", "AddressTypeName", "CreatedDate", "LastModifiedDate", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, "Postal Street address", "Office Street Address", new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(188), new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(190), 1 },
-                    { 2, "Residential Street address", "Residential Address", new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(193), new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(194), 1 },
-                    { 3, "Godown/Factory Address", "Godown/Factory Address", new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(197), new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(198), 1 },
-                    { 4, "Postoffice Box Number", "PostBox Address", new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(200), new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(201), 1 }
+                    { 1, "Postal Street address", "Office Street Address", new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6399), new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6402), 1 },
+                    { 2, "Residential Street address", "Residential Address", new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6406), new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6407), 1 },
+                    { 3, "Godown/Factory Address", "Godown/Factory Address", new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6410), new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6411), 1 },
+                    { 4, "Postoffice Box Number", "PostBox Address", new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6414), new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6414), 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -774,8 +774,8 @@ namespace AtoTax.API.Migrations
                 columns: new[] { "Id", "AmendTypeName", "CreatedDate", "LastModifiedDate", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, "Core", new DateTime(2023, 3, 13, 12, 28, 2, 551, DateTimeKind.Utc).AddTicks(9921), new DateTime(2023, 3, 13, 12, 28, 2, 551, DateTimeKind.Utc).AddTicks(9929), 1 },
-                    { 2, "Non-Core", new DateTime(2023, 3, 13, 12, 28, 2, 551, DateTimeKind.Utc).AddTicks(9932), new DateTime(2023, 3, 13, 12, 28, 2, 551, DateTimeKind.Utc).AddTicks(9933), 1 }
+                    { 1, "Core", new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6085), new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6094), 1 },
+                    { 2, "Non-Core", new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6097), new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6098), 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -783,13 +783,13 @@ namespace AtoTax.API.Migrations
                 columns: new[] { "Id", "CreatedDate", "FilingType", "LastModifiedDate", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(48), "GSTR-1", new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(51), 1 },
-                    { 2, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(56), "GSTR-3B", new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(57), 1 },
-                    { 9, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(59), "GSTR-9", new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(59), 1 },
-                    { 10, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(61), "GSTR-9C", new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(62), 1 },
-                    { 11, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(64), "GSTR-10", new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(65), 1 },
-                    { 14, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(67), "NILGSTR1", new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(67), 1 },
-                    { 15, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(69), "NIL3B", new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(70), 1 }
+                    { 1, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6213), "GSTR-1", new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6214), 1 },
+                    { 2, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6218), "GSTR-3B", new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6220), 1 },
+                    { 9, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6222), "GSTR-9", new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6223), 1 },
+                    { 10, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6224), "GSTR-9C", new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6225), 1 },
+                    { 11, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6227), "GSTR-10", new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6228), 1 },
+                    { 14, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6240), "NILGSTR1", new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6241), 1 },
+                    { 15, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6242), "NIL3B", new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6244), 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -797,13 +797,13 @@ namespace AtoTax.API.Migrations
                 columns: new[] { "Id", "CreatedDate", "Description", "LastModifiedDate", "Media", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(105), null, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(107), "HardCopy", 1 },
-                    { 2, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(110), null, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(111), "Email", 1 },
-                    { 3, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(113), null, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(114), "WhatsApp", 1 },
-                    { 4, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(116), null, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(117), "USB/Pen Drive", 1 },
-                    { 5, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(118), null, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(119), "Courier", 1 },
-                    { 6, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(121), null, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(122), "Cloud Drive", 1 },
-                    { 7, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(123), null, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(124), "Hard Disk", 1 }
+                    { 1, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6293), null, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6295), "HardCopy", 1 },
+                    { 2, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6301), null, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6302), "Email", 1 },
+                    { 3, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6304), null, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6305), "WhatsApp", 1 },
+                    { 4, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6307), null, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6308), "USB/Pen Drive", 1 },
+                    { 5, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6310), null, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6311), "Courier", 1 },
+                    { 6, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6313), null, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6314), "Cloud Drive", 1 },
+                    { 7, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6316), null, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6317), "Hard Disk", 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -811,12 +811,12 @@ namespace AtoTax.API.Migrations
                 columns: new[] { "Id", "CreatedDate", "LastModifiedDate", "PaymentMethod", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 3, 13, 12, 28, 2, 551, DateTimeKind.Utc).AddTicks(9983), new DateTime(2023, 3, 13, 12, 28, 2, 551, DateTimeKind.Utc).AddTicks(9985), "Cash", 1 },
-                    { 2, new DateTime(2023, 3, 13, 12, 28, 2, 551, DateTimeKind.Utc).AddTicks(9992), new DateTime(2023, 3, 13, 12, 28, 2, 551, DateTimeKind.Utc).AddTicks(9993), "Bank Transfer", 1 },
-                    { 3, new DateTime(2023, 3, 13, 12, 28, 2, 551, DateTimeKind.Utc).AddTicks(9995), new DateTime(2023, 3, 13, 12, 28, 2, 551, DateTimeKind.Utc).AddTicks(9996), "UPIPay", 1 },
-                    { 4, new DateTime(2023, 3, 13, 12, 28, 2, 551, DateTimeKind.Utc).AddTicks(9998), new DateTime(2023, 3, 13, 12, 28, 2, 551, DateTimeKind.Utc).AddTicks(9999), "GooglePay", 1 },
-                    { 5, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(1), new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(2), "Bank Cheque", 1 },
-                    { 6, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(5), new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(6), "PayTM", 1 }
+                    { 1, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6142), new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6144), "Cash", 1 },
+                    { 2, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6149), new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6150), "Bank Transfer", 1 },
+                    { 3, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6152), new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6153), "UPIPay", 1 },
+                    { 4, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6156), new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6157), "GooglePay", 1 },
+                    { 5, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6159), new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6160), "Bank Cheque", 1 },
+                    { 6, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6162), new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6163), "PayTM", 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -824,11 +824,11 @@ namespace AtoTax.API.Migrations
                 columns: new[] { "Id", "CreatedDate", "Description", "FixedCharge", "LastModifiedDate", "PreviousCharge", "ReturnFreqType", "StatusId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(237), "GSTR-1 & GSTR-3B", 500.0, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(239), 500.0, "Monthly-Return", 1 },
-                    { 2, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(243), "GSTR-1 & GSTR-3B", 300.0, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(244), 300.0, "NilGSTR", 1 },
-                    { 3, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(247), "GSTR-1 & GSTR-3B", 1000.0, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(248), 1000.0, "Quaterly-Return", 1 },
-                    { 4, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(250), "GSTR-1 & GSTR-3B", 1000.0, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(251), 1000.0, "Annual-Return", 1 },
-                    { 5, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(254), "GSTR-1 & GSTR-3B", 500.0, new DateTime(2023, 3, 13, 12, 28, 2, 552, DateTimeKind.Utc).AddTicks(255), 500.0, "FinalReturn", 1 }
+                    { 1, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6458), "GSTR-1 & GSTR-3B", 500.0, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6460), 500.0, "Monthly-Return", 1 },
+                    { 2, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6468), "GSTR-1 & GSTR-3B", 300.0, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6469), 300.0, "NilGSTR", 1 },
+                    { 3, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6472), "GSTR-1 & GSTR-3B", 1000.0, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6473), 1000.0, "Quaterly-Return", 1 },
+                    { 4, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6476), "GSTR-1 & GSTR-3B", 1000.0, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6477), 1000.0, "Annual-Return", 1 },
+                    { 5, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6480), "GSTR-1 & GSTR-3B", 500.0, new DateTime(2023, 3, 13, 13, 3, 2, 16, DateTimeKind.Utc).AddTicks(6481), 500.0, "FinalReturn", 1 }
                 });
 
             migrationBuilder.CreateIndex(

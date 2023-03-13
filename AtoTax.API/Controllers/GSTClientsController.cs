@@ -15,6 +15,7 @@ using AtoTax.API.GenericRepository;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace AtoTax.API.Controllers
 {
@@ -52,11 +53,21 @@ namespace AtoTax.API.Controllers
             {
                 IEnumerable<GSTClient> GSTClientsList = await _unitOfWork.GSTClients.GetAllAsync(null, pageSize: pageSize, pageNumber: pageNumber, arrIncludes);
 
+                IEnumerable<GSTClientDTO> GSTClientsListDTO = _mapper.Map<IEnumerable<GSTClientDTO>>(GSTClientsList);
+
+                foreach (GSTClientDTO clientDTO in GSTClientsListDTO)
+                {
+
+                    if (clientDTO.ClientRelationMgrId != Guid.Empty)
+                    {
+                        clientDTO.ClientRelationMgr = _context.ApplicationUsers.FindAsync(clientDTO.ClientRelationMgrId.ToString()).Result.Name;
+                    }
+                }
 
                 PaginationDTO pagination = new() { PageNumber = pageNumber, PageSize = pageSize };
                 //send pagination details to response header
                 Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
-                _response.Result = _mapper.Map<IEnumerable<GSTClientDTO>>(GSTClientsList);
+                _response.Result = GSTClientsListDTO;
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 _response.SuccessMessage = null;
@@ -85,7 +96,6 @@ namespace AtoTax.API.Controllers
             try
             {
                 IEnumerable<GSTClient> GSTClientsList = await _unitOfWork.GSTClients.GetAllAsync(a => a.StatusId == (int)EStatus.active, 0, 0);
-
 
                 //PaginationDTO pagination = new() { PageNumber = pageNumber, PageSize = pageSize };
                 ////send pagination details to response header
@@ -124,8 +134,15 @@ namespace AtoTax.API.Controllers
             {
                 GSTClient GSTClient = await _unitOfWork.GSTClients.GetAsync(u => u.Id == id, false, arrIncludes);
 
+                GSTClientDTO gSTClientDTO = _mapper.Map<GSTClientDTO>(GSTClient);
 
-                _response.Result = _mapper.Map<GSTClientDTO>(GSTClient);
+                if(GSTClient.ClientRelationMgrId != Guid.Empty)
+                {
+                    gSTClientDTO.ClientRelationMgr = _context.ApplicationUsers.FindAsync(GSTClient.ClientRelationMgrId.ToString()).Result.Name;
+                }
+               
+
+                _response.Result = gSTClientDTO;
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 _response.SuccessMessage = null;
