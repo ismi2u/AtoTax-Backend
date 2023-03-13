@@ -23,10 +23,10 @@ namespace AtoTax.Domain.Entities
         public bool? SalesBillsNil { get; set; }
         public bool? PurchaseInvoice { get; set; }
         public bool? PurchaseNil { get; set; }
-        public string GSTTaxAmount { get; set; }
-        public string FeesAmount { get; set; }
-        public string AmountPaid { get; set; }
-        public string CurrentBalance { get; set; }
+        public double? GSTTaxAmount { get; set; }
+        public double? FeesAmount { get; set; }
+        public double? AmountPaid { get; set; }
+        public double? CurrentBalance { get; set; }
         public DateTime? ReceivedDate { get; set; }
         public bool? SalesFiled { get; set; }
         public bool? SalesNotFiled { get; set; }

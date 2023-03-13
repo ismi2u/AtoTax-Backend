@@ -212,7 +212,7 @@ app.MapControllers();
 app.UseHangfireDashboard();
 app.MapHangfireDashboard();
 RecurringJob.AddOrUpdate<IMonthAndYearRepository>(x => x.CreateMonthYearAsync(0, 0), Cron.Hourly);
-RecurringJob.AddOrUpdate<IProcessTrackingAndFeeBalanceRepository>(x => x.SyncMonthlyDataAsync(), Cron.MinuteInterval(2));
+RecurringJob.AddOrUpdate<IProcessTrackingAndFeeBalanceRepository>(x => x.SyncMonthlyDataAsync(), Cron.Hourly);
 //RecurringJob.AddOrUpdate<IProcessTrackingAndFeeBalanceRepository>(x => x.SyncAnnualDataAsync(), Cron.Minutely);
 //RecurringJob.AddOrUpdate<IProcessTrackingAndFeeBalanceRepository>(x => x.SyncQuaterlyDataAsync(), Cron.Minutely);
 

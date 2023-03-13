@@ -46,16 +46,16 @@ namespace AtoTax.API.Repository.Repos
                 if (clientFeeMap != null)
                 {
 
-                    var listReturnFrequencies = _context.ReturnFrequencyTypes.ToList();
+                    var listReturnFrequencyTypes = _context.ReturnFrequencyTypes.ToList();
 
-                    foreach (var returnFrequency in listReturnFrequencies)
+                    foreach (var returnFrequencyType in listReturnFrequencyTypes)
                     {
 
-                        if (returnFrequency.Id != (int)EFrequency.MonthlyReturn)
+                        if (returnFrequencyType.Id != (int)EFrequency.MonthlyReturn)
                         {
                             continue;
                         }
-                        var MonthAndYear = _context.MonthAndYears.Where(m => m.MonthIdx == todayMonth 
+                        var MonthAndYear = _context.MonthAndYears.Where(m => m.MonthIdx == todayMonth
                         && m.Year == todayYear).FirstOrDefault();
 
 
@@ -71,28 +71,57 @@ namespace AtoTax.API.Repository.Repos
                         }
                         else
                         {
-                            //if (returnFrequency.Id == (int)EFrequency.MonthlyReturn)
-                            //{
-                            //    ProcessTrackingAndFeeBalance.GSTClientId = client.Id;
-                            //    ProcessTrackingAndFeeBalance.FrequencyId = (int)EFrequency.MonthlyReturn;
-                            //    ProcessTrackingAndFeeBalance.DueMonth = MonthAndYear.MonthYear;
-                            //    ProcessTrackingAndFeeBalance.DueYear = MonthAndYear.Year;
-                            //    ProcessTrackingAndFeeBalance.FeesAmount = clientFeeMap.DefaultCharge;
-                            //    ProcessTrackingAndFeeBalance.AmountPaid = 0;
-                            //    ProcessTrackingAndFeeBalance.CurrentBalance = clientFeeMap.DefaultCharge;
+                            if (returnFrequencyType.Id == (int)EFrequency.MonthlyReturn)
+                            {
 
-                            //    await dbSet.AddAsync(ProcessTrackingAndFeeBalance);
-                            //    await _context.SaveChangesAsync();
+                                GSTClient gstClient = _context.GSTClients.FirstOrDefault(g=> g.Id == client.Id);
 
-                            //}
+                                ProcessTrackingAndFeeBalance.GSTClientId = gstClient.Id;
+                                ProcessTrackingAndFeeBalance.ReturnFrequencyTypeId = (int)EFrequency.MonthlyReturn;
+                                ProcessTrackingAndFeeBalance.DueMonth = MonthAndYear.MonthYear;
+                                ProcessTrackingAndFeeBalance.DueYear = MonthAndYear.Year;
+
+                                ProcessTrackingAndFeeBalance.RackFileNo = gstClient.RackFileNo;
+                                ProcessTrackingAndFeeBalance.SalesInvoice = null;
+                                ProcessTrackingAndFeeBalance.SalesBillsNil = null;
+                                ProcessTrackingAndFeeBalance.PurchaseInvoice = null;
+                                ProcessTrackingAndFeeBalance.PurchaseNil = null;
+                                ProcessTrackingAndFeeBalance.GSTTaxAmount = null;
+
+                                ProcessTrackingAndFeeBalance.FeesAmount = clientFeeMap.DefaultCharge;
+                                ProcessTrackingAndFeeBalance.AmountPaid = 0;
+                                ProcessTrackingAndFeeBalance.CurrentBalance = clientFeeMap.DefaultCharge;
+
+
+
+                                ProcessTrackingAndFeeBalance.ReceivedDate = null;
+
+                                ProcessTrackingAndFeeBalance.SalesFiled = null;
+                                ProcessTrackingAndFeeBalance.SalesNotFiled = null;
+                                ProcessTrackingAndFeeBalance.SalesNilFiled = null;
+                                ProcessTrackingAndFeeBalance.SalesNilNotFiled = null;
+                                ProcessTrackingAndFeeBalance.SalesFiledDate = null;
+
+                                ProcessTrackingAndFeeBalance.GSTR3BFiled = null;
+                                ProcessTrackingAndFeeBalance.GSTR3BNotFiled = null;
+                                ProcessTrackingAndFeeBalance.GSTR3BNILFiled = null;
+                                ProcessTrackingAndFeeBalance.GSTR3BNilNotFiled = null;
+
+                                ProcessTrackingAndFeeBalance.GSTR3BFiledDate = null;
+
+
+                                await dbSet.AddAsync(ProcessTrackingAndFeeBalance);
+                                await _context.SaveChangesAsync();
+
+                            }
                         }
 
-                       
+
                     }
                 }
             }
 
-         
+
             Console.WriteLine("Monthly Sync CronJob Completed at " + DateTime.Now.ToLocalTime());
         }
 
@@ -141,7 +170,7 @@ namespace AtoTax.API.Repository.Repos
                             continue;
                         }
 
-                      
+
 
                         //if (returnFrequency.Id == (int)EFrequency.AnnualReturn)
                         //{
@@ -163,7 +192,7 @@ namespace AtoTax.API.Repository.Repos
             //background job send sms
             //BackgroundJob.Enqueue<Iservice>(x => x.sendsms());
 
-        
+
             Console.WriteLine("Annual Sync CronJob Completed at " + DateTime.Now.ToLocalTime());
         }
 

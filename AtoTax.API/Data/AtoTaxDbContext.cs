@@ -79,10 +79,10 @@ namespace AtoTaxAPI.Data
 
             builder.Entity<ReturnFrequencyType>().HasData(
             new ReturnFrequencyType { Id = 1, ReturnFreqType = "Monthly-Return", FixedCharge = 500, PreviousCharge = 500, Description = "GSTR-1 & GSTR-3B", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-            new ReturnFrequencyType { Id = 2, ReturnFreqType = "NilGSTR", FixedCharge = 300, PreviousCharge = 300, Description = "GSTR-1 & GSTR-3B", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-            new ReturnFrequencyType { Id = 3, ReturnFreqType = "Quaterly-Return", FixedCharge = 1000, PreviousCharge = 1000, Description = "GSTR-1 & GSTR-3B", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-            new ReturnFrequencyType { Id = 4, ReturnFreqType = "Annual-Return", FixedCharge = 1000, PreviousCharge = 1000, Description = "GSTR-1 & GSTR-3B", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-            new ReturnFrequencyType { Id = 5, ReturnFreqType = "FinalReturn", FixedCharge = 500, PreviousCharge = 500, Description = "GSTR-1 & GSTR-3B", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 }
+            new ReturnFrequencyType { Id = 2, ReturnFreqType = "NilGSTR", FixedCharge = 300, PreviousCharge = 300, Description = "NILGSTR-1 & NILGSTR-3B", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+            new ReturnFrequencyType { Id = 3, ReturnFreqType = "Quaterly-Return", FixedCharge = 1000, PreviousCharge = 1000, Description = "Quaterly GSTR-1 & GSTR-3B", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+            new ReturnFrequencyType { Id = 4, ReturnFreqType = "Annual-Return", FixedCharge = 1000, PreviousCharge = 1000, Description = "Annual GSTR-9", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+            new ReturnFrequencyType { Id = 5, ReturnFreqType = "FinalReturn", FixedCharge = 500, PreviousCharge = 500, Description = "GSTR-10 Final Return", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 }
             );
 
         }
