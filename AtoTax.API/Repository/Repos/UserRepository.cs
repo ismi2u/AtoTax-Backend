@@ -417,6 +417,7 @@ namespace AtoTax.API.Repository.Repos
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string> { "Trouble with confirmation email link, contact Admin" };
                 _response.StatusCode = HttpStatusCode.BadRequest;
+                return _response;
             }
 
             var user = await _userManager.FindByEmailAsync(confirmEmailDTO.email);
@@ -458,6 +459,7 @@ namespace AtoTax.API.Repository.Repos
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string> { "Email is invalid" };
                 _response.StatusCode = HttpStatusCode.BadRequest;
+                return _response;
             }
 
             if (appuser != null)
@@ -504,6 +506,7 @@ namespace AtoTax.API.Repository.Repos
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string> { "Email ID is invalid" };
                 _response.StatusCode = HttpStatusCode.BadRequest;
+                return _response;
             }
             //ApplicationUser? user = await _userManager.GetUserAsync(HttpContext.User);
             //EmpId = int.Parse(HttpContext.User.Claims.First(c => c.Type == "EmployeeId").Value);
@@ -518,6 +521,8 @@ namespace AtoTax.API.Repository.Repos
                     _response.IsSuccess = false;
                     _response.ErrorMessages = new List<string> { "Current Password is incorrect" }; ;
                     _response.StatusCode = HttpStatusCode.BadRequest;
+                    return _response;
+
 
                 }
 
@@ -589,10 +594,11 @@ namespace AtoTax.API.Repository.Repos
 
             if (updateUserDTO.Id == null || appuser == null)
             {
-                _response.Result = updateUserDTO;
+                _response.Result = null;
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string> { "UserId is invalid" };
                 _response.StatusCode = HttpStatusCode.BadRequest;
+                return _response;
             }
 
 
@@ -783,6 +789,8 @@ namespace AtoTax.API.Repository.Repos
                 _response.SuccessMessage = "User Id is incorrect.";
                 _response.ErrorMessages = null;
                 _response.StatusCode = HttpStatusCode.BadRequest;
+
+                return _response;
             }
 
             var rolenames = await _userManager.GetRolesAsync(user);

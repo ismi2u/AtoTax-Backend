@@ -49,7 +49,7 @@ namespace AtoTax.API.Controllers
 
             List<string> includelist = new List<string>();
             includelist.Add("GSTClient");
-            includelist.Add("ServiceCategory");
+            includelist.Add("ReturnFrequencyType");
             includelist.Add("PaymentType");
 
             string[] arrIncludes = includelist.ToArray();
@@ -85,7 +85,7 @@ namespace AtoTax.API.Controllers
 
             List<string> includelist = new List<string>();
             includelist.Add("GSTClient");
-            includelist.Add("ServiceCategory");
+            includelist.Add("ReturnFrequencyType");
             includelist.Add("PaymentType");
             string[] arrIncludes = includelist.ToArray();
             try
@@ -154,41 +154,41 @@ namespace AtoTax.API.Controllers
 
 
                 //Now tally the Collection and balance for the respective period (March 2023) 
-                var updCollectionAndBalance = _unitOfWork.CollectionAndBalances.GetAllAsync(
+                var updProcessTrackingAndFeeBalance = _unitOfWork.ProcessTrackingAndFeeBalances.GetAllAsync(
                                                         c => c.GSTClientId == ClientMonthlyPaymentCreateDTO.GSTClientId
                                                         && c.DueMonth == ClientMonthlyPaymentCreateDTO.DueMonth
                                                         && c.DueYear == ClientMonthlyPaymentCreateDTO.DueYear
                                                         )
                                                     .Result.FirstOrDefault();
 
-                if (updCollectionAndBalance != null)
-                {
+                //if (updProcessTrackingAndFeeBalance != null)
+                //{
 
-                    double CurBalance = updCollectionAndBalance.CurrentBalance;
-                    updCollectionAndBalance.AmountPaid = ClientMonthlyPaymentCreateDTO.ReceivedAmount ?? 0;
-                    updCollectionAndBalance.CurrentBalance = updCollectionAndBalance.CurrentBalance - (ClientMonthlyPaymentCreateDTO.ReceivedAmount ?? 0);
+                //    double CurBalance = updProcessTrackingAndFeeBalance.CurrentBalance;
+                //    updProcessTrackingAndFeeBalance.AmountPaid = ClientMonthlyPaymentCreateDTO.ReceivedAmount ?? 0;
+                //    updProcessTrackingAndFeeBalance.CurrentBalance = updProcessTrackingAndFeeBalance.CurrentBalance - (ClientMonthlyPaymentCreateDTO.ReceivedAmount ?? 0);
 
-                    if (updCollectionAndBalance.CurrentBalance < 0)
-                    {
-                        _response.StatusCode = HttpStatusCode.NoContent;
-                        _response.Result = null;
-                        _response.IsSuccess = false;
-                        _response.SuccessMessage = null;
-                        _response.ErrorMessages = new List<string> { "You cannot pay in excess of " + CurBalance + " for this period" };
-                        return Ok(_response);
-                    }
+                //    if (updProcessTrackingAndFeeBalance.CurrentBalance < 0)
+                //    {
+                //        _response.StatusCode = HttpStatusCode.NoContent;
+                //        _response.Result = null;
+                //        _response.IsSuccess = false;
+                //        _response.SuccessMessage = null;
+                //        _response.ErrorMessages = new List<string> { "You cannot pay in excess of " + CurBalance + " for this period" };
+                //        return Ok(_response);
+                //    }
 
 
-                        await _unitOfWork.CollectionAndBalances.UpdateAsync(updCollectionAndBalance);
-                }else
-                {
-                    _response.StatusCode = HttpStatusCode.NoContent;
-                    _response.Result = null;
-                    _response.IsSuccess = false;
-                    _response.SuccessMessage = null;
-                    _response.ErrorMessages = new List<string> { "Fee payments in advance not allowed" };
-                    return Ok(_response);
-                }
+                //        await _unitOfWork.ProcessTrackingAndFeeBalances.UpdateAsync(updProcessTrackingAndFeeBalance);
+                //}else
+                //{
+                //    _response.StatusCode = HttpStatusCode.NoContent;
+                //    _response.Result = null;
+                //    _response.IsSuccess = false;
+                //    _response.SuccessMessage = null;
+                //    _response.ErrorMessages = new List<string> { "Fee payments in advance not allowed" };
+                //    return Ok(_response);
+                //}
                
                 ///
 

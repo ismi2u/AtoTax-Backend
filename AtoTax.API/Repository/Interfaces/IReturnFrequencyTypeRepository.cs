@@ -3,7 +3,7 @@ using AtoTax.Domain.Entities;
 
 namespace AtoTax.API.Repository.Interfaces
 {
-    public interface IFrequencyRepository : IRepository<Frequency>
+    public interface IReturnFrequencyTypeRepository : IRepository<ReturnFrequencyType>
     {
         
 

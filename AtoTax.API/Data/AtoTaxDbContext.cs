@@ -77,23 +77,16 @@ namespace AtoTaxAPI.Data
             new AddressType { Id = 4, AddressTypeName = "PostBox Address", AddressTypeDesc = "Postoffice Box Number", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 }
             );
 
-            builder.Entity<Frequency>().HasData(
-            new Frequency { Id = 1, GSTReturnFreqType = "Monthly-Return", FixedCharge = 500, PreviousCharge = 500, Description = "GSTR-1 & GSTR-3B", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-            new Frequency { Id = 2, GSTReturnFreqType = "NilGSTR", FixedCharge = 300, PreviousCharge = 300, Description = "GSTR-1 & GSTR-3B", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-            new Frequency { Id = 3, GSTReturnFreqType = "Quaterly-Return", FixedCharge = 1000, PreviousCharge = 1000, Description = "GSTR-1 & GSTR-3B", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-            new Frequency { Id = 4, GSTReturnFreqType = "Annual-Return", FixedCharge = 1000, PreviousCharge = 1000, Description = "GSTR-1 & GSTR-3B", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-            new Frequency { Id = 5, GSTReturnFreqType = "FinalReturn", FixedCharge = 500, PreviousCharge = 500, Description = "GSTR-1 & GSTR-3B", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 }
+            builder.Entity<ReturnFrequencyType>().HasData(
+            new ReturnFrequencyType { Id = 1, ReturnFreqType = "Monthly-Return", FixedCharge = 500, PreviousCharge = 500, Description = "GSTR-1 & GSTR-3B", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+            new ReturnFrequencyType { Id = 2, ReturnFreqType = "NilGSTR", FixedCharge = 300, PreviousCharge = 300, Description = "GSTR-1 & GSTR-3B", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+            new ReturnFrequencyType { Id = 3, ReturnFreqType = "Quaterly-Return", FixedCharge = 1000, PreviousCharge = 1000, Description = "GSTR-1 & GSTR-3B", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+            new ReturnFrequencyType { Id = 4, ReturnFreqType = "Annual-Return", FixedCharge = 1000, PreviousCharge = 1000, Description = "GSTR-1 & GSTR-3B", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
+            new ReturnFrequencyType { Id = 5, ReturnFreqType = "FinalReturn", FixedCharge = 500, PreviousCharge = 500, Description = "GSTR-1 & GSTR-3B", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 }
             );
 
-            builder.Entity<ServiceCategory>().HasData(
-           new ServiceCategory { Id = 1, ServiceName = "MonthlyFiling", FixedCharge = 500, PreviousCharge = 500, Description = "GSTR-1 & GSTR-3B", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-           new ServiceCategory { Id = 2, ServiceName = "GSTAnnualReturnFiling", FixedCharge = 1000, PreviousCharge = 500, Description = "GST Amendment", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-           new ServiceCategory { Id = 3, ServiceName = "GSTAmendment", FixedCharge = 1000, PreviousCharge = 1000, Description = "GST Annual Return Filing", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-           new ServiceCategory { Id = 4, ServiceName = "GSTNoticeService", FixedCharge = 1000, PreviousCharge = 1000, Description = "GST Notice Service", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 },
-           new ServiceCategory { Id = 5, ServiceName = "PenaltyBySquad", FixedCharge = 1000, PreviousCharge = 1000, Description = "Penalty while transporting", CreatedDate = DateTime.UtcNow, LastModifiedDate = DateTime.UtcNow, StatusId = 1 }
-           );
         }
-        public DbSet<Frequency> Frequencies { get; set; }
+        public DbSet<ReturnFrequencyType> ReturnFrequencyTypes { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<ApprovalStatusType> ApprovalStatusTypes { get; set; }
         public DbSet<Status> Status { get; set; }
@@ -101,7 +94,7 @@ namespace AtoTaxAPI.Data
         public DbSet<ClientMonthlyPayment> ClientMonthlyPayments { get; set; }
         public DbSet<PaymentType> PaymentTypes { get; set; }
         public DbSet<MultimediaType> MultimediaTypes { get; set; }
-        public DbSet<ServiceCategory> ServiceCategories { get; set; }
+        public DbSet<ReturnFrequencyType> ServiceCategories { get; set; }
         public DbSet<ClientFeeMap> ClientFeeMaps { get; set; }
         public DbSet<GSTFilingType> GSTFilingTypes { get; set; }
 
@@ -116,7 +109,7 @@ namespace AtoTaxAPI.Data
 
         public DbSet<MonthAndYear> MonthAndYears { get; set; }
 
-        public DbSet<CollectionAndBalance> CollectionAndBalances { get; set; }
+        public DbSet<ProcessTrackingAndFeeBalance> ProcessTrackingAndFeeBalances { get; set; }
         public DbSet<AccountLedger> AccountLedgers { get; set; }
 
         public DbSet<ServiceChargeUpdateHistory> ServiceChargeUpdateHistories { get; set; }

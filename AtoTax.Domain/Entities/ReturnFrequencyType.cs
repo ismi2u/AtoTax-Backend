@@ -3,12 +3,12 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace AtoTax.Domain.Entities
 {
-    public class Frequency
+    public class ReturnFrequencyType
     {
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string GSTReturnFreqType { get; set; }
+        public string ReturnFreqType { get; set; }
 
         public string Description { get; set; }
         public double FixedCharge { get; set; }

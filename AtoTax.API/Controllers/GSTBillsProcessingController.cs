@@ -61,7 +61,7 @@ namespace AtoTax.API.Controllers
             List<string> includelist = new List<string>();
             includelist.Add("GSTClient");
             includelist.Add("GSTFilingType");
-            includelist.Add("ServiceCategory");
+            includelist.Add("ReturnFrequencyType");
             includelist.Add("MultimediaType");
             string[] arrIncludes = includelist.ToArray();
 
@@ -97,7 +97,7 @@ namespace AtoTax.API.Controllers
             List<string> includelist = new List<string>();
             includelist.Add("GSTClient");
             includelist.Add("GSTFilingType");
-            includelist.Add("ServiceCategory");
+            includelist.Add("ReturnFrequencyType");
             includelist.Add("MultimediaType");
             string[] arrIncludes = includelist.ToArray();
             try
@@ -234,16 +234,16 @@ namespace AtoTax.API.Controllers
 
 
                 //GST Filed should be set to true
-                CollectionAndBalance updCollectionAndBalance = _unitOfWork.CollectionAndBalances.GetAllAsync(c => c.GSTClientId == oldGSTBillsProcessing.GSTClientId
+                ProcessTrackingAndFeeBalance updProcessTrackingAndFeeBalance = _unitOfWork.ProcessTrackingAndFeeBalances.GetAllAsync(c => c.GSTClientId == oldGSTBillsProcessing.GSTClientId
               && c.DueMonth == oldGSTBillsProcessing.DueMonth
               && c.DueYear == oldGSTBillsProcessing.DueYear
              ).Result.FirstOrDefault();
-                if (updCollectionAndBalance != null)
+                if (updProcessTrackingAndFeeBalance != null)
                 {
 
-                    //updCollectionAndBalance.IsGSTFiled = true;
+                    //updProcessTrackingAndFeeBalance.IsGSTFiled = true;
 
-                    await _unitOfWork.CollectionAndBalances.UpdateAsync(updCollectionAndBalance);
+                    await _unitOfWork.ProcessTrackingAndFeeBalances.UpdateAsync(updProcessTrackingAndFeeBalance);
                 }
                 else
                 {
@@ -283,7 +283,7 @@ namespace AtoTax.API.Controllers
 
             bool recordAlreadyExists = _unitOfWork.GSTBillsProcessings.GetAllAsync(g => g.GSTClientId == GSTBillsProcessingCreateDTO.GSTClientID && g.DueMonth == GSTBillsProcessingCreateDTO.DueMonth && g.DueYear == GSTBillsProcessingCreateDTO.DueYear).Result.Any();
 
-            // && g.ServiceCategoryId == GSTBillsProcessingCreateDTO.ServiceCategoryId
+            // && g.ReturnFrequencyTypeId == GSTBillsProcessingCreateDTO.ReturnFrequencyTypeId
 
             if (recordAlreadyExists)
             {
@@ -360,36 +360,36 @@ namespace AtoTax.API.Controllers
 
                 /// Create entry in Collection in Balance for IsBillsreceived and IsGSTFiled
 
-                CollectionAndBalance updCollectionAndBalance = _unitOfWork.CollectionAndBalances.GetAllAsync(c => c.GSTClientId == GSTBillsProcessingCreateDTO.GSTClientID
+                ProcessTrackingAndFeeBalance updProcessTrackingAndFeeBalance = _unitOfWork.ProcessTrackingAndFeeBalances.GetAllAsync(c => c.GSTClientId == GSTBillsProcessingCreateDTO.GSTClientID
                 && c.DueMonth == GSTBillsProcessingCreateDTO.DueMonth
                 && c.DueYear == GSTBillsProcessingCreateDTO.DueYear
                ).Result.FirstOrDefault();
-                if (updCollectionAndBalance != null)
-                {
-                    //updCollectionAndBalance.IsGSTBillReceived = true;
-                    //updCollectionAndBalance.IsGSTFiled = false;
-                    updCollectionAndBalance.CurrentBalance = clientFeeMap.DefaultCharge;
-                    updCollectionAndBalance.FeesAmount = clientFeeMap.DefaultCharge;
-                    updCollectionAndBalance.AmountPaid = 0;
+                //////if (updProcessTrackingAndFeeBalance != null)
+                //////{
+                //////    //updProcessTrackingAndFeeBalance.IsGSTBillReceived = true;
+                //////    //updProcessTrackingAndFeeBalance.IsGSTFiled = false;
+                //////    updProcessTrackingAndFeeBalance.CurrentBalance = clientFeeMap.DefaultCharge;
+                //////    updProcessTrackingAndFeeBalance.FeesAmount = clientFeeMap.DefaultCharge;
+                //////    updProcessTrackingAndFeeBalance.AmountPaid = 0;
 
-                    await _unitOfWork.CollectionAndBalances.UpdateAsync(updCollectionAndBalance);
-                }
-                else
-                {// this record already created by Hangfire CRON job, but in case if it missed due 
-                 // to trigger time, create a record
-                    CollectionAndBalance NewCollectionAndBalance = new();
-                    NewCollectionAndBalance.GSTClientId = GSTBillsProcessing.GSTClientId;
-                    NewCollectionAndBalance.DueMonth = GSTBillsProcessing.DueMonth;
-                    NewCollectionAndBalance.DueYear = GSTBillsProcessing.DueYear;
-                    NewCollectionAndBalance.FeesAmount = clientFeeMap.DefaultCharge;
-                    NewCollectionAndBalance.CurrentBalance = clientFeeMap.DefaultCharge;
-                    NewCollectionAndBalance.AmountPaid = 0;
-                    //NewCollectionAndBalance.ServiceCategoryId = GSTBillsProcessingCreateDTO.ServiceCategoryId;//GSTMonthlySubmission
-                    //NewCollectionAndBalance.IsGSTBillReceived = true;
-                    //NewCollectionAndBalance.IsGSTFiled = false;
+                //////    await _unitOfWork.ProcessTrackingAndFeeBalances.UpdateAsync(updProcessTrackingAndFeeBalance);
+                //////}
+                //////else
+                //////{// this record already created by Hangfire CRON job, but in case if it missed due 
+                ////// // to trigger time, create a record
+                //////    ProcessTrackingAndFeeBalance NewProcessTrackingAndFeeBalance = new();
+                //////    NewProcessTrackingAndFeeBalance.GSTClientId = GSTBillsProcessing.GSTClientId;
+                //////    NewProcessTrackingAndFeeBalance.DueMonth = GSTBillsProcessing.DueMonth;
+                //////    NewProcessTrackingAndFeeBalance.DueYear = GSTBillsProcessing.DueYear;
+                //////    NewProcessTrackingAndFeeBalance.FeesAmount = clientFeeMap.DefaultCharge;
+                //////    NewProcessTrackingAndFeeBalance.CurrentBalance = clientFeeMap.DefaultCharge;
+                //////    NewProcessTrackingAndFeeBalance.AmountPaid = 0;
+                //////    //NewProcessTrackingAndFeeBalance.ReturnFrequencyTypeId = GSTBillsProcessingCreateDTO.ReturnFrequencyTypeId;//GSTMonthlySubmission
+                //////    //NewProcessTrackingAndFeeBalance.IsGSTBillReceived = true;
+                //////    //NewProcessTrackingAndFeeBalance.IsGSTFiled = false;
 
-                    await _unitOfWork.CollectionAndBalances.CreateAsync(NewCollectionAndBalance);
-                }
+                //////    await _unitOfWork.ProcessTrackingAndFeeBalances.CreateAsync(NewProcessTrackingAndFeeBalance);
+                //////}
 
                 await _unitOfWork.CompleteAsync();
 

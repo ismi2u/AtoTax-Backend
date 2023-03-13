@@ -12,8 +12,8 @@ namespace AtoTax.Domain.DTOs
         public string? PaymentDueMonth { get; set; }
         public int PaymentDueYear { get; set; }
         public double Amount { get; set; }
-        public int ServiceCategoryId { get; set; }
-        public ServiceCategoryDTO ServiceCategory { get; set; }
+        public int ReturnFrequencyTypeId { get; set; }
+        public ReturnFrequencyTypeDTO ReturnFrequencyType { get; set; }
         public int PaymentTypeId { get; set; }
         public PaymentTypeDTO PaymentType { get; set; }
         public DateTime? SettledDate { get; set; }
@@ -27,7 +27,7 @@ namespace AtoTax.Domain.DTOs
         public string? PaymentDueMonth { get; set; }
         public int PaymentDueYear { get; set; }
         public double Amount { get; set; }
-        public int ServiceCategoryId { get; set; }
+        public int ReturnFrequencyTypeId { get; set; }
         public int PaymentTypeId { get; set; }
         public DateTime? SettledDate { get; set; }
         public bool? IsPending { get; set; }
@@ -42,7 +42,7 @@ namespace AtoTax.Domain.DTOs
         public string? PaymentDueMonth { get; set; }
         public int PaymentDueYear { get; set; }
         public double Amount { get; set; }
-        public int ServiceCategoryId { get; set; }
+        public int ReturnFrequencyTypeId { get; set; }
         public int PaymentTypeId { get; set; }
         public DateTime? SettledDate { get; set; }
         public bool? IsPending { get; set; }

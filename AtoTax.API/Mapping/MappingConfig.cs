@@ -34,9 +34,9 @@ namespace AtoTax.API.Mapping
                .ForMember(dest => dest.TransactionDate, opt => opt.MapFrom(src => DateTime.UtcNow));
 
 
-            //Frequency
-            CreateMap<Frequency, FrequencyDTO>().ReverseMap();
-            CreateMap<FrequencyCreateDTO, Frequency>();
+            //ReturnFrequencyType
+            CreateMap<ReturnFrequencyType, ReturnFrequencyTypeDTO>().ReverseMap();
+            CreateMap<ReturnFrequencyTypeDTO, ReturnFrequencyType>();
               
 
             //Address Type
@@ -102,15 +102,15 @@ namespace AtoTax.API.Mapping
             CreateMap<GSTFilingType, ActiveGSTFilingTypeForDD>();
 
 
-            //ServiceCategory
-            CreateMap<ServiceCategory, ServiceCategoryDTO>().ReverseMap();
-            CreateMap<ServiceCategoryCreateDTO, ServiceCategory>()
+            //ReturnFrequencyType
+            CreateMap<ReturnFrequencyType, ReturnFrequencyTypeDTO>().ReverseMap();
+            CreateMap<ReturnFrequencyTypeCreateDTO, ReturnFrequencyType>()
              .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
              .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
-            CreateMap<ServiceCategoryUpdateDTO, ServiceCategory>()
+            CreateMap<ReturnFrequencyTypeUpdateDTO, ReturnFrequencyType>()
                 .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
-            CreateMap<ServiceCategory, ActiveServiceCategoryForDD>()
-               .ForMember(dest => dest.ServiceNameAndDesc, opt => opt.MapFrom(src => src.GetServiceCategory()));
+            //CreateMap<ReturnFrequencyType, ActiveReturnFrequencyTypeForDD>()
+            //   .ForMember(dest => dest.ServiceNameAndDesc, opt => opt.MapFrom(src => src.GetReturnFrequencyType()));
 
 
             //ClientFeeMaps
@@ -156,9 +156,9 @@ namespace AtoTax.API.Mapping
 
 
 
-            //CollectionAndBalance
-            CreateMap<CollectionAndBalance, CollectionAndBalanceDTO>().ReverseMap();
-            //CreateMap<CollectionAndBalanceCreateDTO, CollectionAndBalance>().ReverseMap();
+            //ProcessTrackingAndFeeBalance
+            CreateMap<ProcessTrackingAndFeeBalance, ProcessTrackingAndFeeBalanceDTO>().ReverseMap();
+            //CreateMap<ProcessTrackingAndFeeBalanceCreateDTO, ProcessTrackingAndFeeBalance>().ReverseMap();
 
             //AccountLedger
             CreateMap<AccountLedger, AccountLedgerDTO>().ReverseMap();

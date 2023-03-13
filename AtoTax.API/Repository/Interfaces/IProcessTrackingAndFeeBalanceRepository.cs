@@ -3,10 +3,10 @@ using AtoTax.Domain.Entities;
 
 namespace AtoTax.API.Repository.Interfaces
 {
-    public interface ICollectionAndBalanceRepository : IRepository<CollectionAndBalance>
+    public interface IProcessTrackingAndFeeBalanceRepository : IRepository<ProcessTrackingAndFeeBalance>
     {
 
-        Task<CollectionAndBalance> UpdateAsync(CollectionAndBalance entity);
+        Task<ProcessTrackingAndFeeBalance> UpdateAsync(ProcessTrackingAndFeeBalance entity);
 
         Task SyncMonthlyDataAsync();
         Task SyncAnnualDataAsync();

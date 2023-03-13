@@ -10,10 +10,10 @@ using AtoTax.Domain.Entities;
 namespace AtoTax.Domain.DTOs
 {
 
-    public class FrequencyDTO
+    public class ReturnFrequencyTypeDTO
     {
         public int Id { get; set; }
-        public string GSTReturnFreqType { get; set; }
+        public string ReturnFreqType { get; set; }
 
         public string Description { get; set; }
         public double FixedCharge { get; set; }
@@ -25,9 +25,9 @@ namespace AtoTax.Domain.DTOs
         public StatusDTO Status { get; set; }
 
     }
-    public class FrequencyCreateDTO
+    public class ReturnFrequencyTypeCreateDTO
     {
-        public string GSTReturnFreqType { get; set; }
+        public string ReturnFreqType { get; set; }
 
         public string Description { get; set; }
         public double FixedCharge { get; set; }
@@ -40,11 +40,11 @@ namespace AtoTax.Domain.DTOs
     }
 
 
-    public class FrequencyUpdateDTO
+    public class ReturnFrequencyTypeUpdateDTO
     {
         [Required]
         public int Id { get; set; }
-        public string GSTReturnFreqType { get; set; }
+        public string ReturnFreqType { get; set; }
 
         public string Description { get; set; }
         public double FixedCharge { get; set; }
@@ -55,10 +55,10 @@ namespace AtoTax.Domain.DTOs
         public int? StatusId { get; set; }
     }
 
-    public class ClientFrequencyForDD
+    public class ClientReturnFrequencyForDD
     {
         public int Id { get; set; }
-        public string GSTReturnFreqType { get; set; }
+        public string ReturnFreqType { get; set; }
     }
 
 }

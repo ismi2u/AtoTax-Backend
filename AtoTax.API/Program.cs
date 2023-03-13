@@ -63,7 +63,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
 
 builder.Services.AddResponseCaching();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IFrequencyRepository, FrequencyRepository>();
+builder.Services.AddScoped<IReturnFrequencyTypeRepository, ReturnFrequencyTypeRepository>();
 builder.Services.AddScoped<IMonthAndYearRepository, MonthAndYearRepository>();
 
 
@@ -72,9 +72,9 @@ builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 builder.Services.AddScoped<IApprovalStatusTypeRepository, ApprovalStatusTypeRepository>();
 builder.Services.AddScoped<IMultimediaTypeRepository, MultimediaTypeRepository>();
 builder.Services.AddScoped<IAddressTypeRepository, AddressTypeRepository>();
-builder.Services.AddScoped<IServiceCategoryRepository, ServiceCategoryRepository>();
+builder.Services.AddScoped<IReturnFrequencyTypeRepository, ReturnFrequencyTypeRepository>();
 
-builder.Services.AddScoped<ICollectionAndBalanceRepository, CollectionAndBalanceRepository>();
+builder.Services.AddScoped<IProcessTrackingAndFeeBalanceRepository, ProcessTrackingAndFeeBalanceRepository>();
 builder.Services.AddScoped<IAccountLedgerRepository, AccountLedgerRepository>();
 builder.Services.AddScoped<IServiceChargeUpdateHistoryRepository, ServiceChargeUpdateHistoryRepository>();
 builder.Services.AddScoped<IUserLoggedActivityRepository, UserLoggedActivityRepository>();
@@ -211,10 +211,10 @@ app.MapControllers();
 //hangfine job defined here
 app.UseHangfireDashboard();
 app.MapHangfireDashboard();
-RecurringJob.AddOrUpdate<IMonthAndYearRepository>(x => x.CreateMonthYearAsync(0, 0), Cron.Minutely);
-RecurringJob.AddOrUpdate<ICollectionAndBalanceRepository>(x => x.SyncMonthlyDataAsync(), Cron.Minutely);
-RecurringJob.AddOrUpdate<ICollectionAndBalanceRepository>(x => x.SyncAnnualDataAsync(), Cron.Minutely);
-RecurringJob.AddOrUpdate<ICollectionAndBalanceRepository>(x => x.SyncQuaterlyDataAsync(), Cron.Minutely);
+//RecurringJob.AddOrUpdate<IMonthAndYearRepository>(x => x.CreateMonthYearAsync(0, 0), Cron.Minutely);
+//RecurringJob.AddOrUpdate<IProcessTrackingAndFeeBalanceRepository>(x => x.SyncMonthlyDataAsync(), Cron.Minutely);
+//RecurringJob.AddOrUpdate<IProcessTrackingAndFeeBalanceRepository>(x => x.SyncAnnualDataAsync(), Cron.Minutely);
+//RecurringJob.AddOrUpdate<IProcessTrackingAndFeeBalanceRepository>(x => x.SyncQuaterlyDataAsync(), Cron.Minutely);
 
 //app.UseStaticFiles(new StaticFileOptions
 //{

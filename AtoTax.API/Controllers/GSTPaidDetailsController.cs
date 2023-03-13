@@ -49,7 +49,7 @@ namespace AtoTax.API.Controllers
 
             List<string> includelist = new List<string>();
             includelist.Add("GSTClient");
-            includelist.Add("ServiceCategory");
+            includelist.Add("ReturnFrequencyType");
             includelist.Add("PaymentType");
             string[] arrIncludes = includelist.ToArray();
 
@@ -85,7 +85,7 @@ namespace AtoTax.API.Controllers
             List<string> includelist = new List<string>();
             includelist.Add("Status");
             includelist.Add("GSTClient");
-            includelist.Add("ServiceCategory");
+            includelist.Add("ReturnFrequencyType");
             includelist.Add("PaymentType");
             string[] arrIncludes = includelist.ToArray();
             try

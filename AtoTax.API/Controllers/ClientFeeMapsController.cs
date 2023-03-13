@@ -44,7 +44,7 @@ namespace AtoTax.API.Controllers
 
             List<string> includelist = new List<string>();
             includelist.Add("GSTClient");
-            includelist.Add("ServiceCategory");
+            includelist.Add("ReturnFrequencyType");
             string[] arrIncludes = includelist.ToArray();
 
             try
@@ -78,7 +78,7 @@ namespace AtoTax.API.Controllers
 
             List<string> includelist = new List<string>();
             includelist.Add("GSTClient");
-            includelist.Add("ServiceCategory");
+            includelist.Add("ReturnFrequencyType");
             string[] arrIncludes = includelist.ToArray();
             try
             {
@@ -124,7 +124,7 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                if (id == Guid.Empty || !(id == ClientFeeMapUpdateDTO.Id) || ClientFeeMapUpdateDTO.GSTClientId == Guid.Empty || ClientFeeMapUpdateDTO.ServiceCategoryId == 0)
+                if (id == Guid.Empty || !(id == ClientFeeMapUpdateDTO.Id) || ClientFeeMapUpdateDTO.GSTClientId == Guid.Empty || ClientFeeMapUpdateDTO.ReturnFrequencyTypeId == 0)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.Result = ClientFeeMapUpdateDTO;

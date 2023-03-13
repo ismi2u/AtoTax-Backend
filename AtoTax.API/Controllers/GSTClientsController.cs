@@ -199,8 +199,8 @@ namespace AtoTax.API.Controllers
 
                 //Client Fee Map table update check
 
-                var ListOfServiceCategories = await _unitOfWork.ServiceCategories.GetAllAsync();
-                foreach (var serviceCategory in ListOfServiceCategories)
+                var ListOfServiceCategories = await _unitOfWork.ReturnFrequencyTypes.GetAllAsync();
+                foreach (var ReturnFrequencyType in ListOfServiceCategories)
                 {
                     var existingClientFee = await _unitOfWork.ClientFeeMaps.GetAsync(u =>  u.GSTClientId == oldgstclient.Id, tracked: false);
                     if (existingClientFee == null)
@@ -208,8 +208,8 @@ namespace AtoTax.API.Controllers
                         ClientFeeMap clientFeeMap = new ClientFeeMap();
 
                         clientFeeMap.GSTClientId = gstClient.Id;
-                        //clientFeeMap.ServiceCategoryId = serviceCategory.Id;
-                        clientFeeMap.DefaultCharge = serviceCategory.FixedCharge;
+                        //clientFeeMap.ReturnFrequencyTypeId = ReturnFrequencyType.Id;
+                        clientFeeMap.DefaultCharge = ReturnFrequencyType.FixedCharge;
                         clientFeeMap.CreatedDate = DateTime.UtcNow;
                         clientFeeMap.LastModifiedDate = DateTime.UtcNow;
 
@@ -275,13 +275,13 @@ namespace AtoTax.API.Controllers
                 }
                 await _unitOfWork.GSTClients.CreateAsync(gstClient);
 
-                var ListOfFrequencies = await _unitOfWork.Frequencies.GetAllAsync();
+                var ListOfFrequencies = await _unitOfWork.ReturnFrequencyTypes.GetAllAsync();
                 foreach (var freq in ListOfFrequencies)
                 {
                     ClientFeeMap clientFeeMap = new ClientFeeMap();
 
                     clientFeeMap.GSTClientId = gstClient.Id;
-                    clientFeeMap.FrequencyId = freq.Id;
+                    clientFeeMap.ReturnFrequencyTypeId = freq.Id;
                     clientFeeMap.DefaultCharge = freq.FixedCharge;
                     clientFeeMap.CreatedDate = DateTime.UtcNow;
                     clientFeeMap.LastModifiedDate = DateTime.UtcNow;

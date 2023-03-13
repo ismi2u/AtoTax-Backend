@@ -39,7 +39,7 @@ namespace AtoTax.API.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetFrequency()
+        public async Task<ActionResult<APIResponse>> GetReturnFrequencyType()
         {
 
             List<string> includelist = new List<string>();
@@ -49,9 +49,9 @@ namespace AtoTax.API.Controllers
             {
 
                 
-                IEnumerable<Frequency> FrequencyList = await _unitOfWork.Frequencies.GetAllAsync(null, 0, 0, arrIncludes);
+                IEnumerable<ReturnFrequencyType> FrequencyList = await _unitOfWork.ReturnFrequencyTypes.GetAllAsync(null, 0, 0, arrIncludes);
 
-                _response.Result = _mapper.Map<IEnumerable<FrequencyDTO>>(FrequencyList);
+                _response.Result = _mapper.Map<IEnumerable<ReturnFrequencyTypeDTO>>(FrequencyList);
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
             }
@@ -69,7 +69,7 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetFrequency(int id)
+        public async Task<ActionResult<APIResponse>> GetReturnFrequencyType(int id)
         {
 
             List<string> includelist = new List<string>();
@@ -78,10 +78,10 @@ namespace AtoTax.API.Controllers
             string[] arrIncludes = includelist.ToArray();
             try
             {
-                Frequency Frequency = await _unitOfWork.Frequencies.GetAsync(u => u.Id == id, false, arrIncludes);
+                ReturnFrequencyType Frequency = await _unitOfWork.ReturnFrequencyTypes.GetAsync(u => u.Id == id, false, arrIncludes);
 
 
-                _response.Result = _mapper.Map<FrequencyDTO>(Frequency);
+                _response.Result = _mapper.Map<ReturnFrequencyTypeDTO>(Frequency);
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
             }
@@ -106,7 +106,7 @@ namespace AtoTax.API.Controllers
         //    try
         //    {
 
-        //        var Frequency = _mapper.Map<Frequency>(FrequencyCreateDTO);
+        //        var Frequency = _mapper.Map<ReturnFrequencyType>(FrequencyCreateDTO);
 
 
         //        //if(Frequency.ExpenseAmount==0)
@@ -124,7 +124,7 @@ namespace AtoTax.API.Controllers
         //        //Frequency.TransactionRecordedBy = User.Identity.Name;
 
 
-        //        await _unitOfWork.Frequencies.CreateAsync(Frequency);
+        //        await _unitOfWork.ReturnFrequencyTypes.CreateAsync(Frequency);
 
         //        await _unitOfWork.CompleteAsync();
         //        _response.Result = _mapper.Map<FrequencyDTO>(Frequency);

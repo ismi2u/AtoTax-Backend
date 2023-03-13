@@ -16,9 +16,9 @@ namespace AtoTax.Domain.Entities
         public int DueYear { get; set; }
 
 
-        [ForeignKey("ServiceCategory")]
-        public int ServiceCategoryId { get; set; }
-        public virtual ServiceCategory ServiceCategory { get; set; }
+        [ForeignKey("ReturnFrequencyType")]
+        public int ReturnFrequencyTypeId { get; set; }
+        public virtual ReturnFrequencyType ReturnFrequencyType { get; set; }
 
         [ForeignKey("GSTFilingType")]
         public int? GSTFilingTypeId { get; set; }

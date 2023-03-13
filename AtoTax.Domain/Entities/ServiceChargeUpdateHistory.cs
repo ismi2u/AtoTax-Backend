@@ -17,9 +17,9 @@ namespace AtoTax.Domain.Entities
 
 
         [Required]
-        [ForeignKey("ServiceCategory")]
-        public int ServiceCategoryId { get; set; }
-        public virtual ServiceCategory ServiceCategory { get; set; }
+        [ForeignKey("ReturnFrequencyType")]
+        public int ReturnFrequencyTypeId { get; set; }
+        public virtual ReturnFrequencyType ReturnFrequencyType { get; set; }
 
         public double PreviousRate { get; set; }
         public double NewRate { get; set; }

@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AtoTax.API.Repository.Repos
 {
-    public class FrequencyRepository : Repository<Frequency>, IFrequencyRepository
+    public class ReturnFrequencyTypeRepository : Repository<ReturnFrequencyType>, IReturnFrequencyTypeRepository
     {
         private readonly AtoTaxDbContext _context;
-        private readonly new ILogger<Frequency> _logger;
-        public FrequencyRepository(AtoTaxDbContext context, ILogger<Frequency> logger) : base(context, logger)
+        private readonly new ILogger<ReturnFrequencyType> _logger;
+        public ReturnFrequencyTypeRepository(AtoTaxDbContext context, ILogger<ReturnFrequencyType> logger) : base(context, logger)
         {
 
             _context = context;

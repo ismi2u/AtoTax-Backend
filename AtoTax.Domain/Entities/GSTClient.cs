@@ -38,7 +38,7 @@ namespace AtoTax.Domain.Entities
         public DateTime? CreatedDate { get; set; }
         public DateTime? LastModifiedDate { get; set; }
 
-        
+        public Guid? ClientRelationMgrId { get; set; }
 
         [Required]
         [ForeignKey("Status")]

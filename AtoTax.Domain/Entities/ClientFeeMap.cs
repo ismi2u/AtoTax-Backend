@@ -15,9 +15,9 @@ namespace AtoTax.Domain.Entities
         public virtual GSTClient GSTClient { get; set; }
 
         [Required]
-        [ForeignKey("Frequency")]
-        public int FrequencyId { get; set; }
-        public virtual Frequency Frequency { get; set; }
+        [ForeignKey("ReturnFrequencyType")]
+        public int ReturnFrequencyTypeId { get; set; }
+        public virtual ReturnFrequencyType ReturnFrequencyType { get; set; }
 
         [Required]
         public double DefaultCharge { get; set; }

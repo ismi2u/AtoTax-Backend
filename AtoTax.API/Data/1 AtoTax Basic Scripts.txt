@@ -7,19 +7,19 @@ INSERT INTO public."GSTClients"(
 --ClientFeeMap
 
 INSERT INTO public."ClientFeeMaps"(
-	"Id", "GSTClientId", "ServiceCategoryId", "DefaultCharge", "CreatedDate", "LastModifiedDate")
+	"Id", "GSTClientId", "ReturnFrequencyTypeId", "DefaultCharge", "CreatedDate", "LastModifiedDate")
 	VALUES ('fcf7cf6d-27fa-40a7-80ab-b86402a8e695', 'ebf7cf6d-26fa-40a7-90ab-b86402a7e594', 1, 500, '2023-02-27 11:35:32.934', '2023-02-27 11:35:32.934');
 	INSERT INTO public."ClientFeeMaps"(
-	"Id", "GSTClientId", "ServiceCategoryId", "DefaultCharge", "CreatedDate", "LastModifiedDate")
+	"Id", "GSTClientId", "ReturnFrequencyTypeId", "DefaultCharge", "CreatedDate", "LastModifiedDate")
 	VALUES ('fcf7cf6d-27fa-40a7-80ab-b86402a8e696', 'ebf7cf6d-26fa-40a7-90ab-b86402a7e594', 2, 500, '2023-02-27 11:35:32.934', '2023-02-27 11:35:32.934');
 	INSERT INTO public."ClientFeeMaps"(
-	"Id", "GSTClientId", "ServiceCategoryId", "DefaultCharge", "CreatedDate", "LastModifiedDate")
+	"Id", "GSTClientId", "ReturnFrequencyTypeId", "DefaultCharge", "CreatedDate", "LastModifiedDate")
 	VALUES ('fcf7cf6d-27fa-40a7-80ab-b86402a8e697', 'ebf7cf6d-26fa-40a7-90ab-b86402a7e594', 3, 1000, '2023-02-27 11:35:32.934', '2023-02-27 11:35:32.934');
 	INSERT INTO public."ClientFeeMaps"(
-	"Id", "GSTClientId", "ServiceCategoryId", "DefaultCharge", "CreatedDate", "LastModifiedDate")
+	"Id", "GSTClientId", "ReturnFrequencyTypeId", "DefaultCharge", "CreatedDate", "LastModifiedDate")
 	VALUES ('fcf7cf6d-27fa-40a7-80ab-b86402a8e698', 'ebf7cf6d-26fa-40a7-90ab-b86402a7e594', 4, 1000, '2023-02-27 11:35:32.934', '2023-02-27 11:35:32.934');
 	INSERT INTO public."ClientFeeMaps"(
-	"Id", "GSTClientId", "ServiceCategoryId", "DefaultCharge", "CreatedDate", "LastModifiedDate")
+	"Id", "GSTClientId", "ReturnFrequencyTypeId", "DefaultCharge", "CreatedDate", "LastModifiedDate")
 	VALUES ('fcf7cf6d-27fa-40a7-80ab-b86402a8e699', 'ebf7cf6d-26fa-40a7-90ab-b86402a7e594', 5, 1000, '2023-02-27 11:35:32.934', '2023-02-27 11:35:32.934');
 
 -----------------------------------------

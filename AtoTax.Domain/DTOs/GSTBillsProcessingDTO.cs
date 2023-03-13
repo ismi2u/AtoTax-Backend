@@ -11,8 +11,8 @@ namespace AtoTax.Domain.DTOs
         public Guid GSTClientID { get; set; }
         public GSTClientDTO GSTClient { get; set; }
 
-        public int ServiceCategoryId { get; set; }
-        public ServiceCategoryDTO ServiceCategory { get; set; }
+        public int ReturnFrequencyTypeId { get; set; }
+        public ReturnFrequencyTypeDTO ReturnFrequencyType { get; set; }
         public string DueMonth { get; set; }
         public int DueYear { get; set; }
         public int GSTFilingTypeId { get; set; }

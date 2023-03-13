@@ -17,8 +17,8 @@ namespace AtoTax.Domain.DTOs
         public GSTClientDTO GSTClient { get; set; }
         public string? DueMonth { get; set; }
         public int? DueYear { get; set; }
-        public int ServiceCategoryId { get; set; }
-        public ServiceCategoryDTO ServiceCategory { get; set; }
+        public int ReturnFrequencyTypeId { get; set; }
+        public ReturnFrequencyTypeDTO ReturnFrequencyType { get; set; }
         public int PaymentTypeId { get; set; }
         public PaymentTypeDTO PaymentType { get; set; }
         public string? PaymentReferenceNumber { get; set; }
@@ -38,7 +38,7 @@ namespace AtoTax.Domain.DTOs
         [Required]
         public int? DueYear { get; set; }
         [Required]
-        public int ServiceCategoryId { get; set; }
+        public int ReturnFrequencyTypeId { get; set; }
         [Required]
         public int PaymentTypeId { get; set; }
         [Required]
