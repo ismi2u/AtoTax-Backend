@@ -426,7 +426,7 @@ namespace AtoTax.API.Controllers
 
 
         }
-
+        [HttpPut]
         // PUT: api/ProcessTrackingAndFeeBalances/5
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
