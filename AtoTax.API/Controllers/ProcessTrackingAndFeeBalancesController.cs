@@ -324,6 +324,7 @@ namespace AtoTax.API.Controllers
                                                                     .GetAllAsync(p => p.GSTClientId == id).Result
                                                                     .Select(s => s.CurrentBalance).Sum() ?? 0;
 
+
                 gstClientPopupDataDTO.GSTClientId = gstClient.Id;
                 gstClientPopupDataDTO.PropreitorName = gstClient.ProprietorName;
                 gstClientPopupDataDTO.RackFileNo = gstClient.RackFileNo;
@@ -386,7 +387,11 @@ namespace AtoTax.API.Controllers
                 List<string> listMonths = new List<string>();
                 foreach (var item in listTrackingAndFeeBalances)
                 {
-                    listMonths.Add(_unitOfWork.MonthAndYears.GetAsync(m => m.Month == item.DueMonth).Result.Month);
+                    if(item.DueMonth != null)
+                    {
+                        listMonths.Add(item.DueMonth);
+                    }
+                    
                 }
                 getS1ProcessInputDTO.DueMonths = listMonths;
 

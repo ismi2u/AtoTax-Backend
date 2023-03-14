@@ -72,6 +72,7 @@ public class ProcessTrackingForReceivedDTO
 
     public class GSTClientPopupDataDTO
     {
+
         public Guid GSTClientId { get; set; }
 
         public string PropreitorName { get; set; }

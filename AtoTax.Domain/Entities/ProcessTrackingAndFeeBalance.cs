@@ -16,8 +16,8 @@ namespace AtoTax.Domain.Entities
         [ForeignKey("ReturnFrequencyType")]
         public int ReturnFrequencyTypeId { get; set; }
         public virtual ReturnFrequencyType ReturnFrequencyType { get; set; }
-        public string DueMonth { get; set; }
-        public int DueYear { get; set; }
+        public string? DueMonth { get; set; }
+        public int? DueYear { get; set; }
         public string RackFileNo { get; set; }
         public bool? SalesInvoice { get; set; }
         public bool? SalesBillsNil { get; set; }
