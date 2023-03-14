@@ -11,6 +11,8 @@ namespace AtoTax.API.GenericRepository
     public class UnitOfWork : IUnitOfWork
     {
         private bool _disposed;
+
+        public IMonthAndYearRepository MonthAndYears { get; private set; }
         public IAddressTypeRepository AddressTypes { get; private set; }
         public IReturnFrequencyTypeRepository ReturnFrequencyTypes { get; private set; }
         public IAmendmentRepository Amendments { get; private set; }
@@ -35,6 +37,7 @@ namespace AtoTax.API.GenericRepository
 
         private readonly AtoTaxDbContext _context;
         private readonly ILogger<ReturnFrequencyType> _ReturnFrequencyTypeLogger;
+        private readonly ILogger<MonthAndYear> _MonthAndYearsLogger;
         private readonly ILogger<AddressType> _AddressTypeLogger;
         private readonly ILogger<Amendment> _AmendmentLogger;
         private readonly ILogger<AmendType> _AmendTypeLogger;
@@ -57,8 +60,9 @@ namespace AtoTax.API.GenericRepository
 
             ILogger<ReturnFrequencyType> ReturnFrequencyTypeLogger,
             ILogger<AddressType> AddressTypeLogger,
-             ILogger<Amendment> AmendmentLogger,
-             ILogger<AmendType> AmendTypeLogger,
+            ILogger<MonthAndYear> MonthAndYearsLogger,
+            ILogger<Amendment> AmendmentLogger,
+            ILogger<AmendType> AmendTypeLogger,
             ILogger<ClientFeeMap> ClientFeeMapLogger,
             ILogger<ProcessTrackingAndFeeBalance> ProcessTrackingAndFeeBalanceLogger,
             ILogger<GSTBillsProcessing> GSTBillsProcessingLogger,
@@ -95,7 +99,8 @@ namespace AtoTax.API.GenericRepository
             _StatusLogger = StatusLogger;
             _UserLoggedActivityLogger = UserLoggedActivityLogger;
             _ServiceChargeUpdateHistoryLogger = ServiceChargeUpdateHistoryLogger;
-            _ClientMonthlyPaymentLogger= ClientMonthlyPaymentLogger;
+            _ClientMonthlyPaymentLogger = ClientMonthlyPaymentLogger;
+            _MonthAndYearsLogger= MonthAndYearsLogger;
 
             ReturnFrequencyTypes = new ReturnFrequencyTypeRepository(_context, _ReturnFrequencyTypeLogger);
             AddressTypes = new AddressTypeRepository(_context, _AddressTypeLogger);
@@ -115,6 +120,7 @@ namespace AtoTax.API.GenericRepository
             UserLoggedActivities = new UserLoggedActivityRepository(_context, _UserLoggedActivityLogger);
             ServiceChargeUpdateHistories = new ServiceChargeUpdateHistoryRepository(_context, _ServiceChargeUpdateHistoryLogger);
             ClientMonthlyPayments = new ClientMonthlyPaymentRepository(_context, _ClientMonthlyPaymentLogger);
+            MonthAndYears = new MonthAndYearRepository(_context, _MonthAndYearsLogger);
         }
 
         public async Task CompleteAsync()

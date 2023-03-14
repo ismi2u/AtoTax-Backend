@@ -23,6 +23,38 @@ namespace AtoTax.Domain.Entities
         public string AmountPaid { get; set; }
         public string CurrentBalance { get; set; }
         public DateTime? ReceivedDate { get; set; }
+        public string ReceivedByUser { get; set; }
+        public bool? SalesFiled { get; set; }
+        public bool? SalesNotFiled { get; set; }
+        public bool? SalesNilFiled { get; set; }
+        public bool? SalesNilNotFiled { get; set; }
+        public DateTime? SalesFiledDate { get; set; }
+        public bool? GSTR3BFiled { get; set; }
+        public bool? GSTR3BNotFiled { get; set; }
+        public bool? GSTR3BNILFiled { get; set; }
+        public bool? GSTR3BNilNotFiled { get; set; }
+        public DateTime? GSTR3BFiledDate { get; set; }
+
+    }
+public class ProcessTrackingForReceivedDTO
+    {
+        public Guid Id { get; set; }
+        public Guid GSTClientId { get; set; }
+        public GSTClientDTO GSTClient { get; set; }
+        public int ReturnFrequencyTypeId { get; set; }
+        public ReturnFrequencyTypeDTO ReturnFrequencyType { get; set; }
+        public string DueMonth { get; set; }
+        public int DueYear { get; set; }
+        public string RackFileNo { get; set; }
+        public bool? SalesInvoice { get; set; }
+        public bool? SalesBillsNil { get; set; }
+        public bool? PurchaseInvoice { get; set; }
+        public bool? PurchaseNil { get; set; }
+        public string GSTTaxAmount { get; set; }
+        public string FeesAmount { get; set; }
+        public string AmountPaid { get; set; }
+        public string CurrentBalance { get; set; }
+        public DateTime? ReceivedDate { get; set; }
         public bool? SalesFiled { get; set; }
         public bool? SalesNotFiled { get; set; }
         public bool? SalesNilFiled { get; set; }
@@ -36,15 +68,64 @@ namespace AtoTax.Domain.Entities
 
     }
 
-    //used in ClientMonthlyPayments 
-    
-    //public class ClientApplicableReturnsDTO
-    //{
-    //    public Guid GSTClientId { get; set; }
+    //used in GetProcessPopupDataForGSTClient 
 
-    //    public List<ClientFrequencyForDD> Frequencies { get; set; }
+    public class GSTClientPopupDataDTO
+    {
+        public Guid GSTClientId { get; set; }
 
-    //}
+        public string PropreitorName { get; set; }
 
-    
+        public double TotalPendingBalance { get; set; }
+
+        public string RackFileNo { get; set; }
+
+        public string TallyDataFilePath { get; set; }
+
+        public double CurrentFees { get; set; }
+
+        public string ReturnFrequency { get; set; }
+
+        public string ClientRelationMgr { get; set; }
+
+
+    }
+
+
+    public class GetS1ProcessInputDTO
+    {
+
+        public Guid GSTClientId { get; set; }
+
+        public List<string> DueMonths { get; set; }
+
+        public List<ReturnFrequencyType> listReturnFreqTypes { get; set; }
+
+
+    }
+
+    public class UpdateS1ProcessDataDTO
+    {
+        public Guid GSTClientId { get; set; }
+        public string DueMonth { get; set; }
+        public int ReturnFrequencyTypeId { get; set; }
+        public bool? SalesInvoice { get; set; }
+        public bool? SalesBillsNil { get; set; }
+        public bool? PurchaseInvoice { get; set; }
+        public bool? PurchaseNil { get; set; }
+
+        public double? GSTTaxAmount { get;set; }
+        public double? AmountPaid { get; set; }
+
+    }
+
+
+    public class MonthObject
+    {
+        public int iMonth { get; set; }
+
+        public string sMonth { get; set; }
+
+    }
 }
+

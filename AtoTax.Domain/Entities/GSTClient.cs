@@ -32,7 +32,9 @@ namespace AtoTax.Domain.Entities
         public string? GSTRecoveryEmailPassword { get; set; }
         public string? EWAYBillUserName { get; set; }
         public string? EWAYBillPassword { get; set; }
+        [Required]
         public string? RackFileNo { get; set; }
+        [Required]
         public string? TallyDataFilePath { get; set; }
 
         public DateTime? CreatedDate { get; set; }
