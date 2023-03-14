@@ -405,6 +405,7 @@ namespace AtoTax.API.Controllers
 
                     listReturnFreq.Add(returnFrequency);
                 }
+                getS1ProcessInputDTO.GSTClientId = gstClient.Id;
                 getS1ProcessInputDTO.DueMonths = listMonths;
                 getS1ProcessInputDTO.listReturnFreqTypes = listReturnFreq;
 
