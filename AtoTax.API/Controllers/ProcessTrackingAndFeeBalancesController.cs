@@ -781,6 +781,129 @@ namespace AtoTax.API.Controllers
         }
 
 
+        [HttpPut]
+        // PUT: api/ProcessTrackingAndFeeBalances/5
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> UpdateGSTR3BFiled(UpdateGSTR3BFileDataDTO updateGSTR3BFileDataDTO)
+        {
+
+            if (updateGSTR3BFileDataDTO.GSTClientId == Guid.Empty)
+            {
+                _response.Result = updateGSTR3BFileDataDTO.GSTClientId;
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages = new List<string>() { "GSTClientId is not valid" };
+
+                return Ok(_response);
+            }
+
+            try
+            {
+                var processTrackingAndFeeBalance = await _unitOfWork.ProcessTrackingAndFeeBalances
+                                                    .GetAsync(u => u.GSTClientId == updateGSTR3BFileDataDTO.GSTClientId
+                                                    && u.DueMonth == updateGSTR3BFileDataDTO.DueMonth
+                                                    && u.DueYear == updateGSTR3BFileDataDTO.DueYear
+                                                    && u.ReturnFrequencyTypeId == updateGSTR3BFileDataDTO.ReturnFrequencyTypeId, tracked: true);
+
+                if (processTrackingAndFeeBalance == null)
+                {
+                    _response.Result = updateGSTR3BFileDataDTO;
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.ErrorMessages = new List<string>() { "Process Tracking record is null" };
+                    return Ok(_response);
+                }
+
+                if (processTrackingAndFeeBalance.GSTR3BFiledByUser != null && processTrackingAndFeeBalance.GSTR3BFiledDate != null)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages = new List<string>() { "GSTR3B is already in filed state" };
+                    _response.Result = processTrackingAndFeeBalance;
+                    return Ok(_response);
+                }
+
+                if (processTrackingAndFeeBalance.ReceivedByUser == null && processTrackingAndFeeBalance.ReceivedDate == null)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages = new List<string>() { "Bills not received yet, cant file GSTR1" };
+                    _response.Result = processTrackingAndFeeBalance;
+                    return Ok(_response);
+                }
+
+                processTrackingAndFeeBalance.GSTR3BFiled = updateGSTR3BFileDataDTO.GSTR3BFiled;
+                processTrackingAndFeeBalance.GSTR3BNotFiled = updateGSTR3BFileDataDTO.GSTR3BNotFiled;
+                processTrackingAndFeeBalance.GSTR3BNILFiled = updateGSTR3BFileDataDTO.GSTR3BNILFiled;
+                processTrackingAndFeeBalance.GSTR3BNilNotFiled = updateGSTR3BFileDataDTO.GSTR3BNilNotFiled;
+
+                processTrackingAndFeeBalance.GSTR3BFiledDate = DateTime.UtcNow;
+                processTrackingAndFeeBalance.GSTR3BFiledByUser = User.Identity.Name;
+
+
+                await _unitOfWork.ProcessTrackingAndFeeBalances.UpdateAsync(processTrackingAndFeeBalance);
+
+                await _unitOfWork.CompleteAsync();
+
+
+
+                if (processTrackingAndFeeBalance.ReturnFrequencyTypeId != null)
+                {
+                    processTrackingAndFeeBalance.ReturnFrequencyType = await _unitOfWork.ReturnFrequencyTypes.GetAsync(u => u.Id == processTrackingAndFeeBalance.ReturnFrequencyTypeId);
+                }
+
+                var gstClient = await _unitOfWork.GSTClients.GetAsync(u => u.Id == updateGSTR3BFileDataDTO.GSTClientId);
+                // Send Mail ID confirmation email
+
+                string[] paths = { Directory.GetCurrentDirectory(), "GSTFiled.html" };
+                string FilePath = Path.Combine(paths);
+                // _logger.LogInformation("Email template path " + FilePath);
+                StreamReader str = new StreamReader(FilePath);
+                string MailText = str.ReadToEnd();
+                str.Close();
+
+                var domain = _config.GetSection("Domain").Value;
+                var duemonth = processTrackingAndFeeBalance.DueMonth;
+                var dueyear = processTrackingAndFeeBalance.DueYear;
+                var builder = new MimeKit.BodyBuilder();
+                var receiverEmail = gstClient.GSTEmailId;
+                string subject = "AtoTax: GSTR3BFiled for the month of " + duemonth + "-" + dueyear;
+
+                MailText = MailText.Replace("{Domain}", domain);
+                MailText = MailText.Replace("{employee}", User.Identity.Name);
+                MailText = MailText.Replace("{month}", duemonth);
+                MailText = MailText.Replace("{year}", dueyear.ToString());
+                MailText = MailText.Replace("{gstclient}", gstClient.ProprietorName);
+
+
+                builder.HtmlBody = MailText;
+
+                EmailDto emailDto = new EmailDto();
+                emailDto.To = receiverEmail;
+                emailDto.Subject = subject;
+                emailDto.Body = builder.HtmlBody;
+
+                await _emailSender.SendEmailAsync(emailDto);
+                _logger.LogInformation("Email Acknowledgement:GSTR3B Filed " + gstClient.ProprietorName + " for the month of " + duemonth + "-" + dueyear);
+                ///
+
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "GSTR3B Filed";
+                _response.Result = processTrackingAndFeeBalance;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+            return Ok(_response);
+        }
+
+
 
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]

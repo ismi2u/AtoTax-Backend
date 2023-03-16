@@ -12,6 +12,8 @@ COPY ["AtoTax.API/GSTBillsReceived.html", "AtoTax.API/"]
 COPY ["AtoTax.API/GSTFiled.html", "AtoTax.API/"]
 COPY ["AtoTax.API/PasswordReset.html", "AtoTax.API/"]
 COPY ["AtoTax.API/ConfirmEmail.html", "AtoTax.API/"]
+COPY ["AtoTax.API/SalesGSTR1Filed.html", "AtoTax.API/"]
+
 
 COPY ["AtoTax.API/AtoTax.API.csproj", "AtoTax.API/"]
 COPY ["AtoTax.Domain/AtoTax.Domain.csproj", "AtoTax.Domain/"]

@@ -179,6 +179,23 @@ public class ProcessTrackingForReceivedDTO
         public bool? SalesNilNotFiled { get; set; }
     }
 
+
+    public class UpdateGSTR3BFileDataDTO
+    {
+        public Guid GSTClientId { get; set; }
+        public string DueMonth { get; set; }
+        public int DueYear { get; set; }
+        public int ReturnFrequencyTypeId { get; set; }
+
+        public bool? GSTR3BFiled { get; set; }
+        public bool? GSTR3BNotFiled { get; set; }
+        public bool? GSTR3BNILFiled { get; set; }
+        public bool? GSTR3BNilNotFiled { get; set; }
+        
+
+
+    }
+
     public class MonthObject
     {
         public int iMonth { get; set; }
