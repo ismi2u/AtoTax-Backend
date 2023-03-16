@@ -455,14 +455,24 @@ namespace AtoTax.API.Controllers
             {
                 if (item.ReceivedDate == null && string.IsNullOrEmpty(item.ReceivedByUser))
                 {
-                    if(gstClientIdFreq.FrequencyId == (int)EFrequency.AnnualReturn)
+
+                    try
                     {
-                        listYears.Add(item.DueYear ?? 0, item.FeesAmount ?? 0);
+                        if (gstClientIdFreq.FrequencyId == (int)EFrequency.AnnualReturn)
+                        {
+                            listYears.Add(item.DueYear ?? 0, item.FeesAmount ?? 0);
+                        }
+                        else
+                        {
+                            listYears.Add(item.DueYear ?? 0, 0);
+                        }
                     }
-                    else
+                    catch (Exception)
                     {
-                        listYears.Add(item.DueYear ?? 0, 0);
+
+                        continue;
                     }
+                   
 
                     
 
@@ -510,9 +520,18 @@ namespace AtoTax.API.Controllers
             foreach (var item in listProcessAndFeeBals)
             {
 
-                if(item.ReceivedDate == null && string.IsNullOrEmpty( item.ReceivedByUser))
+
+                try
                 {
-                    listMonths.Add(item.DueMonth, item.FeesAmount ?? 0);
+                    if (item.ReceivedDate == null && string.IsNullOrEmpty(item.ReceivedByUser))
+                    {
+                        listMonths.Add(item.DueMonth, item.FeesAmount ?? 0);
+                    }
+                }
+                catch (Exception)
+                {
+
+                    continue;
                 }
 
             }
