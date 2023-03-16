@@ -446,6 +446,7 @@ namespace AtoTax.API.Controllers
 
             getYearsInputDTO.GSTClientId = gstClientIdFreq.GSTClientId;
 
+
             foreach (var item in listProcessAndFeeBals)
             {
                 if (!listYears.Contains(item.DueYear ?? 0))
