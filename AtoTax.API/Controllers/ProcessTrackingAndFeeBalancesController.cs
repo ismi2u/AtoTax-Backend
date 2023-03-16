@@ -614,6 +614,7 @@ namespace AtoTax.API.Controllers
                 var processTrackingAndFeeBalance = await _unitOfWork.ProcessTrackingAndFeeBalances
                                                     .GetAsync(u => u.GSTClientId == updateS1ProcessDataDTO.GSTClientId
                                                     && u.DueMonth == updateS1ProcessDataDTO.DueMonth
+                                                    && u.DueYear == updateS1ProcessDataDTO.DueYear
                                                     && u.ReturnFrequencyTypeId == updateS1ProcessDataDTO.ReturnFrequencyTypeId, tracked: true);
 
                 if (processTrackingAndFeeBalance == null)

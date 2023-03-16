@@ -147,6 +147,7 @@ public class ProcessTrackingForReceivedDTO
     {
         public Guid GSTClientId { get; set; }
         public string DueMonth { get; set; }
+        public int DueYear { get; set; }
         public int ReturnFrequencyTypeId { get; set; }
         public bool? SalesInvoice { get; set; }
         public bool? SalesBillsNil { get; set; }
