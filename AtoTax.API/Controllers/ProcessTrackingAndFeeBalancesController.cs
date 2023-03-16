@@ -471,7 +471,7 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetMonthsInputforGSTClient(GSTClientFreqYearDTO gstClientFreqYearDTO)
+        public async Task<ActionResult<APIResponse>> GetMonthsInputforGSTClient([FromQuery] GSTClientFreqYearDTO gstClientFreqYearDTO)
         {
 
             GetMonthsInputDTO getMonthsInputDTO = new GetMonthsInputDTO();
