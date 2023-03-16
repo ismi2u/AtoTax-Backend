@@ -125,7 +125,9 @@ public class ProcessTrackingForReceivedDTO
 
         public int ReturnFrequencyTypeId { get; set; }
 
-        public List<int> Years { get; set; }
+        public Dictionary<int,double> YearsAndAmount { get; set; }  
+
+    
 
 
     }
@@ -139,6 +141,10 @@ public class ProcessTrackingForReceivedDTO
         public int Year { get; set; }
 
         public List<string> dueMonths { get; set; }
+
+        
+
+
 
 
     }

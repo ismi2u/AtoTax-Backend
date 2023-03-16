@@ -287,8 +287,10 @@ namespace AtoTax.API.Repository.Repos
 
                             await dbSet.AddAsync(ProcessTrackingAndFeeBalance);
                             await _context.SaveChangesAsync();
+
                         }
                     }
+                    
 
                     Console.WriteLine("Quaterly Sync CronJob Completed at " + DateTime.Now.ToLocalTime());
                 }

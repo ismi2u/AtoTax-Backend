@@ -17,6 +17,8 @@ using System.Data;
 using System.Linq.Expressions;
 using EmailService;
 using static Org.BouncyCastle.Math.EC.ECCurve;
+using System.ComponentModel;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace AtoTax.API.Controllers
 {
@@ -321,7 +323,7 @@ namespace AtoTax.API.Controllers
 
                 GSTClientPopupDataDTO gstClientPopupDataDTO = new();
                 gstClientPopupDataDTO.TotalPendingBalance = _unitOfWork.ProcessTrackingAndFeeBalances
-                                                                    .GetAllAsync(p => p.GSTClientId == id).Result
+                                                                    .GetAllAsync(p => p.GSTClientId == id && p.ReturnFrequencyTypeId != (int)EFrequency.AnnualReturn).Result
                                                                     .Select(s => s.CurrentBalance).Sum() ?? 0;
 
 
@@ -440,7 +442,7 @@ namespace AtoTax.API.Controllers
 
             GetYearsInputDTO getYearsInputDTO = new GetYearsInputDTO();
 
-            List<int> listYears = new List<int>();
+            Dictionary<int, double> listYears = new Dictionary<int, double>();
 
             var listProcessAndFeeBals = await _unitOfWork.ProcessTrackingAndFeeBalances.GetAllAsync(p => p.GSTClientId == gstClientIdFreq.GSTClientId && p.ReturnFrequencyTypeId == gstClientIdFreq.FrequencyId);
 
@@ -449,14 +451,19 @@ namespace AtoTax.API.Controllers
 
             foreach (var item in listProcessAndFeeBals)
             {
-                if (!listYears.Contains(item.DueYear ?? 0))
+                if (item.ReceivedDate == null && string.IsNullOrEmpty(item.ReceivedByUser))
                 {
-                    listYears.Add(item.DueYear ?? 0);
-                }
 
+                    listYears.Add(item.DueYear ?? 0, item.FeesAmount?? 0);
+
+                    //if (!listYears.Contains(item.DueYear ?? 0))
+                    //{
+                    //    listYears.Add(item.DueYear ?? 0);
+                    //}
+                }
             }
             getYearsInputDTO.ReturnFrequencyTypeId = gstClientIdFreq.FrequencyId;
-            getYearsInputDTO.Years = listYears;
+            getYearsInputDTO.YearsAndAmount = listYears;
 
             _response.Result = getYearsInputDTO;
             _response.IsSuccess = true;
@@ -486,13 +493,18 @@ namespace AtoTax.API.Controllers
             getMonthsInputDTO.ReturnFrequencyTypeId = gstClientFreqYearDTO.FrequencyId;
             getMonthsInputDTO.Year = gstClientFreqYearDTO.Year;
 
+         
+
             foreach (var item in listProcessAndFeeBals)
             {
-                if (!listMonths.Contains(item.DueMonth))
+
+                if(item.ReceivedDate == null && string.IsNullOrEmpty( item.ReceivedByUser))
                 {
-                    listMonths.Add(item.DueMonth);
+                    if (!listMonths.Contains(item.DueMonth))
+                    {
+                        listMonths.Add(item.DueMonth);
+                    }
                 }
-               
 
             }
             getMonthsInputDTO.dueMonths = listMonths;
@@ -511,7 +523,7 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetS2ProcessInputforGSTClient(Guid id)
+        public async Task<ActionResult<APIResponse>> GetInputForGSTR1ForGSTClient(Guid id)
         {
 
             if (id == Guid.Empty)
@@ -535,7 +547,7 @@ namespace AtoTax.API.Controllers
             }
 
             IEnumerable<ProcessTrackingAndFeeBalance> listTrackingAndFeeBalances = await _unitOfWork.ProcessTrackingAndFeeBalances
-                                                                        .GetAllAsync(c => c.GSTClientId == id);
+                                                                        .GetAllAsync(c => c.GSTClientId == id && c.ReceivedByUser != null);
 
 
             //try
@@ -678,7 +690,7 @@ namespace AtoTax.API.Controllers
                 _logger.LogInformation("Email Acknowledgement: Acknowledgement sent to " + gstClient.ProprietorName + " for the month of " + duemonth + "-" + dueyear);
                 ///
 
-                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 _response.SuccessMessage = "Received the Invoices";
                 _response.Result = processTrackingAndFeeBalance;
