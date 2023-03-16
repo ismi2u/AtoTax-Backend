@@ -471,33 +471,33 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetMonthsInputforGSTClient(GSTClientIdAndFreqIdTO gstClientIdFreq)
+        public async Task<ActionResult<APIResponse>> GetMonthsInputforGSTClient(GSTClientFreqYearDTO gstClientFreqYearDTO)
         {
 
-            GetYearsInputDTO getYearsInputDTO = new GetYearsInputDTO();
+            GetMonthsInputDTO getMonthsInputDTO = new GetMonthsInputDTO();
 
             List<string> listMonths = new List<string>();
-            List<int> listYears = new List<int>();
 
-            var listProcessAndFeeBals = await _unitOfWork.ProcessTrackingAndFeeBalances.GetAllAsync(p => p.GSTClientId == gstClientIdFreq.GSTClientId && p.ReturnFrequencyTypeId == gstClientIdFreq.FrequencyId);
+            var listProcessAndFeeBals = await _unitOfWork.ProcessTrackingAndFeeBalances.GetAllAsync(p => p.GSTClientId == gstClientFreqYearDTO.GSTClientId 
+            && p.ReturnFrequencyTypeId == gstClientFreqYearDTO.FrequencyId
+            && p.DueYear == gstClientFreqYearDTO.Year);
 
-            getYearsInputDTO.GSTClientId = gstClientIdFreq.GSTClientId;
+            getMonthsInputDTO.GSTClientId = gstClientFreqYearDTO.GSTClientId;
+            getMonthsInputDTO.ReturnFrequencyTypeId = gstClientFreqYearDTO.FrequencyId;
+            getMonthsInputDTO.Year = gstClientFreqYearDTO.Year;
 
             foreach (var item in listProcessAndFeeBals)
             {
-                //if(!listMonths.Contains(item.DueMonth))
-                //{
-                //    listMonths.Add(item.DueMonth);
-                //}
-                if (!listYears.Contains(item.DueYear ?? 0))
+                if (!listMonths.Contains(item.DueMonth))
                 {
-                    listYears.Add(item.DueYear ?? 0);
+                    listMonths.Add(item.DueMonth);
                 }
+               
 
             }
-            getYearsInputDTO.Years = listYears;
+            getMonthsInputDTO.dueMonths = listMonths;
 
-            _response.Result = getYearsInputDTO;
+            _response.Result = getMonthsInputDTO;
             _response.IsSuccess = true;
             _response.StatusCode = HttpStatusCode.OK;
             _response.SuccessMessage = "";
