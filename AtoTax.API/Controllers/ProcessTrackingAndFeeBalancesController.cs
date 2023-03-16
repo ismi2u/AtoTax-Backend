@@ -444,7 +444,9 @@ namespace AtoTax.API.Controllers
 
             Dictionary<int, double> listYears = new Dictionary<int, double>();
 
-            var listProcessAndFeeBals = await _unitOfWork.ProcessTrackingAndFeeBalances.GetAllAsync(p => p.GSTClientId == gstClientIdFreq.GSTClientId && p.ReturnFrequencyTypeId == gstClientIdFreq.FrequencyId);
+            var listProcessAndFeeBals = await _unitOfWork.ProcessTrackingAndFeeBalances.GetAllAsync(
+                                                    p => p.GSTClientId == gstClientIdFreq.GSTClientId 
+                                                && p.ReturnFrequencyTypeId == gstClientIdFreq.FrequencyId);
 
             getYearsInputDTO.GSTClientId = gstClientIdFreq.GSTClientId;
 
@@ -453,8 +455,16 @@ namespace AtoTax.API.Controllers
             {
                 if (item.ReceivedDate == null && string.IsNullOrEmpty(item.ReceivedByUser))
                 {
+                    if(gstClientIdFreq.FrequencyId == (int)EFrequency.AnnualReturn)
+                    {
+                        listYears.Add(item.DueYear ?? 0, item.FeesAmount ?? 0);
+                    }
+                    else
+                    {
+                        listYears.Add(item.DueYear ?? 0, 0);
+                    }
 
-                    listYears.Add(item.DueYear ?? 0, item.FeesAmount?? 0);
+                    
 
                     //if (!listYears.Contains(item.DueYear ?? 0))
                     //{
@@ -506,7 +516,7 @@ namespace AtoTax.API.Controllers
                 }
 
             }
-            getMonthsInputDTO.dueMonths = listMonths;
+            getMonthsInputDTO.MonthsAndAmount = listMonths;
 
             _response.Result = getMonthsInputDTO;
             _response.IsSuccess = true;
