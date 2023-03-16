@@ -435,12 +435,11 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetYearsInputforGSTClient(GSTClientIdAndFreqIdTO gstClientIdFreq)
+        public async Task<ActionResult<APIResponse>> GetYearsInputforGSTClient([FromQuery]GSTClientIdAndFreqIdTO gstClientIdFreq)
         {
 
             GetYearsInputDTO getYearsInputDTO = new GetYearsInputDTO();
 
-            List<string> listMonths = new List<string>();
             List<int> listYears = new List<int>();
 
             var listProcessAndFeeBals = await _unitOfWork.ProcessTrackingAndFeeBalances.GetAllAsync(p => p.GSTClientId == gstClientIdFreq.GSTClientId && p.ReturnFrequencyTypeId == gstClientIdFreq.FrequencyId);
@@ -449,10 +448,6 @@ namespace AtoTax.API.Controllers
 
             foreach (var item in listProcessAndFeeBals)
             {
-                //if(!listMonths.Contains(item.DueMonth))
-                //{
-                //    listMonths.Add(item.DueMonth);
-                //}
                 if (!listYears.Contains(item.DueYear ?? 0))
                 {
                     listYears.Add(item.DueYear ?? 0);
