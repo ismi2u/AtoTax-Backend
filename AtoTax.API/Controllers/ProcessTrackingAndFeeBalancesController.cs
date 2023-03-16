@@ -455,6 +455,7 @@ namespace AtoTax.API.Controllers
                 }
 
             }
+            getYearsInputDTO.ReturnFrequencyTypeId = gstClientIdFreq.FrequencyId;
             getYearsInputDTO.Years = listYears;
 
             _response.Result = getYearsInputDTO;

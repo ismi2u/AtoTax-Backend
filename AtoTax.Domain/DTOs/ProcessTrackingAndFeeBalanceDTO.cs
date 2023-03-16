@@ -115,6 +115,8 @@ public class ProcessTrackingForReceivedDTO
     {
         public Guid GSTClientId { get; set; }
 
+        public int ReturnFrequencyTypeId { get; set; }
+
         public List<int> Years { get; set; }
 
 
