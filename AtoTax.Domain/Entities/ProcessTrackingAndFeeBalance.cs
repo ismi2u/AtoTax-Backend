@@ -24,7 +24,7 @@ namespace AtoTax.Domain.Entities
         public bool? PurchaseInvoice { get; set; }
         public bool? PurchaseNil { get; set; }
 
-        public string ReceivedByUser { get; set; }
+        public string? ReceivedByUser { get; set; }
         public double? GSTTaxAmount { get; set; }
         public double? FeesAmount { get; set; }
         public double? AmountPaid { get; set; }
@@ -35,13 +35,13 @@ namespace AtoTax.Domain.Entities
         public bool? SalesNilFiled { get; set; }
         public bool? SalesNilNotFiled { get; set; }
         public DateTime? SalesFiledDate { get; set; }
-        public string GSTR1FiledByUser { get; set; }
+        public string? GSTR1FiledByUser { get; set; }
         public bool? GSTR3BFiled { get; set; }
         public bool? GSTR3BNotFiled { get; set; }
         public bool? GSTR3BNILFiled { get; set; }
         public bool? GSTR3BNilNotFiled { get; set; }
         public DateTime? GSTR3BFiledDate { get; set; }
-        public string GSTR3BFiledByUser { get; set; }
+        public string? GSTR3BFiledByUser { get; set; }
 
 
     }

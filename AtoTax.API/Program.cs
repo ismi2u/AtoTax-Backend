@@ -211,10 +211,10 @@ app.MapControllers();
 //hangfine job defined here
 app.UseHangfireDashboard();
 app.MapHangfireDashboard();
-RecurringJob.AddOrUpdate<IMonthAndYearRepository>(x => x.CreateMonthYearAsync(0, 0), Cron.Minutely);
-RecurringJob.AddOrUpdate<IProcessTrackingAndFeeBalanceRepository>(x => x.SyncMonthlyDataAsync(), Cron.Minutely);
-//RecurringJob.AddOrUpdate<IProcessTrackingAndFeeBalanceRepository>(x => x.SyncAnnualDataAsync(), Cron.Minutely);
-//RecurringJob.AddOrUpdate<IProcessTrackingAndFeeBalanceRepository>(x => x.SyncQuaterlyDataAsync(), Cron.Minutely);
+RecurringJob.AddOrUpdate<IMonthAndYearRepository>(x => x.CreateMonthYearAsync(0, 0), Cron.Hourly);
+RecurringJob.AddOrUpdate<IProcessTrackingAndFeeBalanceRepository>(x => x.SyncMonthlyDataAsync(), Cron.Hourly);
+RecurringJob.AddOrUpdate<IProcessTrackingAndFeeBalanceRepository>(x => x.SyncAnnualDataAsync(), Cron.Hourly);
+RecurringJob.AddOrUpdate<IProcessTrackingAndFeeBalanceRepository>(x => x.SyncQuaterlyDataAsync(), Cron.Hourly);
 
 //app.UseStaticFiles(new StaticFileOptions
 //{

@@ -92,15 +92,30 @@ public class ProcessTrackingForReceivedDTO
 
     }
 
+    public class GSTClientIdAndFreqIdTO
+    {
+        public Guid GSTClientId { get; set; }
+        public int FrequencyId { get; set; }
+    }
 
-    public class GetS1ProcessInputDTO
+
+        public class GetFrequencyInputDTO
     {
 
         public Guid GSTClientId { get; set; }
 
-        public List<string> DueMonths { get; set; }
+        //public List<string> DueMonths { get; set; }
 
-        public List<ReturnFrequencyType> listReturnFreqTypes { get; set; }
+        public List<ClientReturnFrequencyForDD> listReturnFreqTypes { get; set; }
+
+
+    }
+
+    public class GetYearsInputDTO
+    {
+        public Guid GSTClientId { get; set; }
+
+        public List<int> Years { get; set; }
 
 
     }

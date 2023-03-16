@@ -353,7 +353,7 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetS1ProcessInputforGSTClient(Guid id)
+        public async Task<ActionResult<APIResponse>> GetReturnFrequenciesforGSTClient(Guid id)
         {
 
             if (id == Guid.Empty)
@@ -382,37 +382,41 @@ namespace AtoTax.API.Controllers
 
             try
             {
-                GetS1ProcessInputDTO getS1ProcessInputDTO = new GetS1ProcessInputDTO();
+                GetFrequencyInputDTO getFrequencyInputDTO = new GetFrequencyInputDTO();
 
-                List<string> listMonths = new List<string>();
-                foreach (var item in listTrackingAndFeeBalances)
-                {
-                    if(item.DueMonth != null)
-                    {
-                        listMonths.Add(item.DueMonth);
-                    }
+                //List<string> listMonths = new List<string>();
+                //foreach (var item in listTrackingAndFeeBalances)
+                //{
+                //    if(item.DueMonth != null)
+                //    {
+                //        listMonths.Add(item.DueMonth);
+                //    }
                     
-                }
-                getS1ProcessInputDTO.DueMonths = listMonths;
+                //}
+                //getS1ProcessInputDTO.DueMonths = listMonths;
 
 
-                List<ReturnFrequencyType> listReturnFreq = new List<ReturnFrequencyType>();
+                List<ClientReturnFrequencyForDD> listReturnFreq = new List<ClientReturnFrequencyForDD>();
                 foreach (var item in listTrackingAndFeeBalances)
                 {
-                    ReturnFrequencyType returnFrequency = new ReturnFrequencyType();
+                    ClientReturnFrequencyForDD returnFrequency = new ClientReturnFrequencyForDD();
                     returnFrequency.Id = item.ReturnFrequencyTypeId;
                     returnFrequency.ReturnFreqType = _unitOfWork.ReturnFrequencyTypes.GetAsync(m => m.Id == item.ReturnFrequencyTypeId).Result.ReturnFreqType;
+                    if(!listReturnFreq.Any(f=> f.ReturnFreqType == returnFrequency.ReturnFreqType))
+                    {
+                        listReturnFreq.Add(returnFrequency);
+                    }
 
-                    listReturnFreq.Add(returnFrequency);
+
                 }
-                getS1ProcessInputDTO.GSTClientId = gstClient.Id;
-                getS1ProcessInputDTO.DueMonths = listMonths;
-                getS1ProcessInputDTO.listReturnFreqTypes = listReturnFreq;
+                getFrequencyInputDTO.GSTClientId = gstClient.Id;
+                //getS1ProcessInputDTO.DueMonths = listMonths;
+                getFrequencyInputDTO.listReturnFreqTypes = listReturnFreq;
 
-                _response.Result = getS1ProcessInputDTO;
+                _response.Result = getFrequencyInputDTO;
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;
-                _response.SuccessMessage = "Retrieved the requested data";
+                _response.SuccessMessage = "";
                 return Ok(_response);
             }
             catch (Exception ex)
@@ -426,6 +430,170 @@ namespace AtoTax.API.Controllers
 
 
         }
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetYearsInputforGSTClient(GSTClientIdAndFreqIdTO gstClientIdFreq)
+        {
+
+            GetYearsInputDTO getYearsInputDTO = new GetYearsInputDTO();
+
+            List<string> listMonths = new List<string>();
+            List<int> listYears = new List<int>();
+
+            var listProcessAndFeeBals = await _unitOfWork.ProcessTrackingAndFeeBalances.GetAllAsync(p => p.GSTClientId == gstClientIdFreq.GSTClientId && p.ReturnFrequencyTypeId == gstClientIdFreq.FrequencyId);
+
+            getYearsInputDTO.GSTClientId = gstClientIdFreq.GSTClientId;
+
+            foreach (var item in listProcessAndFeeBals)
+            {
+                //if(!listMonths.Contains(item.DueMonth))
+                //{
+                //    listMonths.Add(item.DueMonth);
+                //}
+                if (!listYears.Contains(item.DueYear ?? 0))
+                {
+                    listYears.Add(item.DueYear ?? 0);
+                }
+
+            }
+            getYearsInputDTO.Years = listYears;
+
+            _response.Result = getYearsInputDTO;
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.SuccessMessage = "";
+            return Ok(_response);
+
+
+        }
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetMonthsInputforGSTClient(GSTClientIdAndFreqIdTO gstClientIdFreq)
+        {
+
+            GetYearsInputDTO getYearsInputDTO = new GetYearsInputDTO();
+
+            List<string> listMonths = new List<string>();
+            List<int> listYears = new List<int>();
+
+            var listProcessAndFeeBals = await _unitOfWork.ProcessTrackingAndFeeBalances.GetAllAsync(p => p.GSTClientId == gstClientIdFreq.GSTClientId && p.ReturnFrequencyTypeId == gstClientIdFreq.FrequencyId);
+
+            getYearsInputDTO.GSTClientId = gstClientIdFreq.GSTClientId;
+
+            foreach (var item in listProcessAndFeeBals)
+            {
+                //if(!listMonths.Contains(item.DueMonth))
+                //{
+                //    listMonths.Add(item.DueMonth);
+                //}
+                if (!listYears.Contains(item.DueYear ?? 0))
+                {
+                    listYears.Add(item.DueYear ?? 0);
+                }
+
+            }
+            getYearsInputDTO.Years = listYears;
+
+            _response.Result = getYearsInputDTO;
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.SuccessMessage = "";
+            return Ok(_response);
+
+
+        }
+
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetS2ProcessInputforGSTClient(Guid id)
+        {
+
+            if (id == Guid.Empty)
+            {
+                _response.Result = null;
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages = new List<string>() { "Invalid GSTClient Id" };
+                return Ok(_response);
+            }
+
+            GSTClient gstClient = await _unitOfWork.GSTClients.GetAsync(g => g.Id == id);
+
+            if (gstClient == null)
+            {
+                _response.Result = null;
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages = new List<string>() { "Invalid GSTClient" };
+                return Ok(_response);
+            }
+
+            IEnumerable<ProcessTrackingAndFeeBalance> listTrackingAndFeeBalances = await _unitOfWork.ProcessTrackingAndFeeBalances
+                                                                        .GetAllAsync(c => c.GSTClientId == id);
+
+
+            //try
+            //{
+            //    GetS1ProcessInputDTO getS1ProcessInputDTO = new GetS1ProcessInputDTO();
+
+            //    List<string> listMonths = new List<string>();
+            //    foreach (var item in listTrackingAndFeeBalances)
+            //    {
+            //        if (item.DueMonth != null)
+            //        {
+            //            listMonths.Add(item.DueMonth);
+            //        }
+
+            //    }
+            //    getS1ProcessInputDTO.DueMonths = listMonths;
+
+
+            //    List<ClientReturnFrequencyForDD> listReturnFreq = new List<ClientReturnFrequencyForDD>();
+            //    foreach (var item in listTrackingAndFeeBalances)
+            //    {
+            //        ClientReturnFrequencyForDD returnFrequency = new ClientReturnFrequencyForDD();
+            //        returnFrequency.Id = item.ReturnFrequencyTypeId;
+            //        returnFrequency.ReturnFreqType = _unitOfWork.ReturnFrequencyTypes.GetAsync(m => m.Id == item.ReturnFrequencyTypeId).Result.ReturnFreqType;
+            //        if (!listReturnFreq.Contains(returnFrequency))
+            //        {
+            //            listReturnFreq.Add(returnFrequency);
+            //        }
+
+
+            //    }
+            //    getS1ProcessInputDTO.GSTClientId = gstClient.Id;
+            //    getS1ProcessInputDTO.DueMonths = listMonths;
+            //    getS1ProcessInputDTO.listReturnFreqTypes = listReturnFreq;
+
+            ////    _response.Result = getS1ProcessInputDTO;
+            //    _response.IsSuccess = true;
+            //    _response.StatusCode = HttpStatusCode.OK;
+            //    _response.SuccessMessage = "Retrieved the requested data";
+            //    return Ok(_response);
+            //}
+            //catch (Exception ex)
+            //{
+            //    _response.Result = "";
+            //    _response.IsSuccess = false;
+            //    _response.StatusCode = HttpStatusCode.BadRequest;
+            //    _response.ErrorMessages = new List<string>() { ex.ToString() };
+            //}
+            return Ok(_response);
+
+
+        }
+
+
+
         [HttpPut]
         // PUT: api/ProcessTrackingAndFeeBalances/5
         [ProducesResponseType(StatusCodes.Status204NoContent)]
