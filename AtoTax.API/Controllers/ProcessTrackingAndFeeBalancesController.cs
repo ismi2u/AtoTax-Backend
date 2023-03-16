@@ -601,6 +601,12 @@ namespace AtoTax.API.Controllers
                 await _unitOfWork.CompleteAsync();
 
 
+
+                if (processTrackingAndFeeBalance.ReturnFrequencyTypeId != null)
+                {
+                    processTrackingAndFeeBalance.ReturnFrequencyType = await _unitOfWork.ReturnFrequencyTypes.GetAsync(u => u.Id == processTrackingAndFeeBalance.ReturnFrequencyTypeId);
+                }
+
                 var gstClient = await _unitOfWork.GSTClients.GetAsync(u => u.Id == updateS1ProcessDataDTO.GSTClientId);
                 // Send Mail ID confirmation email
 
