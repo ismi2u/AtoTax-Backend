@@ -483,7 +483,9 @@ namespace AtoTax.API.Controllers
 
             GetMonthsInputDTO getMonthsInputDTO = new GetMonthsInputDTO();
 
-            List<string> listMonths = new List<string>();
+            //List<string> listMonths = new List<string>();
+
+            Dictionary<string, double> listMonths = new Dictionary<string, double>();
 
             var listProcessAndFeeBals = await _unitOfWork.ProcessTrackingAndFeeBalances.GetAllAsync(p => p.GSTClientId == gstClientFreqYearDTO.GSTClientId 
             && p.ReturnFrequencyTypeId == gstClientFreqYearDTO.FrequencyId
@@ -500,10 +502,7 @@ namespace AtoTax.API.Controllers
 
                 if(item.ReceivedDate == null && string.IsNullOrEmpty( item.ReceivedByUser))
                 {
-                    if (!listMonths.Contains(item.DueMonth))
-                    {
-                        listMonths.Add(item.DueMonth);
-                    }
+                    listMonths.Add(item.DueMonth, item.FeesAmount ?? 0);
                 }
 
             }
@@ -518,88 +517,6 @@ namespace AtoTax.API.Controllers
 
         }
 
-
-        [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetInputForGSTR1ForGSTClient(Guid id)
-        {
-
-            if (id == Guid.Empty)
-            {
-                _response.Result = null;
-                _response.IsSuccess = false;
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.ErrorMessages = new List<string>() { "Invalid GSTClient Id" };
-                return Ok(_response);
-            }
-
-            GSTClient gstClient = await _unitOfWork.GSTClients.GetAsync(g => g.Id == id);
-
-            if (gstClient == null)
-            {
-                _response.Result = null;
-                _response.IsSuccess = false;
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.ErrorMessages = new List<string>() { "Invalid GSTClient" };
-                return Ok(_response);
-            }
-
-            IEnumerable<ProcessTrackingAndFeeBalance> listTrackingAndFeeBalances = await _unitOfWork.ProcessTrackingAndFeeBalances
-                                                                        .GetAllAsync(c => c.GSTClientId == id && c.ReceivedByUser != null);
-
-
-            //try
-            //{
-            //    GetS1ProcessInputDTO getS1ProcessInputDTO = new GetS1ProcessInputDTO();
-
-            //    List<string> listMonths = new List<string>();
-            //    foreach (var item in listTrackingAndFeeBalances)
-            //    {
-            //        if (item.DueMonth != null)
-            //        {
-            //            listMonths.Add(item.DueMonth);
-            //        }
-
-            //    }
-            //    getS1ProcessInputDTO.DueMonths = listMonths;
-
-
-            //    List<ClientReturnFrequencyForDD> listReturnFreq = new List<ClientReturnFrequencyForDD>();
-            //    foreach (var item in listTrackingAndFeeBalances)
-            //    {
-            //        ClientReturnFrequencyForDD returnFrequency = new ClientReturnFrequencyForDD();
-            //        returnFrequency.Id = item.ReturnFrequencyTypeId;
-            //        returnFrequency.ReturnFreqType = _unitOfWork.ReturnFrequencyTypes.GetAsync(m => m.Id == item.ReturnFrequencyTypeId).Result.ReturnFreqType;
-            //        if (!listReturnFreq.Contains(returnFrequency))
-            //        {
-            //            listReturnFreq.Add(returnFrequency);
-            //        }
-
-
-            //    }
-            //    getS1ProcessInputDTO.GSTClientId = gstClient.Id;
-            //    getS1ProcessInputDTO.DueMonths = listMonths;
-            //    getS1ProcessInputDTO.listReturnFreqTypes = listReturnFreq;
-
-            ////    _response.Result = getS1ProcessInputDTO;
-            //    _response.IsSuccess = true;
-            //    _response.StatusCode = HttpStatusCode.OK;
-            //    _response.SuccessMessage = "Retrieved the requested data";
-            //    return Ok(_response);
-            //}
-            //catch (Exception ex)
-            //{
-            //    _response.Result = "";
-            //    _response.IsSuccess = false;
-            //    _response.StatusCode = HttpStatusCode.BadRequest;
-            //    _response.ErrorMessages = new List<string>() { ex.ToString() };
-            //}
-            return Ok(_response);
-
-
-        }
 
 
 
@@ -703,6 +620,91 @@ namespace AtoTax.API.Controllers
             }
             return Ok(_response);
         }
+
+
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetInputForGSTR1ForGSTClient(Guid id)
+        {
+
+            if (id == Guid.Empty)
+            {
+                _response.Result = null;
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages = new List<string>() { "Invalid GSTClient Id" };
+                return Ok(_response);
+            }
+
+            GSTClient gstClient = await _unitOfWork.GSTClients.GetAsync(g => g.Id == id);
+
+            if (gstClient == null)
+            {
+                _response.Result = null;
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages = new List<string>() { "Invalid GSTClient" };
+                return Ok(_response);
+            }
+
+            IEnumerable<ProcessTrackingAndFeeBalance> listTrackingAndFeeBalances = await _unitOfWork.ProcessTrackingAndFeeBalances
+                                                                        .GetAllAsync(c => c.GSTClientId == id && c.ReceivedByUser != null);
+
+
+            //try
+            //{
+            //    GetS1ProcessInputDTO getS1ProcessInputDTO = new GetS1ProcessInputDTO();
+
+            //    List<string> listMonths = new List<string>();
+            //    foreach (var item in listTrackingAndFeeBalances)
+            //    {
+            //        if (item.DueMonth != null)
+            //        {
+            //            listMonths.Add(item.DueMonth);
+            //        }
+
+            //    }
+            //    getS1ProcessInputDTO.DueMonths = listMonths;
+
+
+            //    List<ClientReturnFrequencyForDD> listReturnFreq = new List<ClientReturnFrequencyForDD>();
+            //    foreach (var item in listTrackingAndFeeBalances)
+            //    {
+            //        ClientReturnFrequencyForDD returnFrequency = new ClientReturnFrequencyForDD();
+            //        returnFrequency.Id = item.ReturnFrequencyTypeId;
+            //        returnFrequency.ReturnFreqType = _unitOfWork.ReturnFrequencyTypes.GetAsync(m => m.Id == item.ReturnFrequencyTypeId).Result.ReturnFreqType;
+            //        if (!listReturnFreq.Contains(returnFrequency))
+            //        {
+            //            listReturnFreq.Add(returnFrequency);
+            //        }
+
+
+            //    }
+            //    getS1ProcessInputDTO.GSTClientId = gstClient.Id;
+            //    getS1ProcessInputDTO.DueMonths = listMonths;
+            //    getS1ProcessInputDTO.listReturnFreqTypes = listReturnFreq;
+
+            ////    _response.Result = getS1ProcessInputDTO;
+            //    _response.IsSuccess = true;
+            //    _response.StatusCode = HttpStatusCode.OK;
+            //    _response.SuccessMessage = "Retrieved the requested data";
+            //    return Ok(_response);
+            //}
+            //catch (Exception ex)
+            //{
+            //    _response.Result = "";
+            //    _response.IsSuccess = false;
+            //    _response.StatusCode = HttpStatusCode.BadRequest;
+            //    _response.ErrorMessages = new List<string>() { ex.ToString() };
+            //}
+            return Ok(_response);
+
+
+        }
+
 
         //// POST: api/ProcessTrackingAndFeeBalances
         //[HttpPost]

@@ -140,7 +140,7 @@ public class ProcessTrackingForReceivedDTO
 
         public int Year { get; set; }
 
-        public List<string> dueMonths { get; set; }
+        public Dictionary<string, double> dueMonths { get; set; }
 
         
 
