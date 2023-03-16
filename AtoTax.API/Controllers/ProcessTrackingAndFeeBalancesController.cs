@@ -658,6 +658,130 @@ namespace AtoTax.API.Controllers
 
 
 
+        [HttpPut]
+        // PUT: api/ProcessTrackingAndFeeBalances/5
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> UpdateSalesGSTR1Filed(UpdateGSTR1FileDataDTO updateGSTR1FileDataDTO)
+        {
+
+            if (updateGSTR1FileDataDTO.GSTClientId == Guid.Empty)
+            {
+                _response.Result = updateGSTR1FileDataDTO.GSTClientId;
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages = new List<string>() { "GSTClientId is not valid" };
+
+                return Ok(_response);
+            }
+
+            try
+            {
+                var processTrackingAndFeeBalance = await _unitOfWork.ProcessTrackingAndFeeBalances
+                                                    .GetAsync(u => u.GSTClientId == updateGSTR1FileDataDTO.GSTClientId
+                                                    && u.DueMonth == updateGSTR1FileDataDTO.DueMonth
+                                                    && u.DueYear == updateGSTR1FileDataDTO.DueYear
+                                                    && u.ReturnFrequencyTypeId == updateGSTR1FileDataDTO.ReturnFrequencyTypeId, tracked: true);
+
+                if (processTrackingAndFeeBalance == null)
+                {
+                    _response.Result = updateGSTR1FileDataDTO;
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.ErrorMessages = new List<string>() { "Process Tracking record is null" };
+                    return Ok(_response);
+                }
+
+                if(processTrackingAndFeeBalance.GSTR1FiledByUser != null && processTrackingAndFeeBalance.SalesFiledDate != null)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages = new List<string>() { "GSTR1 is already in filed state" };
+                    _response.Result = processTrackingAndFeeBalance;
+                    return Ok(_response);
+                }
+
+                if (processTrackingAndFeeBalance.ReceivedByUser == null && processTrackingAndFeeBalance.ReceivedDate == null)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages = new List<string>() { "Bills not received yet, cant file GSTR1" };
+                    _response.Result = processTrackingAndFeeBalance;
+                    return Ok(_response);
+                }
+
+                processTrackingAndFeeBalance.SalesFiled = updateGSTR1FileDataDTO.SalesFiled;
+                processTrackingAndFeeBalance.SalesNotFiled = updateGSTR1FileDataDTO.SalesNotFiled;
+                processTrackingAndFeeBalance.SalesNilFiled = updateGSTR1FileDataDTO.SalesNilFiled;
+                processTrackingAndFeeBalance.SalesNilNotFiled = updateGSTR1FileDataDTO.SalesNilNotFiled;
+            
+                processTrackingAndFeeBalance.SalesFiledDate = DateTime.UtcNow;
+                processTrackingAndFeeBalance.GSTR1FiledByUser = User.Identity.Name;
+
+
+                await _unitOfWork.ProcessTrackingAndFeeBalances.UpdateAsync(processTrackingAndFeeBalance);
+
+                await _unitOfWork.CompleteAsync();
+
+
+
+                if (processTrackingAndFeeBalance.ReturnFrequencyTypeId != null)
+                {
+                    processTrackingAndFeeBalance.ReturnFrequencyType = await _unitOfWork.ReturnFrequencyTypes.GetAsync(u => u.Id == processTrackingAndFeeBalance.ReturnFrequencyTypeId);
+                }
+
+                var gstClient = await _unitOfWork.GSTClients.GetAsync(u => u.Id == updateGSTR1FileDataDTO.GSTClientId);
+                // Send Mail ID confirmation email
+
+                string[] paths = { Directory.GetCurrentDirectory(), "SalesGSTR1Filed.html" };
+                string FilePath = Path.Combine(paths);
+                // _logger.LogInformation("Email template path " + FilePath);
+                StreamReader str = new StreamReader(FilePath);
+                string MailText = str.ReadToEnd();
+                str.Close();
+
+                var domain = _config.GetSection("Domain").Value;
+                var duemonth = processTrackingAndFeeBalance.DueMonth;
+                var dueyear = processTrackingAndFeeBalance.DueYear;
+                var builder = new MimeKit.BodyBuilder();
+                var receiverEmail = gstClient.GSTEmailId;
+                string subject = "AtoTax: GSTR1 Sales Files for the month of " + duemonth + "-" + dueyear;
+
+                MailText = MailText.Replace("{Domain}", domain);
+                MailText = MailText.Replace("{employee}", User.Identity.Name);
+                MailText = MailText.Replace("{month}", duemonth);
+                MailText = MailText.Replace("{year}", dueyear.ToString());
+                MailText = MailText.Replace("{gstclient}", gstClient.ProprietorName);
+
+
+                builder.HtmlBody = MailText;
+
+                EmailDto emailDto = new EmailDto();
+                emailDto.To = receiverEmail;
+                emailDto.Subject = subject;
+                emailDto.Body = builder.HtmlBody;
+
+                await _emailSender.SendEmailAsync(emailDto);
+                _logger.LogInformation("Email Acknowledgement:GSTR1 Filed " + gstClient.ProprietorName + " for the month of " + duemonth + "-" + dueyear);
+                ///
+
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.SuccessMessage = "GSTR1 Filed";
+                _response.Result = processTrackingAndFeeBalance;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+            return Ok(_response);
+        }
+
+
+
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
