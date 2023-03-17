@@ -9,8 +9,8 @@ namespace AtoTax.Domain.Entities
         public Guid Id { get; set; }
         public Guid GSTClientId { get; set; }
         public GSTClientDTO GSTClient { get; set; }
-        public int FrequencyId { get; set; }
-        public ReturnFrequencyTypeDTO Frequency { get; set; }
+        public int ReturnFrequencyTypeId { get; set; }
+        public ReturnFrequencyTypeDTO ReturnFrequencyType { get; set; }
         public string DueMonth { get; set; }
         public int DueYear { get; set; }
         public string RackFileNo { get; set; }
