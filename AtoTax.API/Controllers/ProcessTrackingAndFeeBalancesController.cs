@@ -61,7 +61,7 @@ namespace AtoTax.API.Controllers
 
             List<string> includelist = new List<string>();
             includelist.Add("GSTClient");
-            includelist.Add("Frequency");
+            includelist.Add("ReturnFrequencyType");
             string[] arrIncludes = includelist.ToArray();
 
             try
