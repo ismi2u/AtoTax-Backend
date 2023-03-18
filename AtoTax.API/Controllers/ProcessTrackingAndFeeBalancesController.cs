@@ -494,6 +494,10 @@ namespace AtoTax.API.Controllers
 
         }
 
+
+
+
+
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -546,7 +550,23 @@ namespace AtoTax.API.Controllers
 
         }
 
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetNilReturnFeeAmountForGSTClient([FromQuery] Guid gstClientId, int returnFrequencyTypeId  )
+        {
 
+          double feeamount =  _unitOfWork.ClientFeeMaps.GetAsync(u => u.GSTClientId == gstClientId && u.ReturnFrequencyTypeId == returnFrequencyTypeId).Result.DefaultCharge;
+
+            _response.Result = feeamount;
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.SuccessMessage = "";
+            return Ok(_response);
+
+
+        }
 
 
         [HttpPut]
