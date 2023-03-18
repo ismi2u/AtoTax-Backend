@@ -554,7 +554,7 @@ namespace AtoTax.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetNilReturnFeeAmountForGSTClient([FromQuery] Guid gstClientId, int returnFrequencyTypeId  )
+        public async Task<ActionResult<APIResponse>> GetFeeAmountForGSTClientForFrequency ([FromQuery] Guid gstClientId, int returnFrequencyTypeId  )
         {
 
           double feeamount =  _unitOfWork.ClientFeeMaps.GetAsync(u => u.GSTClientId == gstClientId && u.ReturnFrequencyTypeId == returnFrequencyTypeId).Result.DefaultCharge;
