@@ -70,6 +70,7 @@ namespace AtoTax.API.Repository.Repos
                         ProcessTrackingAndFeeBalance.ReturnFrequencyTypeId = (int)EFrequency.MonthlyReturn;
                         ProcessTrackingAndFeeBalance.DueMonth = MonthAndYear.MonthYear;
                         ProcessTrackingAndFeeBalance.DueYear = MonthAndYear.Year;
+                        ProcessTrackingAndFeeBalance.FiscalYear = MonthAndYear.FiscalYear;
 
                         ProcessTrackingAndFeeBalance.RackFileNo = gstClient.RackFileNo;
                         ProcessTrackingAndFeeBalance.SalesInvoice = null;

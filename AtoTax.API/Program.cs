@@ -213,8 +213,8 @@ app.UseHangfireDashboard();
 app.MapHangfireDashboard();
 RecurringJob.AddOrUpdate<IMonthAndYearRepository>(x => x.CreateMonthYearAsync(0, 0), Cron.Hourly);
 RecurringJob.AddOrUpdate<IProcessTrackingAndFeeBalanceRepository>(x => x.SyncMonthlyDataAsync(), Cron.Hourly);
-RecurringJob.AddOrUpdate<IProcessTrackingAndFeeBalanceRepository>(x => x.SyncAnnualDataAsync(), Cron.Hourly);
-RecurringJob.AddOrUpdate<IProcessTrackingAndFeeBalanceRepository>(x => x.SyncQuaterlyDataAsync(), Cron.Hourly);
+//RecurringJob.AddOrUpdate<IProcessTrackingAndFeeBalanceRepository>(x => x.SyncAnnualDataAsync(), Cron.Hourly);
+//RecurringJob.AddOrUpdate<IProcessTrackingAndFeeBalanceRepository>(x => x.SyncQuaterlyDataAsync(), Cron.Hourly);
 
 //app.UseStaticFiles(new StaticFileOptions
 //{

@@ -83,10 +83,18 @@ namespace AtoTax.API.Repository.Repos
 
                 monthAndYear.MonthIdx = month.ToString("d2");
                 monthAndYear.Month = strMonth.Substring(0, 3);
-                monthAndYear.MonthYear = strMonth.Substring(0, 3) + "-" + year.ToString();
+                  monthAndYear.MonthYear = strMonth.Substring(0, 3) + "-" + year.ToString();
                 monthAndYear.Year = year;
-                monthAndYear.FiscalYear = "FY " + year.ToString() + "-" + (year + 1).ToString();
 
+                //int intmonth = DateTime.ParseExact(strMonth, "MMMM", CultureInfo.CurrentCulture).Month;
+                if (int.Parse(monthAndYear.MonthIdx) <= 3)
+                {
+                    monthAndYear.FiscalYear = "FY " + (year - 1).ToString() + "-" + (year).ToString();
+                }
+                else
+                {
+                    monthAndYear.FiscalYear = "FY " + year.ToString() + "-" + (year + 1).ToString();
+                }
 
             }
             else
@@ -95,7 +103,16 @@ namespace AtoTax.API.Repository.Repos
                 monthAndYear.Month = DateTime.Now.ToString("MMMM").Substring(0, 3);
                 monthAndYear.MonthYear = DateTime.Now.ToString("MMMM").Substring(0, 3) + "-" + DateTime.Now.Year.ToString();
                 monthAndYear.Year = DateTime.Now.Year;
-                monthAndYear.FiscalYear = "FY " + DateTime.Now.Year.ToString() + "-" + (DateTime.Now.Year + 1).ToString();
+                //DateTime.ParseExact(monthName, "MMMM", CultureInfo.CurrentCulture).Month
+                //int intmonth = DateTime.ParseExact(monthAndYear.Month, "MMMM", CultureInfo.CurrentCulture).Month;
+                if (int.Parse(monthAndYear.MonthIdx) <= 3)
+                {
+                    monthAndYear.FiscalYear = "FY " + (monthAndYear.Year - 1).ToString() + "-" + (monthAndYear.Year).ToString();
+                }
+                else
+                {
+                    monthAndYear.FiscalYear = "FY " + monthAndYear.Year.ToString() + "-" + (monthAndYear.Year + 1).ToString();
+                }
 
             }
 

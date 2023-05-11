@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtoTax.API", "AtoTax.API\AtoTax.API.csproj", "{8646F313-AE6E-4724-8944-BB700D1E364D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AtoTax.API", "AtoTax.API\AtoTax.API.csproj", "{8646F313-AE6E-4724-8944-BB700D1E364D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AtoTax.Domain", "AtoTax.Domain\AtoTax.Domain.csproj", "{7673DB1B-E30F-4737-9861-E47F237932C2}"
 EndProject

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using AtoTax.Domain.DTOs;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AtoTax.Domain.Entities
 {
-    public class ProcessTrackingAndFeeBalance
+    public class AnnualFiling
     {
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
@@ -16,20 +16,29 @@ namespace AtoTax.Domain.Entities
         [ForeignKey("ReturnFrequencyType")]
         public int ReturnFrequencyTypeId { get; set; }
         public virtual ReturnFrequencyType ReturnFrequencyType { get; set; }
-        public string? DueMonth { get; set; }
         public int? DueYear { get; set; }
-        public string FiscalYear { get; set; }
+        public string? FiscalYear { get; set; }
         public string RackFileNo { get; set; }
+
+        public double? SalesTaxable { get; set; }
+        public double? SalesCGST { get; set; }
+        public double? SalesSGST { get; set; }
+        public double? SalesIGST { get; set; }
         public bool? SalesInvoice { get; set; }
         public bool? SalesBillsNil { get; set; }
+
+        public double? PurchaseTaxable { get; set; }
+        public double? PurchaseCGST { get; set; }
+        public double? PurchaseSGST { get; set; }
+        public double? PurchaseIGST { get; set; }
         public bool? PurchaseInvoice { get; set; }
         public bool? PurchaseNil { get; set; }
 
         public string? ReceivedByUser { get; set; }
         public double? GSTTaxAmount { get; set; }
-        public double? FeesAmount { get; set; }
-        public double? AmountPaid { get; set; }
-        public double? CurrentBalance { get; set; }
+        public double? ServiceFee { get; set; }
+        public double? ServiceFeeReceived { get; set; }
+        public double? ServiceFeeBalance { get; set; }
         public DateTime? ReceivedDate { get; set; }
         public bool? SalesFiled { get; set; }
         public bool? SalesNotFiled { get; set; }
@@ -44,6 +53,6 @@ namespace AtoTax.Domain.Entities
         public DateTime? GSTR3BFiledDate { get; set; }
         public string? GSTR3BFiledByUser { get; set; }
 
-
     }
 }
+
